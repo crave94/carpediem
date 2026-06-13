@@ -8,10 +8,9 @@ services:
       - .env
     volumes:
       - carpediem_data:/carpediem_data
-      - carpediem_imgs:/app/static/imgmaple
     restart: always
 
   carpediem_imgs:
-    driver: local
+    driver: instance/imgmaple
   carpediem_data:
     driver: local
