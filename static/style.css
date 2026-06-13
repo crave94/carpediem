@@ -499,8 +499,19 @@ main, nav, footer {
   position: relative;
   z-index: 1;
   min-height: 180px;
+  overflow: hidden;
 }
-.char-card__img img { max-width: 100%; max-height: 100%; image-rendering: pixelated; }
+.char-card__img img {
+  width: 135%;
+  height: 135%;
+  object-fit: contain;
+  object-position: center 15%;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease-out;
+}
+.char-card:hover .char-card__img img {
+  transform: scale(1.08);
+}
 .char-card__body {
   padding: 0.75rem 1rem;
   position: relative;
