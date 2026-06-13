@@ -436,7 +436,7 @@
   })();
   </script>
 
-  <!-- Stars generation for background -->
+  <!-- Stars & Sparks generation for background -->
   <script>
   (function() {
     'use strict';
@@ -448,27 +448,62 @@
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
-    const starCount = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 15000));
-    const colors = ['#fff', '#E9D5FF', '#DBEAFE', '#FCE7F3', '#D1FAE5', '#FEF3C7'];
+    // 1. Generate Stars (twinkling space dust)
+    const starCount = Math.min(90, Math.floor(window.innerWidth * window.innerHeight / 14000));
+    const starColors = ['#ffffff', '#E9D5FF', '#DBEAFE', '#FCE7F3', '#FEF3C7'];
 
     for (let i = 0; i < starCount; i++) {
       const star = document.createElement('div');
       star.className = 'star';
+      const color = starColors[Math.floor(Math.random() * starColors.length)];
+      const size = 1 + Math.random() * 2.5;
+
       star.style.cssText = `
         left: ${Math.random() * 100}%;
         top: ${Math.random() * 100}%;
-        width: ${1 + Math.random() * 2}px;
-        height: ${1 + Math.random() * 2}px;
-        background: ${colors[Math.floor(Math.random() * colors.length)]};
-        animation: star-twinkle ${2 + Math.random() * 4}s ease-in-out infinite;
-        animation-delay: ${Math.random() * 3}s;
-        opacity: ${0.15 + Math.random() * 0.35};
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        animation: star-twinkle ${3 + Math.random() * 4}s ease-in-out infinite;
+        animation-delay: ${Math.random() * 4}s;
+        opacity: ${0.25 + Math.random() * 0.45};
+        box-shadow: 0 0 5px ${color}, 0 0 10px ${color}80;
       `;
-      // Add varying glow color
-      const glowColor = colors[Math.floor(Math.random() * colors.length)];
-      star.style.boxShadow = `0 0 4px ${glowColor}, 0 0 8px ${glowColor}80`;
-
       starsLayer.appendChild(star);
+    }
+
+    // 2. Generate Drifting Sparks (glowing magical particles floating up)
+    const sparkCount = Math.min(35, Math.floor(window.innerWidth * window.innerHeight / 40000));
+    const sparkColors = [
+      '#C084FC', // Maple Purple
+      '#60A5FA', // Maple Blue
+      '#FB7185', // Maple Pink
+      '#FCD34D'  // Gold
+    ];
+
+    for (let i = 0; i < sparkCount; i++) {
+      const spark = document.createElement('div');
+      spark.className = 'spark';
+      const color = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+      const size = 3 + Math.random() * 4;
+      const duration = 12 + Math.random() * 15;
+      const delay = -(Math.random() * duration);
+      const driftX = (Math.random() - 0.5) * 200;
+      const driftRot = (Math.random() - 0.5) * 360;
+      const left = Math.random() * 100;
+
+      spark.style.cssText = `
+        left: ${left}%;
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        box-shadow: 0 0 8px ${color}, 0 0 16px ${color}c0, 0 0 24px ${color}60;
+        --drift-x: ${driftX}px;
+        --drift-rot: ${driftRot}deg;
+        --spark-duration: ${duration}s;
+        --spark-delay: ${delay}s;
+      `;
+      starsLayer.appendChild(spark);
     }
   })();
   </script>
