@@ -20,6 +20,8 @@ from flask import (
 )
 
 import db
+
+db.init_db()
 from scraper import (
     scrape_character, download_image, ScrapingError, Character,
     scrape_legion_level, bulk_scrape_legion_levels, get_exp_tnl,
@@ -175,6 +177,7 @@ def job_image_url(job: str) -> Optional[str]:
 
 
 app = Flask(__name__)
+# Flask uses SECRET_KEY to sign session cookies and protect against tampering.
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "maplestory-scraper-dev-key")
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB (was 64 KB)
 
