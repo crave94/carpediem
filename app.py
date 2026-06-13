@@ -388,14 +388,14 @@ def info():
         try:
             with open(cache_path, "r", encoding="utf-8") as f:
                 all_news = json.load(f)
-                news_list = all_news[:9]
+                news_list = all_news[:6]
         except Exception as e:
             error = f"Error al leer la caché: {e}"
     else:
         # Cache doesn't exist yet, try to fetch it synchronously as fallback
         try:
             all_news = scrape_news()
-            news_list = all_news[:9]
+            news_list = all_news[:6]
             # Save it to cache so it exists next time
             os.makedirs(os.path.dirname(cache_path), exist_ok=True)
             with open(cache_path, "w", encoding="utf-8") as f:
