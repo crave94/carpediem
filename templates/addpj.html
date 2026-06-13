@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Agregar personaje · Carpediem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary mb-3">
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+    <div class="card">
+      <div class="card-body">
+        <h1 class="h3 mb-3">
+          <i class="bi bi-plus-circle"></i> Agregar personaje
+        </h1>
+        <p class="text-body-secondary">
+          Escribí el nombre de un personaje para buscarlo en el ranking y guardarlo en la base de datos.
+        </p>
+
+        <form method="post" action="{{ url_for('addpj') }}">
+          <div class="mb-3">
+            <label for="names" class="form-label">Nombres (Luna · Interactive · Europe)</label>
+            <input
+              type="text"
+              class="form-control"
+              id="names"
+              name="names"
+              required
+              maxlength="256"
+              placeholder="XenCzar, AllanJair, Maguiito0"
+              autocomplete="off"
+              autofocus>
+            <div class="form-text">
+              Podés escribir varios separados por coma. Ejemplo:
+              <code>XenCzar, AllanJair, Maguiito0</code>.
+              Se scrapean en orden. Busca en
+              <code>nexon.com/.../world-ranking/luna?world_type=interactive&amp;search={nombre}</code>.
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="libb" name="libb" value="1">
+            <label class="form-check-label" for="libb">
+              Marcar como <strong>liberado</strong>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-cloud-download"></i> Scrabear y guardar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

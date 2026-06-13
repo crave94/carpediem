@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Miembros del clan · Carpediem{% endblock %}
+
+{% block content %}
+<section class="mb-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="h3 mb-0">
+      <i class="bi bi-people-fill me-2"></i>Miembros del clan
+      <span class="badge text-bg-secondary ms-2">{{ characters|length }}</span>
+    </h2>
+  </div>
+
+  {% if not characters %}
+    <div class="alert alert-info">Aún no hay personajes.</div>
+  {% else %}
+    <!-- Skeleton Loading State -->
+    <div class="row g-3 skeleton-grid" id="skeletonGrid" aria-hidden="true">
+      {% for _ in range(6) %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <article class="char-card skeleton-card d-flex flex-column h-100">
+            <div class="skeleton skeleton-img" aria-hidden="true"></div>
+            <div class="char-card__body d-flex flex-column p-3">
+              <div class="char-card__meta d-flex flex-wrap gap-1 align-items-stretch">
+                <div class="skeleton skeleton-badge skeleton-badge-sm" aria-hidden="true"></div>
+                <div class="skeleton skeleton-badge skeleton-badge-lg" aria-hidden="true"></div>
+                <div class="skeleton skeleton-badge skeleton-badge-sm" aria-hidden="true"></div>
+              </div>
+              <div class="skeleton skeleton-text skeleton-text-lg mt-3" aria-hidden="true"></div>
+              <div class="skeleton skeleton-text skeleton-text-sm mt-auto" aria-hidden="true"></div>
+              <div class="skeleton skeleton-text skeleton-text-xs mt-2" aria-hidden="true"></div>
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Actual Content -->
+    <div class="row g-3 animate-stagger" id="characterGrid" style="display: none;">
+      {% for c in characters %}
+        {% set is_leader = c['leader'] %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 30 }}">
+          <a class="char-card text-decoration-none text-reset d-flex flex-column h-100 w-100 animate__animated animate__fadeInUp"
+             {% set job_bg = c['job']|job_img %}
+             {% if job_bg %}style="background-image: url('{{ job_bg }}');"{% endif %}
+             href="{{ url_for('character_detail', char_id=c['id']) }}">
+            <div class="char-card__img">
+              {% if c['image_path'] %}
+                <img src="{{ url_for('serve_image', filename=c['image_path']) }}" alt="{{ c['name'] }}" loading="lazy">
+              {% else %}
+                <div class="placeholder">?</div>
+              {% endif %}
+            </div>
+            <div class="char-card__body d-flex flex-column">
+              <div class="char-card__badges d-flex flex-wrap gap-1 align-items-stretch mb-3">
+                <span class="badge badge-job d-flex align-items-center">Lv. {{ c['level'] }}</span>
+                <span class="badge badge-job d-flex align-items-center">{{ c['job'] }}</span>
+                <span class="badge badge-luna d-flex align-items-center">{{ c['world'] }}</span>
+                {% if c['libb'] %}
+                  <span class="badge badge-liberado d-flex align-items-center badge-pop">LIBERADO</span>
+                {% endif %}
+                {% if is_leader %}
+                  <span class="badge badge-leader d-flex align-items-center badge-pop">LIDER</span>
+                {% endif %}
+              </div>
+              <div class="char-card__info d-flex flex-column gap-2">
+                <!-- Only keeping badges for visual identification -->
+              </div>
+            </div>
+
+            <!-- Uniform info section -->
+            <div class="char-card__uniform-info p-3 text-center">
+              <h3 class="mb-1">
+                {% if is_leader %}<i class="bi bi-crown-fill text-warning me-1"></i>{% endif %}
+                {{ c['name'] }}
+              </h3>
+              <div class="exp-guild-info">
+                <span class="text-warning fw-semibold">{{ c['exp']|format_short }} EXP</span>
+                <span>Guild: <strong>CARPEDIEM</strong></span>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  'use strict';
+  // Show skeleton for 800ms minimum, then fade to content
+  const skeletonGrid = document.getElementById('skeletonGrid');
+  const characterGrid = document.getElementById('characterGrid');
+  if (!skeletonGrid || !characterGrid) return;
+
+  const minLoadTime = 800;
+  const startTime = Date.now();
+
+  function showContent() {
+    const elapsed = Date.now() - startTime;
+    const delay = Math.max(0, minLoadTime - elapsed);
+
+    setTimeout(() => {
+      skeletonGrid.style.transition = 'opacity 0.3s ease';
+      skeletonGrid.style.opacity = '0';
+      setTimeout(() => {
+        skeletonGrid.style.display = 'none';
+        characterGrid.style.display = 'flex';
+        characterGrid.style.opacity = '0';
+        characterGrid.style.transition = 'opacity 0.4s ease';
+        requestAnimationFrame(() => {
+          characterGrid.style.opacity = '1';
+        });
+        // Trigger AOS refresh for new elements
+        if (typeof AOS !== 'undefined') {
+          AOS.refresh();
+        }
+      }, 300);
+    }, delay);
+  }
+
+  // If images are already cached, show quickly
+  if (document.readyState === 'complete') {
+    showContent();
+  } else {
+    window.addEventListener('load', showContent);
+  }
+
+  // Fallback: force show after 3s max
+  setTimeout(showContent, 3000);
+})();
+</script>
+{% endblock %}

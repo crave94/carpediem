@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/user/**)",
+      "Bash(python app.py)",
+      "Bash(curl -s http://127.0.0.1:5000/)",
+      "Bash(pkill -f \"python app.py\")",
+      "Bash(python *)",
+      "Bash(curl -s -L http://127.0.0.1:5000/)",
+      "Bash(curl -s \"http://127.0.0.1:5000/api/search?q=xen\")",
+      "Bash(curl -s -v \"http://127.0.0.1:5000/api/search?q=xen\")",
+      "Bash(taskkill *)",
+      "Bash(wmic process *)",
+      "Bash(powershell *)",
+      "Bash(curl -s \"http://127.0.0.1:5000/api/search?q=allan\")",
+      "Bash(curl -s \"http://127.0.0.1:5000/api/search?q=thunder\")",
+      "Bash(curl -s \"http://127.0.0.1:5000/\")",
+      "Bash(curl -s \"http://127.0.0.1:5000/characters/46\")",
+      "Bash(npx ctx7 *)",
+      "Bash(pip install *)",
+      "Bash(curl -s http://127.0.0.1:5000/characters/1)",
+      "Bash(curl -s http://127.0.0.1:5000/characters/45)",
+      "Bash(curl -s http://127.0.0.1:5000/dashboard)",
+      "Bash(curl *)",
+      "Bash(python3 *)"
+    ]
+  }
+}

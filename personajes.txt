@@ -1,0 +1,13 @@
+AllanJair, XenCzar, iShiny, Maguiito0, ManchessBowm, DualPepe, Evansusman, Luvee, RayoBreaker, DjOmarEvan, MijaelDw, xLoCoBostx, Para2x, SkySoulDark, Kainted, xxisaacxxxx, XmikedoomX, DarkSister, Iven, Aruna, ANDREW1, VanguardiaJS, Jesuita, Rennga, PrídéCzar, Sianuro, NoGameN0Life, KaysaHel, Truenoo, Alexm12, MegaNRidley, susmankanesi, MegaGarchomp, PatoDoom, XdoomwalkerX, Braille
+
+
+D:\carpediem\instance\imgmaple\Black_Mage.png
+
+curl -X GET "https://context7.com/api/v2/libs/search?libraryName=next.js&query=setup+ssr" \
+  -H ctx7sk-6e755eea-0554-4c92-8408-277ef5dcaef6"
+ctx7sk-6e755eea-0554-4c92-8408-277ef5dcaef6
+
+curl -X GET "https://context7.com/api/v2/libs/search?libraryName=next.js&query=setup+ssr" \
+  -H "Authorization: Bearer ctx7sk-6e755eea-0554-4c92-8408-277ef5dcaef6"
+
+npx ctx7 setup --claude --api-key ctx7sk-6e755eea-0554-4c92-8408-277ef5dcaef6

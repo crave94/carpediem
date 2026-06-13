@@ -1,0 +1,17 @@
+# Core
+Flask>=3.0.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Scraping
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Production server
+gunicorn>=21.0.0
+
+# Scheduler (optional - for background daily scrape)
+apscheduler>=3.10.0
+
+# Security
+werkzeug>=3.0.0

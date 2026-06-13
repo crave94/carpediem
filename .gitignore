@@ -1,0 +1,7 @@
+instance/*
+!instance/imgmaple/
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/

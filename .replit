@@ -1,0 +1,35 @@
+# Replit configuration for Carpediem
+# Run: python main.py (local) or gunicorn via Deployments
+
+run = "python main.py"
+entrypoint = "main.py"
+
+[env]
+# Flask
+FLASK_ENV = "production"
+SECRET_KEY = ""           # Set in Replit Secrets (🔒 icon)
+# Admin password for default user 'admin'
+CARPEDIEM_ADMIN_PASSWORD = ""  # Set in Replit Secrets
+# Enable background scheduler (only ONE instance should run this!)
+# In Deployments, enable ONLY on one replica. Default: disabled.
+CARPEDIEM_SCHEDULER = "0"
+
+[nix]
+channel = "stable-24_05"
+
+# Install Python + packages from requirements.txt
+# Replit automatically runs `pip install -r requirements.txt`
+
+[deployment]
+# Production settings for Replit Deployments
+run = ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", "--timeout", "120", "main:app"]
+
+# Build step (optional)
+# build = ["pip", "install", "-r", "requirements.txt"]
+
+# Health check path (optional)
+# healthCheck = "/health"
+
+[[ports]]
+localPort = 8080
+externalPort = 80

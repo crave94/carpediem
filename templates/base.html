@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Carpediem{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Enhanced background effects - layered for depth -->
+  <div class="grid-pattern" aria-hidden="true"></div>
+  <div class="noise-texture" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="floating-particles" aria-hidden="true">
+    <div class="particle" aria-hidden="true"></div>
+    <div class="particle" aria-hidden="true"></div>
+    <div class="particle" aria-hidden="true"></div>
+    <div class="particle" aria-hidden="true"></div>
+  </div>
+
+  <div class="stars-layer" aria-hidden="true" id="starsLayer"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="z-index: 1000; background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(168, 85, 247, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(168, 85, 247, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="{{ url_for('index') }}" aria-label="Carpediem - Inicio">
+        <!-- MapleStory leaf SVG (purple/blue theme) -->
+        <svg class="ms-leaf" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M16 2C10.5 2 6 5.5 6 10c0 2.5 1.5 4.5 4 6.5 2.5 2 4.5 4.5 6 7 1.5-2.5 3.5-5 6-7 2.5-2 4-4 4-6.5C26 5.5 21.5 2 16 2z" fill="#A855F7"/>
+          <path d="M16 5.5c-2.2 0-4 1.8-4 4 0 1.1.7 2 1.5 3.5.8 1.5 1.8 3 2.5 4.5.7-1.5 1.7-3 2.5-4.5.8-1.5 1.5-2.4 1.5-3.5C20 7.3 18.2 5.5 16 5.5z" fill="#C084FC"/>
+          <ellipse cx="16" cy="11" rx="2.5" ry="1.5" fill="#DBEAFE" opacity="0.7"/>
+        </svg>
+        <span class="brand-text fw-bold">Carpediem</span>
+      </a>
+
+      <!-- Toggler always visible for mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Collapsible menu - always rendered, content conditionally shown -->
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}" style="color: var(--text-muted); transition: all 0.2s; border-radius: 6px; padding: 0.5rem 1rem;" onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
+              <i class="bi bi-people-fill me-1"></i>Miembros
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('directory') }}" style="color: var(--text-muted); transition: all 0.2s; border-radius: 6px; padding: 0.5rem 1rem;" onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
+              <i class="bi bi-folder-fill me-1"></i>Jobs
+            </a>
+          </li>
+          {% if current_user and current_user.is_admin %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('dashboard') }}" style="color: var(--text-muted); transition: all 0.2s; border-radius: 6px; padding: 0.5rem 1rem;" onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
+                <i class="bi bi-sliders me-1"></i>Dashboard
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+
+        <!-- Search (visible for everyone) -->
+        <div class="navbar-nav me-3" id="navbarSearch">
+          <button class="btn btn-outline-primary btn-sm position-relative" type="button" id="searchToggle" aria-label="Buscar personajes" aria-expanded="false" title="Buscar (Ctrl+K)">
+            <i class="bi bi-search"></i>
+            <kbd class="search-shortcut d-none d-md-inline">Ctrl+K</kbd>
+          </button>
+          <div class="search-dropdown position-absolute top-100 end-0 mt-2 p-3 rounded-3 shadow-lg d-none" id="searchDropdown" role="search" aria-label="Buscar personajes" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%); border: 1px solid rgba(168, 85, 247, 0.3); backdrop-filter: saturate(180%) blur(20px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(168, 85, 247, 0.15);">
+            <div class="input-group input-group-sm" style="min-width: 280px;">
+              <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+              <input type="search" class="form-control border-start-0" id="searchInput" placeholder="Buscar por nombre, job, mundo..." aria-label="Buscar personajes" autocomplete="off" spellcheck="false" style="background: rgba(15, 23, 42, 0.9); border-color: rgba(168, 85, 247, 0.3); color: var(--text);">
+              <button type="button" class="btn btn-outline-secondary border-start-0" id="searchClear" aria-label="Limpiar búsqueda" style="display:none;">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <div class="search-hint small text-body-secondary mt-2 text-end">
+              <kbd>Esc</kbd> para cerrar
+            </div>
+          </div>
+        </div>
+
+        <!-- Auth buttons -->
+        <ul class="navbar-nav">
+          {% if current_user %}
+            <li class="nav-item">
+              <form method="post" action="{{ url_for('logout') }}" class="d-inline">
+                <button type="submit" class="btn btn-outline-secondary btn-sm" title="Cerrar sesión" aria-label="Cerrar sesión" style="border-color: var(--ms-purple); color: var(--ms-purple); transition: all 0.2s; border-radius: 6px; padding: 0.375rem 0.75rem;" onmouseover="this.style.background='rgba(168,85,247,0.15)'; this.style.boxShadow='0 0 12px rgba(168,85,247,0.3)';" onmouseout="this.style.background=''; this.style.boxShadow='';">
+                  <i class="bi bi-box-arrow-right"></i>
+                </button>
+              </form>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="btn btn-sm" href="{{ url_for('login') }}" style="background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue)); border: none; color: white; transition: all 0.2s; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 0.375rem 0.75rem;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 16px rgba(168,85,247,0.6)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 8px rgba(168,85,247,0.4)';">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar sesión
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes mb-3" id="flashesContainer">
+          {% for category, message in messages %}
+            {% set bs = {'error': 'danger', 'message': 'info'}.get(category, category) %}
+            <div class="alert alert-{{ bs }} alert-dismissible fade show" role="alert" data-auto-dismiss="true">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-top mt-5 py-3 text-center text-body-secondary">
+    <div class="container">
+      <small>Datos provistos por la API pública de Nexon. No afiliado a Nexon.</small>
+      <small class="ms-2">XenCzar.</small>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Navbar Search Logic -->
+  <script>
+  (function() {
+    'use strict';
+
+    const toggle = document.getElementById('searchToggle');
+    const dropdown = document.getElementById('searchDropdown');
+    const input = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('searchClear');
+    const navbarSearch = document.getElementById('navbarSearch');
+    const resultsContainer = document.getElementById('searchResults'); // injected below
+
+    if (!toggle || !dropdown || !input) return;
+
+    // --- Local filter elements (fallback) ---
+    const charCards = Array.from(document.querySelectorAll('.char-card'));
+    const cardsContainer = document.querySelector('.row.g-3');
+    const guildRankItems = Array.from(document.querySelectorAll('.guild-rank-item'));
+    const guildRankList = document.querySelector('.guild-rank-list');
+
+    let isOpen = false;
+    let searchDebounce = null;
+    let abortController = null;
+
+    // Inject results container into dropdown (after input group)
+    (function injectResultsContainer() {
+      const inputGroup = dropdown.querySelector('.input-group');
+      if (inputGroup && !resultsContainer) {
+        const div = document.createElement('div');
+        div.id = 'searchResults';
+        div.className = 'search-results mt-2';
+        div.style.cssText = 'max-height: 320px; overflow-y: auto; display: none;';
+        inputGroup.parentNode.insertBefore(div, inputGroup.nextSibling);
+      }
+    })();
+
+    function openSearch() {
+      if (isOpen) return;
+      isOpen = true;
+      dropdown.classList.remove('d-none');
+      toggle.setAttribute('aria-expanded', 'true');
+      setTimeout(() => input.focus(), 50);
+      document.addEventListener('click', handleOutsideClick);
+      document.addEventListener('keydown', handleKeydown);
+    }
+
+    function closeSearch() {
+      if (!isOpen) return;
+      isOpen = false;
+      dropdown.classList.add('d-none');
+      toggle.setAttribute('aria-expanded', 'false');
+      input.value = '';
+      clearBtn.style.display = 'none';
+      hideResults();
+      filterCards(''); // restore local view
+      document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeydown);
+      if (abortController) abortController.abort();
+    }
+
+    function toggleSearch() {
+      isOpen ? closeSearch() : openSearch();
+    }
+
+    function handleOutsideClick(e) {
+      if (!navbarSearch.contains(e.target)) closeSearch();
+    }
+
+    function handleKeydown(e) {
+      if (e.key === 'Escape') { closeSearch(); toggle.focus(); }
+      // Arrow navigation in results
+      if (isOpen && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        e.preventDefault();
+        navigateResults(e.key === 'ArrowDown' ? 1 : -1);
+      }
+      if (isOpen && e.key === 'Enter') {
+        const active = document.querySelector('.search-result-item.active');
+        if (active) { e.preventDefault(); window.location.href = active.dataset.url; }
+      }
+    }
+
+    // Global shortcut: Ctrl+K (or Meta+K on Mac)
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); toggleSearch(); }
+    });
+
+    toggle.addEventListener('click', (e) => { e.stopPropagation(); toggleSearch(); });
+    dropdown.addEventListener('click', (e) => e.stopPropagation());
+
+    input.addEventListener('input', () => {
+      const query = input.value.trim();
+      clearBtn.style.display = query ? 'inline-flex' : 'none';
+
+      // Debounce: local filter immediately, AJAX after 250ms
+      filterCards(query);
+
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        if (query.length >= 2) fetchResults(query);
+        else hideResults();
+      }, 250);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      clearBtn.style.display = 'none';
+      filterCards('');
+      hideResults();
+      input.focus();
+    });
+
+    // --- Local filter (instant, works offline) ---
+    function filterCards(query) {
+      const q = query.toLowerCase();
+      let visibleCount = 0;
+      let container = cardsContainer || guildRankList;
+
+      if (charCards.length > 0) {
+        charCards.forEach(card => {
+          const name = card.querySelector('.char-card__name span')?.textContent?.toLowerCase() || '';
+          const job = card.querySelector('.badge-job')?.textContent?.toLowerCase() || '';
+          const world = card.querySelector('.text-bg-info')?.textContent?.toLowerCase() || '';
+          const level = card.querySelector('.text-bg-secondary')?.textContent?.toLowerCase() || '';
+          const libb = card.querySelector('.text-bg-success')?.textContent?.toLowerCase() || '';
+          const leader = card.querySelector('.badge-leader')?.textContent?.toLowerCase() || '';
+
+          const matches = !q || `${name} ${job} ${world} ${level} ${libb} ${leader}`.includes(q);
+
+          card.style.display = matches ? 'flex' : 'none';
+          card.parentElement.style.display = matches ? '' : 'none';
+          if (matches) visibleCount++;
+        });
+      }
+
+      if (guildRankItems.length > 0) {
+        guildRankItems.forEach(item => {
+          const name = item.querySelector('.guild-rank-name')?.textContent?.toLowerCase() || '';
+          const meta = item.querySelector('.guild-rank-meta')?.textContent?.toLowerCase() || '';
+          const position = item.querySelector('.guild-rank-position')?.textContent?.toLowerCase() || '';
+
+          const matches = !q || `${name} ${meta} ${position}`.includes(q);
+          item.style.display = matches ? 'flex' : 'none';
+          if (matches) visibleCount++;
+        });
+      }
+
+      // No-results message for local filter (only when no AJAX results showing)
+      const resultsDiv = document.getElementById('searchResults');
+      const showingAjax = resultsDiv && resultsDiv.style.display !== 'none';
+      if (!showingAjax) {
+        const existing = document.getElementById('noResultsMessage');
+        if (existing) existing.remove();
+
+        if (q && visibleCount === 0 && container) {
+          const msg = document.createElement('div');
+          msg.id = 'noResultsMessage';
+          if (guildRankItems.length > 0) {
+            msg.className = 'guild-rank-item text-center py-4 text-body-secondary';
+            msg.style.cssText = 'border-top: 1px solid var(--border);';
+          } else {
+            msg.className = 'col-12 text-center py-4 text-body-secondary';
+          }
+          msg.innerHTML = `<i class="bi bi-search display-1"></i><p class="mt-2">No se encontraron personajes para "<strong>${escapeHtml(query)}</strong>"</p>`;
+          container.appendChild(msg);
+        }
+      }
+    }
+
+    // --- AJAX Live Search ---
+    async function fetchResults(query) {
+      const resultsDiv = document.getElementById('searchResults');
+      if (!resultsDiv) return;
+
+      if (abortController) abortController.abort();
+      abortController = new AbortController();
+
+      resultsDiv.style.display = 'block';
+      resultsDiv.innerHTML = `<div class="text-center py-3 text-body-secondary"><div class="spinner-border spinner-border-sm" role="status"></div><span class="ms-2">Buscando...</span></div>`;
+
+      try {
+        const resp = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+          signal: abortController.signal,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const contentType = resp.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) throw new Error('Respuesta no JSON');
+        const data = await resp.json();
+        renderResults(data.results || [], query);
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          resultsDiv.innerHTML = `<div class="text-center py-3 text-danger"><i class="bi bi-exclamation-triangle"></i><span class="ms-2">Error al buscar</span></div>`;
+          console.warn('Search error:', e);
+        }
+      }
+    }
+
+    function renderResults(results, query) {
+      const resultsDiv = document.getElementById('searchResults');
+      if (!resultsDiv) return;
+
+      if (!results.length) {
+        resultsDiv.innerHTML = `<div class="text-center py-3 text-body-secondary"><i class="bi bi-search display-6"></i><p class="mt-1 mb-0 small">Sin resultados para "<strong>${escapeHtml(query)}</strong>"</p></div>`;
+        return;
+      }
+
+      resultsDiv.innerHTML = results.map((r, i) => `
+        <a href="${r.url}" class="search-result-item d-flex align-items-center gap-3 p-2 text-decoration-none text-reset rounded ${i === 0 ? 'active' : ''}"
+           data-url="${r.url}"
+           style="transition: background 0.1s;"
+           onmouseover="this.classList.add('active'); document.querySelectorAll('.search-result-item').forEach(el => el !== this && el.classList.remove('active'))"
+           onmouseout="this.classList.remove('active')">
+          ${r.image_path
+            ? `<img src="${window.location.origin}/instance/images/${r.image_path}" alt="${r.name}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 6px rgba(0,0,0,0.4); flex-shrink: 0;">`
+            : `<div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink: 0" style="width: 40px; height: 40px; background: var(--bg); color: var(--text-muted); font-size: 0.8rem;">?</div>`
+          }
+          <div class="flex-grow-1 min-width-0 text-start">
+            <div class="fw-semibold small text-truncate" style="color: var(--text);">${escapeHtml(r.name)}</div>
+            <div class="text-truncate small text-body-secondary">
+              Lv. ${r.level} · ${escapeHtml(r.job)} · ${escapeHtml(r.world)}
+              ${r.rank_position ? `· #${r.rank_position}` : ''}
+            </div>
+          </div>
+        </a>
+      `).join('');
+
+      // Hide local no-results message
+      const localMsg = document.getElementById('noResultsMessage');
+      if (localMsg) localMsg.remove();
+    }
+
+    function hideResults() {
+      const resultsDiv = document.getElementById('searchResults');
+      if (resultsDiv) {
+        resultsDiv.style.display = 'none';
+        resultsDiv.innerHTML = '';
+      }
+    }
+
+    // Keyboard navigation in results
+    function navigateResults(dir) {
+      const items = document.querySelectorAll('.search-result-item');
+      if (!items.length) return;
+      let current = Array.from(items).findIndex(el => el.classList.contains('active'));
+      if (current === -1) current = 0;
+      items[current].classList.remove('active');
+      current = (current + dir + items.length) % items.length;
+      items[current].classList.add('active');
+      items[current].scrollIntoView({ block: 'nearest' });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  })();
+
+  // Auto-dismiss flash messages after 3 seconds (only success/info, not errors)
+  (function() {
+    const flashes = document.querySelectorAll('.alert[data-auto-dismiss="true"]');
+    flashes.forEach(alert => {
+      if (!alert.classList.contains('alert-danger')) {
+        setTimeout(() => {
+          const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+          bsAlert.close();
+        }, 3000);
+      }
+    });
+  })();
+  </script>
+
+  <!-- Stars generation for background -->
+  <script>
+  (function() {
+    'use strict';
+
+    const starsLayer = document.getElementById('starsLayer');
+    if (!starsLayer) return;
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const starCount = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 15000));
+    const colors = ['#fff', '#E9D5FF', '#DBEAFE', '#FCE7F3', '#D1FAE5', '#FEF3C7'];
+
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        width: ${1 + Math.random() * 2}px;
+        height: ${1 + Math.random() * 2}px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        animation: star-twinkle ${2 + Math.random() * 4}s ease-in-out infinite;
+        animation-delay: ${Math.random() * 3}s;
+        opacity: ${0.15 + Math.random() * 0.35};
+      `;
+      // Add varying glow color
+      const glowColor = colors[Math.floor(Math.random() * colors.length)];
+      star.style.boxShadow = `0 0 4px ${glowColor}, 0 0 8px ${glowColor}80`;
+
+      starsLayer.appendChild(star);
+    }
+  })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión · Carpediem{% endblock %}
+
+{% block content %}
+<!-- AllanJair Confirmation Popup -->
+<div class="modal fade" id="allanJairModal" tabindex="-1" aria-labelledby="allanJairModalLabel" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="background: linear-gradient(145deg, #1e1e2e 0%, #161622 100%); border: 1px solid var(--ms-purple);">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="allanJairModalLabel" style="background: linear-gradient(135deg, var(--ms-purple-light), var(--ms-purple), var(--ms-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+          <i class="bi bi-question-circle-fill me-2" style="color: var(--ms-purple);"></i>Confirmación requerida
+        </h5>
+      </div>
+      <div class="modal-body text-center py-4">
+        <div class="mb-4">
+          <!-- AllanJair character image in popup -->
+          <img src="{{ url_for('serve_image', filename='75df30758582adfe.png') }}"
+               alt="AllanJair"
+               style="
+                 width: 80px;
+                 height: 80px;
+                 border-radius: 50%;
+                 object-fit: cover;
+                 border: 3px solid var(--ms-purple);
+                 box-shadow:
+                   0 0 0 4px #161622,
+                   0 0 20px rgba(168, 85, 247, 0.5),
+                   0 0 40px rgba(59, 130, 246, 0.3);
+                 image-rendering: pixelated;
+                 animation: allan-glow 3s ease-in-out infinite;
+               ">
+        </div>
+        <h3 class="fw-bold mb-2" style="color: var(--text);">¿Eres AllanJair??</h3>
+        <p class="text-body-secondary mb-0">Solo el elegido puede acceder a los secretos del clan.</p>
+      </div>
+      <div class="modal-footer border-0 pt-0 justify-content-center gap-3">
+        <button type="button" class="btn btn-outline-danger px-4" id="btnNo" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>No, vete
+        </button>
+        <button type="button" class="btn px-4 fw-semibold" id="btnSi" style="background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue)); border: none; color: white;">
+          <i class="bi bi-check-lg me-1"></i>Sí, soy yo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Login Form (initially hidden) -->
+<div id="loginFormContainer" style="display: none;">
+  <div class="d-flex justify-content-center align-items-start min-vh-50 pt-4 pb-4">
+    <div class="w-100" style="max-width: 420px;">
+      <div class="card login-card shadow-lg" style="
+        background: linear-gradient(145deg, #1e1e2e 0%, #161622 100%);
+        border: 1px solid var(--ms-purple);
+        border-radius: 16px;
+      ">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <!-- AllanJair character image -->
+          <img src="{{ url_for('serve_image', filename='75df30758582adfe.png') }}"
+               alt="AllanJair"
+               class="mb-3"
+               style="
+                 width: 96px;
+                 height: 96px;
+                 border-radius: 50%;
+                 object-fit: cover;
+                 border: 3px solid var(--ms-purple);
+                 box-shadow:
+                   0 0 0 4px #161622,
+                   0 0 24px rgba(168, 85, 247, 0.5),
+                   0 0 48px rgba(59, 130, 246, 0.3);
+                 image-rendering: pixelated;
+                 animation: allan-glow 3s ease-in-out infinite;
+               ">
+          <h1 class="h3 fw-bold mt-2 mb-1" style="background: linear-gradient(135deg, var(--ms-purple-light), var(--ms-purple), var(--ms-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+            Carpediem
+          </h1>
+          <p class="text-body-secondary small mb-0">Iniciá sesión para continuar</p>
+        </div>
+
+        <form method="post" action="{{ url_for('login') }}" autocomplete="on">
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% endif %}
+          <div class="mb-3">
+            <label for="username" class="form-label fw-semibold" style="color: var(--ms-purple-light);">Usuario</label>
+            <div class="input-group">
+              <span class="input-group-text" style="background: var(--bg); border-color: var(--ms-purple); color: var(--ms-purple);">
+                <i class="bi bi-person-fill"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                required
+                autofocus
+                autocomplete="username"
+                style="background: var(--bg); border-color: var(--ms-purple); color: var(--text);"
+              >
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label fw-semibold" style="color: var(--ms-purple-light);">Contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text" style="background: var(--bg); border-color: var(--ms-purple); color: var(--ms-purple);">
+                <i class="bi bi-lock-fill"></i>
+              </span>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+                autocomplete="current-password"
+                style="background: var(--bg); border-color: var(--ms-purple); color: var(--text);"
+              >
+            </div>
+          </div>
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-lg fw-semibold py-3" style="
+              background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue));
+              border: none;
+              border-radius: 10px;
+              color: white;
+              box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+              transition: all 0.2s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 28px rgba(168, 85, 247, 0.6)';"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(168, 85, 247, 0.4)';">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Entrar al Clan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes allan-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 4px #161622,
+      0 0 24px rgba(168, 85, 247, 0.5),
+      0 0 48px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px #161622,
+      0 0 32px rgba(168, 85, 247, 0.8),
+      0 0 64px rgba(59, 130, 246, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #loginFormContainer img {
+    animation: none;
+  }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* Ensure modal is above navbar */
+.modal#allanJairModal {
+  z-index: 1060 !important;
+}
+</style>
+<script>
+(function() {
+  'use strict';
+
+  const modalEl = document.getElementById('allanJairModal');
+  const loginContainer = document.getElementById('loginFormContainer');
+  const btnSi = document.getElementById('btnSi');
+  const btnNo = document.getElementById('btnNo');
+
+  // Flag to track user intent
+  let userConfirmed = false;
+
+  // Initialize Bootstrap modal - backdrop: false disables the overlay
+  const modal = new bootstrap.Modal(modalEl, {
+    backdrop: false,
+    keyboard: false
+  });
+
+  // Show modal immediately on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    modal.show();
+  });
+
+  // Handle "Sí" - show login form
+  btnSi.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    userConfirmed = true;
+    modal.hide();
+    // Small delay for modal animation
+    setTimeout(() => {
+      loginContainer.style.display = 'block';
+      // Focus username field
+      const usernameInput = document.getElementById('username');
+      if (usernameInput) usernameInput.focus();
+    }, 300);
+  });
+
+  // Handle "No" - redirect to home
+  btnNo.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.location.href = '{{ url_for("index") }}';
+  });
+
+  // Also handle modal close via backdrop/ESC (treat as "No" unless user confirmed)
+  modalEl.addEventListener('hidden.bs.modal', (event) => {
+    if (!userConfirmed) {
+      // User dismissed without clicking "Sí"
+      window.location.href = '{{ url_for("index") }}';
+    }
+  });
+
+  // Prevent ESC from closing modal (data-bs-keyboard="false" handles this, but double-check)
+  modalEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+})();
+</script>
+{% endblock %}

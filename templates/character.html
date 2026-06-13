@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block title %}{{ char['name'] }} · Carpediem{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary mb-3">
+  <i class="bi bi-arrow-left"></i> Volver
+</a>
+
+<!-- CHARACTER PROFILE - Full Width -->
+<section class="card character-detail mb-4" {% set job_bg=char['job']|job_img %} {% if job_bg
+  %}style="background-image: url('{{ job_bg }}');" {% endif %}>
+  {% if char['libb'] %}
+  <img class="character-detail__libb-mark" src="{{ url_for('serve_job_image', filename='Black_Mage.png') }}" alt="">
+  {% endif %}
+  <div class="character-detail__header d-flex gap-3 align-items-center flex-wrap p-3">
+    <div class="character-detail__img">
+      {% if char['image_path'] %}
+      <img src="{{ url_for('serve_image', filename=char['image_path']) }}" alt="{{ char['name'] }}">
+      {% elif char['image_url'] %}
+      <img src="{{ char['image_url'] }}" alt="{{ char['name'] }}">
+      {% else %}
+      <div class="placeholder">?</div>
+      {% endif %}
+    </div>
+    <div class="character-detail__info flex-grow-1">
+      <div class="badges d-flex flex-wrap gap-2 mb-2 align-items-stretch">
+        <span class="badge badge-luna d-flex align-items-center">LUNA</span>
+        <span class="badge badge-eu d-flex align-items-center">EU</span>
+        {% if char['libb'] %}
+        <span class="badge badge-liberado d-flex align-items-center">LIBERADO</span>
+        {% endif %}
+        {% if char['leader'] %}
+        <span class="badge badge-leader d-flex align-items-center">LIDER</span>
+        {% endif %}
+      </div>
+      <span class="badge badge-job mb-2">{{ char['job'] }}</span>
+      <!-- Character name moved to uniform section at end -->
+    </div>
+    <div class="character-detail__level ms-auto text-end">
+      <div class="character-detail__level-label">NIVEL</div>
+      <div class="character-detail__level-value">{{ char['level'] }}</div>
+    </div>
+  </div>
+
+    <!-- Uniform info section -->
+    
+
+  {% if exp_tnl %}
+  <div class="character-detail__progress px-3 pb-3">
+    <div class="character-detail__progress-labels">
+      <span class="text-body-secondary">EXP</span>
+      <span class="exp-current">{{ char['exp']|format_short }}</span>
+      <span class="text-body-secondary">/</span>
+      <span class="exp-target">{{ exp_tnl|format_short }}</span>
+      <span class="character-detail__progress-target ms-2 text-body-secondary">
+        para nivel <strong class="text-body">{{ next_level }}</strong>
+      </span>
+    </div>
+    <div class="progress character-detail__progress-bar" role="progressbar" aria-valuenow="{{ progress_pct|round(2) }}"
+      aria-valuemin="0" aria-valuemax="100" aria-label="Progreso al siguiente nivel">
+      <div class="progress-bar character-detail__progress-fill" style="width: {{ '%.4f'|format(progress_pct) }}%"></div>
+      <span class="character-detail__progress-percent">{{ progress_label }}</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row g-3 px-3 pb-3">
+    <div class="col-6 col-md-3">
+      <div class="stat h-100">
+        <div class="stat__label">Experiencia</div>
+        <div class="stat__value">{{ char['exp']|format_short }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat h-100">
+        <div class="stat__label">RANK EU</div>
+        <div class="stat__value">#{{ char['rank_position'] }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat h-100">
+        <div class="stat__label">LEGION</div>
+        <div class="stat__value">
+          {% if char['legion_level'] is not none %}
+          {{ char['legion_level']|format_short }}
+          {% else %}
+          <span class="text-body-secondary">—</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat h-100">
+        <div class="stat__label">GUILD RANK</div>
+        <div class="stat__value">#{{ char_rank }}</div>
+      </div>
+    </div>
+  </div>
+
+  {% if current_user and current_user.is_admin %}
+  <div class="d-flex flex-wrap gap-2 px-3 pb-3">
+    <form method="post" action="{{ url_for('character_refresh', char_id=char['id']) }}">
+      <button type="submit" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-arrow-clockwise"></i> Refrescar datos
+      </button>
+    </form>
+    <form method="post" action="{{ url_for('character_scrape_legion', char_id=char['id']) }}">
+      <button type="submit" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-shield-shaded"></i> Scrape Legion
+      </button>
+    </form>
+    <form method="post" action="{{ url_for('character_delete', char_id=char['id']) }}"
+      onsubmit="return confirm('¿Eliminar a {{ char['name'] }}?');">
+      <button type="submit" class="btn btn-outline-danger btn-sm">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
+    </form>
+  </div>
+  {% endif %}
+</section>
+
+<!-- ROW: Guild Rank Sidebar (1/4) + Exp History (3/4) -->
+<div class="row g-4">
+  <!-- LEFT: Guild Ranking Sidebar - 1/4 width -->
+  <aside class="col-12 col-lg-3">
+    <section class="card guild-rank h-100">
+      <div class="card-header bg-transparent border-bottom">
+        <h2 class="h5 mb-0">
+          <i class="bi bi-trophy-fill text-warning me-2"></i>RANK
+        </h2>
+      </div>
+      <div class="card-body p-0">
+        <div class="guild-rank-list">
+          {% for c in nearby_chars %}
+          {% set is_current = c.id == char.id %}
+          <a href="{{ url_for('character_detail', char_id=c.id) }}"
+            class="guild-rank-item d-flex align-items-center gap-3 p-2 {% if is_current %}active{% endif %} text-decoration-none text-reset">
+            <span class="guild-rank-position fw-bold {% if is_current %}text-warning{% endif %}"
+              style="min-width: 36px; font-size: 1rem;">#{{ nearby_start_rank + loop.index0 }}</span>
+            {% if c.image_path %}
+            <div class="guild-rank-avatar-wrap"
+              style="width: 96px; height: 64px; border-radius: 10px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+              <img src="{{ url_for('serve_image', filename=c.image_path) }}" alt="{{ c.name }}"
+                class="guild-rank-avatar" style="width: 96px; height: auto; position: relative; top: 0; left: 0;">
+            </div>
+            {% else %}
+            <div class="guild-rank-avatar placeholder d-flex align-items-center justify-content-center"
+              style="width: 96px; height: 64px; border-radius: 10px; flex-shrink: 0; background: var(--bg); font-size: 2rem; color: var(--text-muted); box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+              ?</div>
+            {% endif %}
+            <div class="guild-rank-info flex-grow-1 min-width-0">
+              <div class="guild-rank-name fw-semibold {% if is_current %}text-warning{% endif %}"
+                style="font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ c.name }}
+                {% if c.leader %}<i class="bi bi-crown-fill text-warning ms-1" style="font-size: 0.9rem;"></i>{% endif
+                %}
+                {% if c.libb %}<span class="badge text-bg-success ms-1" style="font-size: 0.6rem;">LIB</span>{% endif %}
+              </div>
+              <div class="guild-rank-meta small text-body-secondary"
+                style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                Lv. {{ c.level }}
+                {% if c.job %} · {{ c.job }}{% endif %}
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </aside>
+
+  <!-- RIGHT: Experience History - 3/4 width -->
+  <main class="col-12 col-lg-9">
+    <section class="card exp-history p-3 h-100">
+      <h2 class="h4 mb-3">
+        <i class="bi bi-bar-chart-line"></i> Experiencia diaria
+      </h2>
+
+      {% if not history %}
+      <p class="text-body-secondary mb-0">Sin datos todavía. Refrescá este personaje mañana para empezar a registrar el
+        historial.</p>
+      {% elif history|length == 1 %}
+      <p class="text-body-secondary mb-0">
+        Primer registro: <strong>{{ history[0]['day'] }}</strong> —
+        {{ history[0]['exp']|format_short }} EXP.
+        Vuelve mañana para ver la diferencia diaria.
+      </p>
+      {% else %}
+      <p class="text-body-secondary small">
+        Ganancia de EXP por día (ventana de 14 días).
+        Pico: <strong>{{ max_gain|format_short }}</strong> EXP/día.
+      </p>
+
+      <div class="exp-chart">
+        {% for h in history %}
+        {% set has_gain = h['gain'] is not none %}
+        <div class="exp-chart__bar{% if not has_gain %} exp-chart__bar--no-data{% endif %}"
+          title="{{ h['day'] }} — EXP total: {{ h['exp_fmt'] }}{% if has_gain %} — Ganancia: +{{ h['gain_fmt'] }}{% endif %}">
+          <div class="exp-chart__value">
+            {%- if has_gain and h['gain'] > 0 -%}
+            +{{ h['gain']|format_short }}
+            {%- elif has_gain -%}
+            0
+            {%- endif -%}
+          </div>
+          <div class="exp-chart__fill-wrap">
+            <div class="exp-chart__fill" style="height: {{ '%.1f'|format(h['bar_height']) }}%"></div>
+          </div>
+          <div class="exp-chart__day">{{ h['day'][5:] }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </section>
+  </main>
+</div>
+
+    <!-- Uniform info section -->
+    
+    </div>
+
+{% endblock %}
