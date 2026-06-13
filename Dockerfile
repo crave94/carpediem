@@ -18,6 +18,7 @@ RUN mkdir -p /carpediem_data && chown -R www-data:www-data /carpediem_data
 
 # Create non‑root user and set ownership
 RUN chown -R www-data:www-data /app
+ENV HOME=/app
 USER www-data
 
 # Expose the port defined in .env (default 8001)

@@ -19,7 +19,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 # Replit uses /home/runner/<repl-slug> as $HOME (persistent across deploys)
 # Local dev uses repo root /instance
-if "REPL_HOME" in os.environ:
+if "CARPEDIEM_DATA_DIR" in os.environ:
+    _DATA_DIR = os.environ["CARPEDIEM_DATA_DIR"]
+elif "REPL_HOME" in os.environ:
     _DATA_DIR = os.path.join(os.environ["REPL_HOME"], "data")
 elif "HOME" in os.environ:
     _DATA_DIR = os.path.join(os.environ["HOME"], "carpediem_data")
