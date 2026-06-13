@@ -135,21 +135,33 @@
           <div class="mb-4">
             <label for="weeklyDungeon" class="form-label">Dungeon Semanal</label>
             <select id="weeklyDungeon" class="form-select bg-dark text-white border-secondary">
-              <option value="70" selected>Nightmare Paradise (+70)</option>
-              <option value="0">Ninguno (+0)</option>
+              <option value="0" selected>Ninguno (0)</option>
+              <option value="40">High Mountain (40)</option>
+              <option value="55">Angler Company (55)</option>
+              <option value="70">Nightmare Paradise (70)</option>
             </select>
           </div>
 
           <hr class="border-secondary">
 
-          <div class="row">
-            <div class="col-6">
-              <div class="text-muted small">Días Restantes</div>
-              <h4 id="daysRemaining" class="mb-0 text-info">--</h4>
+          <div class="row g-2 text-center">
+            <div class="col-4">
+              <div class="card bg-dark border-secondary py-2 h-100">
+                <div class="text-muted small" style="font-size: 0.75rem;">Daily Rate</div>
+                <h5 id="dailyRateText" class="mb-0 text-info mt-1">0.0</h5>
+              </div>
             </div>
-            <div class="col-6">
-              <div class="text-muted small">Fecha Estimada</div>
-              <h5 id="estimatedDate" class="mb-0 text-white">--</h5>
+            <div class="col-4">
+              <div class="card bg-dark border-secondary py-2 h-100">
+                <div class="text-muted small" style="font-size: 0.75rem;">Días Restantes</div>
+                <h5 id="daysRemaining" class="mb-0 text-warning mt-1">--</h5>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="card bg-dark border-secondary py-2 h-100">
+                <div class="text-muted small" style="font-size: 0.75rem;">Fecha Estimada</div>
+                <h6 id="estimatedDate" class="mb-0 text-success mt-1" style="font-size: 0.85rem; line-height: 1.5;">--</h6>
+              </div>
             </div>
           </div>
         </div>
@@ -202,6 +214,7 @@
   const wapsPerDay = document.getElementById('wapsPerDay');
   const weeklyQuest = document.getElementById('weeklyQuest');
   const weeklyDungeon = document.getElementById('weeklyDungeon');
+  const dailyRateText = document.getElementById('dailyRateText');
   const daysRemaining = document.getElementById('daysRemaining');
   const estimatedDate = document.getElementById('estimatedDate');
   const priorityContainer = document.getElementById('priorityContainer');
@@ -426,6 +439,8 @@
 
     const dailyRate = (rateWap * wapsDaily) + (extraWeekly / 7.0);
 
+    dailyRateText.textContent = dailyRate.toFixed(1);
+
     if (dailyRate <= 0) {
       daysRemaining.textContent = "--";
       estimatedDate.textContent = "--";
@@ -433,7 +448,7 @@
     }
 
     const days = Math.ceil(remFrags / dailyRate);
-    daysRemaining.textContent = days.toLocaleString() + " días";
+    daysRemaining.textContent = days.toLocaleString();
 
     const date = new Date();
     date.setDate(date.getDate() + days);
