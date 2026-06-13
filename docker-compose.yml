@@ -11,6 +11,7 @@ services:
       - carpediem_imgs:/app/static/imgmaple
     restart: always
 
-volumes:
+  carpediem_imgs:
+    driver: local
   carpediem_data:
     driver: local
