@@ -7,12 +7,14 @@ services:
     env_file:
       - .env
     volumes:
-      - carpediem_data:/carpediem_data
-      - carpediem_imgs:/app/static/imgmaple
+      - carpediem_data:/carpediem_data # DB y demás datos
+      - carpediem_imgs:/app/static/imgmaple # Imágenes del scraper
+      - carpediem_static_images:/app/static/images # Imágenes que tú usas en la UI
     restart: always
-
 volumes:
   carpediem_imgs:
+    driver: local
+  carpediem_static_images:
     driver: local
   carpediem_data:
     driver: local
