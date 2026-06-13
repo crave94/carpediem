@@ -411,6 +411,11 @@ def info():
     return render_template("info.html", news_list=news_list, error=error)
 
 
+@app.route("/utils/fragment-calculator")
+def fragment_calculator():
+    return render_template("fragment-calculator.html")
+
+
 
 
 
