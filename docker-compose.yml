@@ -1,11 +1,11 @@
-version: '3.9'
+
 
 services:
   carpediem:
     build: .
     container_name: carpediem
     ports:
-      - "8001:8001"
+      - "${PORT:-8001}:8001"
     env_file:
       - .env
     volumes:
