@@ -236,6 +236,20 @@ def get_character(char_id: int) -> Optional[sqlite3.Row]:
         return cur.fetchone()
 
 
+def get_random_character() -> Optional[sqlite3.Row]:
+    """Fetch a random character from the database."""
+    with get_conn() as conn:
+        cur = conn.execute("SELECT * FROM characters ORDER BY RANDOM() LIMIT 1")
+        return cur.fetchone()
+
+
+def get_highest_level_character() -> Optional[sqlite3.Row]:
+    """Fetch the character with the highest level in the database."""
+    with get_conn() as conn:
+        cur = conn.execute("SELECT * FROM characters ORDER BY level DESC, exp DESC LIMIT 1")
+        return cur.fetchone()
+
+
 def delete_character(char_id: int) -> bool:
     """Delete a character. Returns True if something was deleted."""
     with get_conn() as conn:

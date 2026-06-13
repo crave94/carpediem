@@ -252,8 +252,18 @@ def admin_required(view):
 
 
 @app.context_processor
-def inject_current_user():
-    return {"current_user": current_user()}
+def inject_global_data():
+    welcome_char = None
+    try:
+        row = db.get_random_character()
+        if row:
+            welcome_char = dict(row)
+    except Exception:
+        pass
+    return {
+        "current_user": current_user(),
+        "welcome_char": welcome_char
+    }
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -397,20 +407,17 @@ def addpj():
             url = _build_url_for(name)
             try:
                 char = scrape_character(url)
+                image_filename = _save_image_locally(char.image_url, char)
+                char_id = db.upsert_character(
+                    char, image_path=image_filename, libb=libb_flag,
+                )
+                # EXP snapshot will be recorded by scheduler on next run (or startup scrape)
+                results.append((name, True, f"id #{char_id}", char_id))
             except ScrapingError as e:
                 results.append((name, False, str(e), None))
-                continue
-            except Exception as e:  # network errors, etc.
+            except Exception as e:  # network errors, database issues, etc.
                 app.logger.exception("scrape failed for %s", name)
-                results.append((name, False, f"Error de red: {e}", None))
-                continue
-
-            image_filename = _save_image_locally(char.image_url, char)
-            char_id = db.upsert_character(
-                char, image_path=image_filename, libb=libb_flag,
-            )
-            # EXP snapshot will be recorded by scheduler on next run (or startup scrape)
-            results.append((name, True, f"id #{char_id}", char_id))
+                results.append((name, False, f"Error: {e}", None))
 
         ok = [r for r in results if r[1]]
         fail = [r for r in results if not r[1]]

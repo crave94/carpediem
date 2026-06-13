@@ -467,6 +467,52 @@
     }
   })();
   </script>
+
+  {% if welcome_char %}
+    <!-- Floating welcome widget -->
+    <div id="welcomePopup" class="welcome-popup-container" aria-live="polite">
+      <div class="speech-bubble">
+        <span>Hola, Soy <strong>{{ welcome_char['name'] }}</strong>, Bienvenido a <strong>CARPEDIEM</strong>!</span>
+        <button type="button" class="btn-close-welcome" id="closeWelcomePopup" aria-label="Cerrar saludo">&times;</button>
+      </div>
+      <div class="welcome-avatar-wrap">
+        {% if welcome_char['image_path'] %}
+          <img src="{{ url_for('serve_image', filename=welcome_char['image_path']) }}" alt="{{ welcome_char['name'] }}" class="welcome-avatar">
+        {% else %}
+          <div class="welcome-avatar-placeholder">?</div>
+        {% endif %}
+        {% if welcome_char['leader'] %}
+          <span class="welcome-crown"><i class="bi bi-crown-fill text-warning"></i></span>
+        {% endif %}
+      </div>
+    </div>
+
+    <script>
+    (function() {
+      'use strict';
+      const popup = document.getElementById('welcomePopup');
+      const closeBtn = document.getElementById('closeWelcomePopup');
+      if (!popup || !closeBtn) return;
+
+      // Check if user dismissed it in this session
+      if (sessionStorage.getItem('welcomeDismissed') === 'true') {
+        popup.style.display = 'none';
+        return;
+      }
+
+      closeBtn.addEventListener('click', () => {
+        popup.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        popup.style.opacity = '0';
+        popup.style.transform = 'translateY(10px) scale(0.9)';
+        setTimeout(() => {
+          popup.style.display = 'none';
+          sessionStorage.setItem('welcomeDismissed', 'true');
+        }, 300);
+      });
+    })();
+    </script>
+  {% endif %}
+
   {% block scripts %}{% endblock %}
 </body>
 </html>
