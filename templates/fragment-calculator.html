@@ -222,6 +222,7 @@
       skillsContainer.classList.add('d-none');
       return;
     }
+    localStorage.setItem('hexa_cal_current_job', currentJob);
     loadJobSkills(currentJob);
     skillsContainer.classList.remove('d-none');
     calculateProgress();
@@ -231,33 +232,36 @@
     const data = jobsData[job];
     if (!data) return;
 
+    const savedState = JSON.parse(localStorage.getItem('hexa_cal_skills_state') || '{}');
+    const jobState = savedState[job] || {};
+
     // Build skill list (index 1 to 12)
     const skillList = [
-      { type: "Origin", maxLevel: 30, name: data.originSkill || "Origin Skill" },
-      { type: "Mastery", maxLevel: 30, name: data.masterySkills[0] || "Mastery 1" },
-      { type: "Boost", maxLevel: 30, name: data.boostSkills[0] || "Boost 1" },
-      { type: "Boost", maxLevel: 30, name: data.boostSkills[1] || "Boost 2" },
-      { type: "Boost", maxLevel: 30, name: data.boostSkills[2] || "Boost 3" },
-      { type: "Boost", maxLevel: 30, name: data.boostSkills[3] || "Boost 4" },
-      { type: "Mastery", maxLevel: 30, name: data.masterySkills[1] || "Mastery 2" },
-      { type: "Mastery", maxLevel: 30, name: data.masterySkills[2] || "Mastery 3" },
-      { type: "Mastery", maxLevel: 30, name: data.masterySkills[3] || "Mastery 4" },
-      { type: "Ascent", maxLevel: 30, name: data.ascentSkill || "Ascent Skill" },
+      { type: "Origin", maxLevel: 30, name: data.originSkill || "" },
+      { type: "Mastery", maxLevel: 30, name: (data.masterySkills && data.masterySkills[0]) || "" },
+      { type: "Boost", maxLevel: 30, name: (data.boostSkills && data.boostSkills[0]) || "" },
+      { type: "Boost", maxLevel: 30, name: (data.boostSkills && data.boostSkills[1]) || "" },
+      { type: "Boost", maxLevel: 30, name: (data.boostSkills && data.boostSkills[2]) || "" },
+      { type: "Boost", maxLevel: 30, name: (data.boostSkills && data.boostSkills[3]) || "" },
+      { type: "Mastery", maxLevel: 30, name: (data.masterySkills && data.masterySkills[1]) || "" },
+      { type: "Mastery", maxLevel: 30, name: (data.masterySkills && data.masterySkills[2]) || "" },
+      { type: "Mastery", maxLevel: 30, name: (data.masterySkills && data.masterySkills[3]) || "" },
+      { type: "Ascent", maxLevel: 30, name: data.ascentSkill || "" },
       { type: "Hexa Stat", maxLevel: 20, name: "Hexa Stat" },
-      { type: "Common", maxLevel: 30, name: data.commonSkills[0] || "Sol Janus" }
+      { type: "Common", maxLevel: 30, name: (data.commonSkills && data.commonSkills[0]) || "" }
     ];
 
     skills = skillList.map((s, idx) => {
       const position = idx + 1;
-      const isVisible = s.name.trim().length > 0 && !s.name.startsWith("Mastery") && !s.name.startsWith("Boost") && !s.name.startsWith("Common");
+      const saved = jobState[position] || {};
       return {
         position: position,
         name: s.name,
         type: s.type,
         maxLevel: s.maxLevel,
-        currentLevel: (position === 1) ? 1 : 0, // Origin starts at 1
-        targetLevel: s.maxLevel,
-        isVisible: isVisible || s.name !== ""
+        currentLevel: saved.current !== undefined ? saved.current : ((position === 1) ? 1 : 0), // Origin starts at 1
+        targetLevel: saved.target !== undefined ? saved.target : s.maxLevel,
+        isVisible: s.name !== ""
       };
     });
 
@@ -411,6 +415,7 @@
 
     calculateEstimates(remainingFragments);
     calculatePriority();
+    saveJobSkillsState();
   }
 
   // Estimation Logic
@@ -439,6 +444,7 @@
     el.addEventListener('input', () => {
       const rem = parseInt(fragmentsRemaining.textContent.replace(/,/g, '')) || 0;
       calculateEstimates(rem);
+      saveEstimatorRates();
     });
   });
 
@@ -513,6 +519,53 @@
     renderSkillsAccordion();
     calculateProgress();
   });
+
+  // LocalStorage Helper Functions
+  function saveJobSkillsState() {
+    if (!currentJob) return;
+    const savedState = JSON.parse(localStorage.getItem('hexa_cal_skills_state') || '{}');
+    const jobState = {};
+    skills.forEach(s => {
+      jobState[s.position] = {
+        current: s.currentLevel,
+        target: s.targetLevel
+      };
+    });
+    savedState[currentJob] = jobState;
+    localStorage.setItem('hexa_cal_skills_state', JSON.stringify(savedState));
+  }
+
+  function saveEstimatorRates() {
+    localStorage.setItem('hexa_cal_rates', JSON.stringify({
+      fragmentsPerWap: fragmentsPerWap.value,
+      wapsPerDay: wapsPerDay.value,
+      weeklyQuest: weeklyQuest.checked,
+      weeklyDungeon: weeklyDungeon.value
+    }));
+  }
+
+  function loadEstimatorRates() {
+    const saved = JSON.parse(localStorage.getItem('hexa_cal_rates') || 'null');
+    if (saved) {
+      if (saved.fragmentsPerWap !== undefined) fragmentsPerWap.value = saved.fragmentsPerWap;
+      if (saved.wapsPerDay !== undefined) wapsPerDay.value = saved.wapsPerDay;
+      if (saved.weeklyQuest !== undefined) weeklyQuest.checked = saved.weeklyQuest;
+      if (saved.weeklyDungeon !== undefined) weeklyDungeon.value = saved.weeklyDungeon;
+    }
+  }
+
+  // Load Estimator configuration
+  loadEstimatorRates();
+
+  // Load saved job if any
+  const savedJob = localStorage.getItem('hexa_cal_current_job');
+  if (savedJob && jobsData[savedJob]) {
+    jobSelector.value = savedJob;
+    currentJob = savedJob;
+    loadJobSkills(currentJob);
+    skillsContainer.classList.remove('d-none');
+    calculateProgress();
+  }
 
 })();
 {% endraw %}
