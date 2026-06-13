@@ -687,8 +687,8 @@ footer {
 }
 
 .char-card__img img {
-  width: 108%;
-  height: 108%;
+  width: 90%;
+  height: 90%;
   object-fit: contain;
   object-position: center 15%;
   image-rendering: pixelated;
@@ -696,7 +696,7 @@ footer {
 }
 
 .char-card:hover .char-card__img img {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
 
 .char-card__body {
