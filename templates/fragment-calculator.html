@@ -437,7 +437,7 @@
     const wapsDaily = parseFloat(wapsPerDay.value) || 0;
     const extraWeekly = (weeklyQuest.checked ? 90 : 0) + (parseInt(weeklyDungeon.value) || 0);
 
-    const dailyRate = (rateWap * wapsDaily) + (extraWeekly / 7.0);
+    const dailyRate = ((rateWap * wapsDaily) * 7 + extraWeekly) / 7.0;
 
     dailyRateText.textContent = dailyRate.toFixed(1);
 
