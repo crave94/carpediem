@@ -271,44 +271,42 @@ main, nav, footer {
 /* ===== Navbar Brand - MapleStory Leaf (Purple/Blue Theme) ===== */
 
 .navbar-brand .ms-leaf {
-  filter: drop-shadow(0 0 6px var(--ms-purple-glow)) drop-shadow(0 0 12px var(--ms-purple));
+  filter: drop-shadow(0 0 8px var(--ms-purple-glow)) drop-shadow(0 0 16px var(--ms-purple));
   animation: ms-leaf-pulse 3s ease-in-out infinite;
   transition: transform 0.3s ease, filter 0.3s ease;
 }
 .navbar-brand:hover .ms-leaf {
-  transform: rotate(-5deg) scale(1.08);
-  filter: drop-shadow(0 0 10px var(--ms-purple-glow)) drop-shadow(0 0 20px var(--ms-purple)) drop-shadow(0 0 30px var(--ms-blue));
+  transform: rotate(-8deg) scale(1.1);
+  filter: drop-shadow(0 0 12px var(--ms-purple-glow)) drop-shadow(0 0 24px var(--ms-purple)) drop-shadow(0 0 36px var(--ms-blue));
 }
 .navbar-brand .brand-text {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  font-size: 1.35rem;
-  letter-spacing: 0.02em;
-  background: linear-gradient(135deg, #fff 0%, var(--ms-purple-light) 20%, var(--ms-purple) 45%, var(--ms-blue) 70%, var(--ms-blue-light) 100%);
+  font-family: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-weight: 800;
+  font-size: 1.45rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 0%, var(--ms-purple-light) 25%, var(--ms-purple-glow) 50%, var(--ms-blue-glow) 75%, #fff 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
-  text-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
   animation: brand-shimmer 4s ease-in-out infinite;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
 .navbar-brand:hover .brand-text {
-  transform: scale(1.02);
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
 }
 @keyframes ms-leaf-pulse {
-  0%, 100% { filter: drop-shadow(0 0 6px var(--ms-purple-glow)) drop-shadow(0 0 12px var(--ms-purple)); }
-  50% { filter: drop-shadow(0 0 12px var(--ms-purple-glow)) drop-shadow(0 0 24px var(--ms-purple)) drop-shadow(0 0 36px var(--ms-blue)); }
+  0%, 100% { filter: drop-shadow(0 0 8px var(--ms-purple-glow)) drop-shadow(0 0 16px var(--ms-purple)); }
+  50% { filter: drop-shadow(0 0 14px var(--ms-purple-glow)) drop-shadow(0 0 28px var(--ms-purple)) drop-shadow(0 0 42px var(--ms-blue)); }
 }
 @keyframes brand-shimmer {
   0%, 100% { background-position: 0% center; }
   50% { background-position: 200% center; }
 }
-
-/* Purple/blue leaf SVG override (fills) */
-.navbar-brand .ms-leaf path:first-of-type { fill: var(--ms-purple) !important; }
-.navbar-brand .ms-leaf path:last-of-type { fill: var(--ms-purple-glow) !important; }
-.navbar-brand .ms-leaf ellipse { fill: var(--ms-blue-light) !important; opacity: 0.7; }
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
