@@ -12,6 +12,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code
 COPY . .
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Create persistence directory for SQLite DB and set permissions
 RUN mkdir -p /carpediem_data && chown -R www-data:www-data /carpediem_data
@@ -25,4 +28,4 @@ USER www-data
 EXPOSE 8001
 
 # Initialise DB then start gunicorn
-CMD ["/bin/sh", "-c", "python - <<'PY'\nimport db, os\ndb.init_db()\nif not db.get_user_by_username('admin'):\n    db.create_user('admin', os.getenv('CARPEDIEM_ADMIN_PASSWORD','carpediem'), is_admin=True)\nPY\n && gunicorn --workers 1 --threads 4 --bind 0.0.0.0:${PORT:-8001} main:app"]
+ENTRYPOINT ["/entrypoint.sh"]
