@@ -687,8 +687,8 @@ footer {
 }
 
 .char-card__img img {
-  width: 90%;
-  height: 90%;
+  width: 70%;
+  height: 70%;
   object-fit: contain;
   object-position: center 15%;
   image-rendering: pixelated;
