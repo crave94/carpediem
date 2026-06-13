@@ -27,7 +27,7 @@ from typing import Optional
 
 import db
 import requests
-from scraper import ScrapingError, scrape_character, HEADERS
+from scraper import ScrapingError, scrape_character, HEADERS, scrape_news, bulk_scrape_legion_levels
 
 
 LOG = logging.getLogger("carpediem.scheduler")
@@ -50,6 +50,7 @@ _scheduler_lock = threading.Lock()
 _scheduler_started = False
 _loop_thread: Optional[threading.Thread] = None
 _startup_thread: Optional[threading.Thread] = None
+_news_thread: Optional[threading.Thread] = None
 
 
 def _ensure_log_handler() -> None:
@@ -114,19 +115,81 @@ def scrape_all_characters_exp() -> dict:
     return {"ok": ok, "fail": len(failures), "failures": failures}
 
 
+def scrape_all_characters_legion() -> dict:
+    """
+    Scrape every character's current legion level via Nexon API and
+    save it to the database characters table.
+    """
+    characters = db.list_characters()
+    if not characters:
+        return {"ok": 0, "fail": 0, "failures": []}
+
+    targets = [(c["name"], c["region"], c["world"]) for c in characters]
+    try:
+        results = bulk_scrape_legion_levels(targets)
+    except Exception as e:
+        LOG.exception("scheduler: bulk legion scrape failed")
+        return {"ok": 0, "fail": len(characters), "failures": [(c["name"], str(e)) for c in characters]}
+
+    ok = 0
+    failures = []
+    for c in characters:
+        lvl, err = results.get(c["name"].lower(), (None, "Sin resultado"))
+        if err is None and lvl is not None:
+            db.set_legion_level(c["id"], lvl)
+            ok += 1
+        else:
+            failures.append((c["name"], err or "Sin resultado"))
+
+    return {"ok": ok, "fail": len(failures), "failures": failures}
+
+
 def _startup_worker() -> None:
     LOG.info(
         "scheduler: startup scrape starting (%d characters)",
         len(db.list_characters()),
     )
-    result = scrape_all_characters_exp()
+    # 1. Scrape EXP
+    result_exp = scrape_all_characters_exp()
     LOG.info(
-        "scheduler: startup scrape done — %d ok, %d fail",
-        result["ok"],
-        result["fail"],
+        "scheduler: startup EXP scrape done — %d ok, %d fail",
+        result_exp["ok"],
+        result_exp["fail"],
     )
-    for name, err in result["failures"]:
-        LOG.warning("scheduler: %s: %s", name, err)
+    for name, err in result_exp["failures"]:
+        LOG.warning("scheduler: EXP: %s: %s", name, err)
+
+    # 2. Scrape Legion
+    LOG.info("scheduler: startup legion scrape starting")
+    result_legion = scrape_all_characters_legion()
+    LOG.info(
+        "scheduler: startup legion scrape done — %d ok, %d fail",
+        result_legion["ok"],
+        result_legion["fail"],
+    )
+    for name, err in result_legion["failures"]:
+        LOG.warning("scheduler: Legion: %s: %s", name, err)
+
+    # 3. Scrape News
+    LOG.info("scheduler: startup news scrape starting")
+    try:
+        news_items = scrape_news()
+        if news_items:
+            import json as _json
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            if "REPL_HOME" in os.environ:
+                _data_dir = os.path.join(os.environ["REPL_HOME"], "data")
+            elif "HOME" in os.environ:
+                _data_dir = os.path.join(os.environ["HOME"], "carpediem_data")
+            else:
+                _data_dir = os.path.join(base_dir, "instance")
+            cache_path = os.path.join(_data_dir, "news_cache.json")
+            with open(cache_path, "w", encoding="utf-8") as f:
+                _json.dump(news_items, f, ensure_ascii=False, indent=2)
+            LOG.info("scheduler: startup news cached successfully (%d items)", len(news_items))
+    except Exception as e:
+        LOG.error("scheduler: startup news scrape failed: %s", e)
+
 
 
 def _loop_worker() -> None:
@@ -139,16 +202,59 @@ def _loop_worker() -> None:
         time.sleep(wait)
         LOG.info("scheduler: daily scrape starting")
         try:
-            result = scrape_all_characters_exp()
+            # 1. Scrape EXP
+            result_exp = scrape_all_characters_exp()
             LOG.info(
-                "scheduler: daily scrape done — %d ok, %d fail",
-                result["ok"],
-                result["fail"],
+                "scheduler: daily EXP scrape done — %d ok, %d fail",
+                result_exp["ok"],
+                result_exp["fail"],
             )
-            for name, err in result["failures"]:
-                LOG.warning("scheduler: %s: %s", name, err)
+            for name, err in result_exp["failures"]:
+                LOG.warning("scheduler: EXP: %s: %s", name, err)
+
+            # 2. Scrape Legion
+            LOG.info("scheduler: daily legion scrape starting")
+            result_legion = scrape_all_characters_legion()
+            LOG.info(
+                "scheduler: daily legion scrape done — %d ok, %d fail",
+                result_legion["ok"],
+                result_legion["fail"],
+            )
+            for name, err in result_legion["failures"]:
+                LOG.warning("scheduler: Legion: %s: %s", name, err)
         except Exception:
             LOG.exception("scheduler: unhandled error in daily loop")
+
+
+def _news_loop_worker() -> None:
+    """Periodically scrape MapleStory news and save it to a JSON cache file."""
+    import json as _json
+
+    # Path to news cache file
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    if "REPL_HOME" in os.environ:
+        _data_dir = os.path.join(os.environ["REPL_HOME"], "data")
+    elif "HOME" in os.environ:
+        _data_dir = os.path.join(os.environ["HOME"], "carpediem_data")
+    else:
+        _data_dir = os.path.join(base_dir, "instance")
+
+    cache_path = os.path.join(_data_dir, "news_cache.json")
+    os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+
+    while True:
+        LOG.info("scheduler: scraping news...")
+        try:
+            news_items = scrape_news()
+            if news_items:
+                with open(cache_path, "w", encoding="utf-8") as f:
+                    _json.dump(news_items, f, ensure_ascii=False, indent=2)
+                LOG.info("scheduler: news cached successfully (%d items)", len(news_items))
+        except Exception as e:
+            LOG.error("scheduler: failed to scrape news: %s", e)
+
+        # Sleep for 1 hour
+        time.sleep(3600)
 
 
 def start_scheduler(run_on_startup: bool = True) -> None:
@@ -159,7 +265,7 @@ def start_scheduler(run_on_startup: bool = True) -> None:
     Set run_on_startup=False to skip the immediate startup scrape (useful
     for tests / one-off scripts).
     """
-    global _scheduler_started, _loop_thread, _startup_thread
+    global _scheduler_started, _loop_thread, _startup_thread, _news_thread
     _ensure_log_handler()
     with _scheduler_lock:
         if _scheduler_started:
@@ -172,12 +278,19 @@ def start_scheduler(run_on_startup: bool = True) -> None:
     _loop_thread.start()
     LOG.info("scheduler: loop thread started")
 
+    _news_thread = threading.Thread(
+        target=_news_loop_worker, name="carpediem-news-scheduler", daemon=True,
+    )
+    _news_thread.start()
+    LOG.info("scheduler: news thread started")
+
     if run_on_startup:
         _startup_thread = threading.Thread(
             target=_startup_worker, name="carpediem-startup-scrape", daemon=True,
         )
         _startup_thread.start()
         LOG.info("scheduler: startup scrape thread started")
+
 
 
 if __name__ == "__main__":

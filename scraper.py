@@ -533,6 +533,69 @@ def get_exp_tnl(level: int) -> Optional[int]:
     return _FALLBACK_EXP_TNL.get(level)
 
 
+def scrape_news() -> list[dict]:
+    """Scrape the latest news from Nexon's CMS API.
+
+    Returns a list of dicts, each containing:
+      - title: name of the news
+      - summary: brief summary
+      - date: published date
+      - category: news category
+      - url: direct link to nexon.com news page
+      - image_url: full URL to thumbnail image
+    """
+    url = "https://g.nexonstatic.com/maplestory/cms/v1/news"
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=DEFAULT_TIMEOUT)
+        resp.raise_for_status()
+        raw_items = resp.json()
+
+        news_list = []
+        for item in raw_items:
+            title = item.get("name", "")
+            summary = item.get("summary", "")
+            category = item.get("category", "all")
+            news_id = item.get("id")
+
+            # Construct direct Nexon link
+            cat_lower = category.lower() if category else "all"
+            nexon_url = f"https://www.nexon.com/maplestory/news/{cat_lower}/{news_id}"
+
+            # Construct image URL
+            thumb = item.get("imageThumbnail", "")
+            if thumb and thumb.startswith("/media"):
+                image_url = f"https://g.nexonstatic.com{thumb}"
+            else:
+                image_url = thumb or ""
+
+            # Date formatting (parse liveDate and format it nicely)
+            live_date_raw = item.get("liveDate", "")
+            formatted_date = ""
+            if live_date_raw:
+                try:
+                    from datetime import datetime
+                    dt = datetime.strptime(live_date_raw.replace("Z", "+00:00"), "%Y-%m-%dT%H:%M:%S%z")
+                    # Format as e.g. "Jun 09, 2026"
+                    formatted_date = dt.strftime("%b %d, %Y")
+                except Exception:
+                    formatted_date = live_date_raw
+
+            news_list.append({
+                "title": title,
+                "summary": summary,
+                "category": category,
+                "url": nexon_url,
+                "image_url": image_url,
+                "date": formatted_date,
+            })
+
+        return news_list
+    except Exception as e:
+        raise ScrapingError(f"Error fetching news: {e}") from e
+
+
+
+
 if __name__ == "__main__":
     import json
     import sys

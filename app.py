@@ -23,6 +23,7 @@ import db
 from scraper import (
     scrape_character, download_image, ScrapingError, Character,
     scrape_legion_level, bulk_scrape_legion_levels, get_exp_tnl,
+    scrape_news,
 )
 
 
@@ -364,6 +365,47 @@ def directory():
         })
 
     return render_template("directory.html", grouped_jobs=sorted_grouped)
+
+
+@app.route("/info")
+def info():
+    # Try reading from cache file
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    if "REPL_HOME" in os.environ:
+        _data_dir = os.path.join(os.environ["REPL_HOME"], "data")
+    elif "HOME" in os.environ:
+        _data_dir = os.path.join(os.environ["HOME"], "carpediem_data")
+    else:
+        _data_dir = os.path.join(base_dir, "instance")
+
+    cache_path = os.path.join(_data_dir, "news_cache.json")
+
+    news_list = []
+    error = None
+
+    import json
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                all_news = json.load(f)
+                news_list = all_news[:9]
+        except Exception as e:
+            error = f"Error al leer la caché: {e}"
+    else:
+        # Cache doesn't exist yet, try to fetch it synchronously as fallback
+        try:
+            all_news = scrape_news()
+            news_list = all_news[:9]
+            # Save it to cache so it exists next time
+            os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+            with open(cache_path, "w", encoding="utf-8") as f:
+                json.dump(all_news, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            error = str(e)
+
+    return render_template("info.html", news_list=news_list, error=error)
+
+
 
 
 

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Noticias · Carpediem{% endblock %}
+
+{% block content %}
+<section class="mb-5">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h2 class="h3 mb-0 text-white font-outfit fw-bold">
+      <i class="bi bi-newspaper me-2 text-primary" style="color: var(--ms-purple-glow) !important;"></i>NEWS
+    </h2>
+    <span class="badge text-bg-secondary p-2">{{ news_list|length }} Artículos</span>
+  </div>
+
+  {% if error %}
+    <div class="alert alert-danger d-flex align-items-center gap-3 border-danger-subtle rounded-3 p-3 shadow-lg" role="alert" style="background: rgba(220, 53, 69, 0.1);">
+      <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+      <div>
+        <h5 class="alert-heading mb-1 fw-bold">Error de conexión</h5>
+        <p class="mb-0 text-body-secondary small">No pudimos conectar con los servidores de Nexon para obtener las últimas noticias. Por favor, inténtalo de nuevo más tarde.</p>
+      </div>
+    </div>
+  {% elif not news_list %}
+    <div class="alert alert-info rounded-3 p-3 text-center shadow-lg" role="alert" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+      <i class="bi bi-info-circle-fill fs-3 text-info mb-2 d-block"></i>
+      <span class="fw-semibold">No se encontraron noticias disponibles.</span>
+    </div>
+  {% else %}
+    <div class="news-grid animate-stagger">
+      {% for item in news_list %}
+        <div data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
+          <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="news-card animate__animated animate__fadeInUp">
+            <div class="news-card__img-container">
+              <span class="news-card__badge badge-category-{{ item.category|lower }}">{{ item.category }}</span>
+              {% if item.image_url %}
+                <img src="{{ item.image_url }}" alt="{{ item.title }}" class="news-card__img" loading="lazy">
+              {% else %}
+                <div class="news-card__img d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #1e1b4b, #311042); color: rgba(255, 255, 255, 0.15); font-size: 3rem;">
+                  <i class="bi bi-image"></i>
+                </div>
+              {% endif %}
+            </div>
+            <div class="news-card__body">
+              <div class="news-card__date">
+                <i class="bi bi-calendar3"></i> {{ item.date }}
+              </div>
+              <h3 class="news-card__title">{{ item.title }}</h3>
+              <p class="news-card__summary">{{ item.summary }}</p>
+              <div class="news-card__footer">
+                <span>Ir a Nexon.com</span>
+                <i class="bi bi-arrow-right"></i>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -81,6 +81,11 @@
               <i class="bi bi-folder-fill me-1"></i>Jobs
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('info') }}" style="color: var(--text-muted); transition: all 0.2s; border-radius: 6px; padding: 0.5rem 1rem;" onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
+              <i class="bi bi-info-circle-fill me-1"></i>Info
+            </a>
+          </li>
           {% if current_user and current_user.is_admin %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('dashboard') }}" style="color: var(--text-muted); transition: all 0.2s; border-radius: 6px; padding: 0.5rem 1rem;" onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
