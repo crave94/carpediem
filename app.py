@@ -32,7 +32,9 @@ from scraper import (
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Data directory - same logic as db.py for persistence
-if "REPL_HOME" in os.environ:
+if "CARPEDIEM_DATA_DIR" in os.environ:
+    _DATA_DIR = os.environ["CARPEDIEM_DATA_DIR"]
+elif "REPL_HOME" in os.environ:
     _DATA_DIR = os.path.join(os.environ["REPL_HOME"], "data")
 elif "HOME" in os.environ:
     _DATA_DIR = os.path.join(os.environ["HOME"], "carpediem_data")
