@@ -416,6 +416,12 @@ def fragment_calculator():
     return render_template("fragment-calculator.html")
 
 
+@app.route("/utils/boss-hp-table")
+def boss_hp_table():
+    return render_template("boss-hp-table.html")
+
+
+
 
 
 

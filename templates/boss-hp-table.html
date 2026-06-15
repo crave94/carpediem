@@ -1,0 +1,710 @@
+{% extends "base.html" %}
+{% block title %}Boss HP Table · Carpediem{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Page Header -->
+  <div class="row mb-5 align-items-center">
+    <div class="col-12 text-center text-md-start d-md-flex align-items-center justify-content-between gap-4">
+      <div>
+        <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-3 mb-2">
+          <i class="bi bi-shield-shaded fs-2 text-primary" style="filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.45));"></i>
+          <h2 class="h3 mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 800; background: linear-gradient(135deg, #fff 30%, var(--text-muted) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Boss HP Table</h2>
+        </div>
+        <p class="text-muted mb-0">Tablas de vida de jefes, fases, PDR y requerimientos de daño para party (5% y 10%).</p>
+      </div>
+      <!-- Search Input -->
+      <div class="mt-4 mt-md-0" style="min-width: 300px;">
+        <div class="input-group search-input-group shadow-sm">
+          <span class="input-group-text bg-dark-subtle border-secondary text-muted"><i class="bi bi-search"></i></span>
+          <input type="text" id="bossSearchInput" class="form-control bg-dark text-white border-secondary" placeholder="Buscar jefe..." aria-label="Buscar jefe...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boss Cards Grid -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-4 g-4" id="bossGrid">
+    <!-- Rendered dynamically by Javascript -->
+  </div>
+
+  <!-- Empty State -->
+  <div class="text-center py-5 d-none" id="emptyState">
+    <i class="bi bi-emoji-frown fs-1 text-muted mb-3 d-block"></i>
+    <p class="text-muted fs-5">No se encontraron jefes con ese criterio de búsqueda.</p>
+  </div>
+</div>
+
+<style>
+  /* Custom Boss HP Table Styles to match premium theme */
+  .search-input-group {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    transition: all 0.3s ease;
+  }
+  .search-input-group:focus-within {
+    border-color: var(--ms-purple);
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+  }
+
+  .boss-card {
+    background: rgba(30, 41, 59, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+  .boss-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(168, 85, 247, 0.35);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(168, 85, 247, 0.1);
+  }
+
+  /* Banner overlay for background portrait */
+  .boss-banner {
+    position: relative;
+    height: 110px;
+    overflow: hidden;
+  }
+  .boss-banner-blur {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(10px) brightness(0.65);
+    mask-image: linear-gradient(to right, black 0%, black 40%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 40%, transparent 100%);
+  }
+  .boss-banner-grad {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent, rgba(15, 23, 42, 0.7));
+  }
+  .boss-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Difficulty Selector Tabs */
+  .diff-tabs {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 8px;
+    padding: 2px;
+    display: flex;
+    gap: 2px;
+  }
+  .diff-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  .diff-btn:hover {
+    color: #fff;
+  }
+  .diff-btn.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--ms-purple) 0%, var(--ms-blue) 100%);
+    box-shadow: 0 2px 6px rgba(168, 85, 247, 0.3);
+  }
+
+  /* HP Bar Visualizer */
+  .hp-bar-container {
+    display: flex;
+    gap: 3px;
+  }
+  .hp-bar-segment {
+    flex: 1;
+    height: 22px;
+    background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color: #fff;
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: opacity 0.2s ease;
+  }
+  .hp-bar-segment:hover {
+    opacity: 0.9;
+  }
+
+  /* Star Symbol Icon for SAC requirements */
+  .symbol-sac {
+    display: inline-block;
+    position: relative;
+    width: 11px;
+    height: 11px;
+    background: #a855f7;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+
+  .symbol-af {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3b82f6;
+  }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function() {
+    'use strict';
+
+    // Helper functions for parsing raw values in data
+    const parseShortValue = str => {
+      const match = str.match(/^([0-9.]+)([KMBTQ]?)$/);
+      if (!match) return 0;
+      const val = parseFloat(match[1]);
+      const suffix = match[2];
+      return suffix ? val * { K: 1e3, M: 1e6, B: 1e9, T: 1e12, Q: 1e15 }[suffix] : val;
+    };
+
+    // Helper function for formatting values
+    const formatShortValue = val => {
+      if (val >= 1e15) {
+        const str = (val / 1e15).toFixed(2);
+        return (str.endsWith(".00") ? str.slice(0, -3) : str.endsWith("0") ? str.slice(0, -1) : str) + "Q";
+      }
+      if (val >= 1e12) {
+        const str = (val / 1e12).toFixed(2);
+        return (str.endsWith(".00") ? str.slice(0, -3) : str.endsWith("0") ? str.slice(0, -1) : str) + "T";
+      }
+      if (val >= 1e9) {
+        const str = (val / 1e9).toFixed(2);
+        return (str.endsWith(".00") ? str.slice(0, -3) : str.endsWith("0") ? str.slice(0, -1) : str) + "B";
+      }
+      if (val >= 1e6) {
+        const str = (val / 1e6).toFixed(2);
+        return (str.endsWith(".00") ? str.slice(0, -3) : str.endsWith("0") ? str.slice(0, -1) : str) + "M";
+      }
+      if (val >= 1e3) {
+        const str = (val / 1e3).toFixed(2);
+        return (str.endsWith(".00") ? str.slice(0, -3) : str.endsWith("0") ? str.slice(0, -1) : str) + "K";
+      }
+      return val.toString();
+    };
+
+    // Boss Data structure matching MapleHub index-J-cqSLk3.js
+    const bosses = [
+      {
+        name: "The First Adversary",
+        pdr: "380%",
+        difficulties: [
+          { name: "Easy", level: 270, sacRequirement: 220, hpPhases: [{ hp: parseShortValue("171.537T") }, { hp: parseShortValue("171.537T") }, { hp: parseShortValue("228.011T") }] },
+          { name: "Normal", level: 280, sacRequirement: 320, hpPhases: [{ hp: parseShortValue("494.111T") }, { hp: parseShortValue("494.111T") }, { hp: parseShortValue("646.783T") }] },
+          { name: "Hard", level: 285, sacRequirement: 340, hpPhases: [{ hp: parseShortValue("3.18Q") }, { hp: parseShortValue("3.18Q") }, { hp: parseShortValue("4.227Q") }] },
+          { name: "Extreme", level: 290, sacRequirement: 460, hpPhases: [{ hp: parseShortValue("10.08Q") }, { hp: parseShortValue("10.08Q") }, { hp: parseShortValue("13.4Q") }] }
+        ]
+      },
+      {
+        name: "Baldrix",
+        level: 290,
+        sacRequirement: 700,
+        pdr: "380%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("2.3798Q"), sac: 700 }, { hp: parseShortValue("2.5317Q"), sac: 700 }, { hp: parseShortValue("4.1454Q"), sac: 700 }] },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("5.3446Q"), sac: 700 }, { hp: parseShortValue("5.6858Q"), sac: 700 }, { hp: parseShortValue("9.309Q"), sac: 700 }] }
+        ]
+      },
+      {
+        name: "Black Mage",
+        pdr: "300%",
+        difficulties: [
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("63T"), level: 265 }, { hp: parseShortValue("115.5T") }, { hp: parseShortValue("157.5T") }, { hp: parseShortValue("136.5T"), level: 265 }], level: 275, afRequirement: 1320 },
+          { name: "Extreme", hpPhases: [{ hp: parseShortValue("1.18Q"), level: 275 }, { hp: parseShortValue("1.19Q") }, { hp: parseShortValue("1.285Q") }, { hp: parseShortValue("1.152Q") }], level: 280, afRequirement: 1320 }
+        ]
+      },
+      {
+        name: "Limbo",
+        pdr: "380%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("1.94Q"), sac: 500 }, { hp: parseShortValue("1.94Q"), segments: 2, sac: 500 }, { hp: parseShortValue("2.6Q"), sac: 500 }], level: 285, sacRequirement: 500 },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("3.78Q"), sac: 500 }, { hp: parseShortValue("3.78Q"), segments: 2, sac: 500 }, { hp: parseShortValue("4.99Q"), sac: 500 }], level: 285, sacRequirement: 500 }
+        ]
+      },
+      {
+        name: "Kaling",
+        pdr: "380%",
+        difficulties: [
+          { name: "Easy", hpPhases: [{ hp: parseShortValue("288T"), segments: 3, note: "Fase 1: Peligros", sac: 230 }, { hp: parseShortValue("105T"), sac: 230 }, { hp: parseShortValue("150T"), note: "Fase 3: Kaling", sac: 230 }, { hp: parseShortValue("378T"), segments: 3, note: "Fase 3: Peligros", sac: 230 }], sacRequirement: 230, level: 275 },
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("1.2Q"), segments: 3, note: "Fase 1: Peligros", sac: 330 }, { hp: parseShortValue("468T"), sac: 330 }, { hp: parseShortValue("722T"), note: "Fase 3: Kaling", sac: 330 }, { hp: parseShortValue("1.536Q"), segments: 3, note: "Fase 3: Peligros", sac: 330 }], sacRequirement: 330, level: 285 },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("2.718Q"), segments: 3, note: "Fase 1: Peligros", sac: 350 }, { hp: parseShortValue("1.404Q"), sac: 350 }, { hp: parseShortValue("2.24Q"), note: "Fase 3: Kaling", sac: 350 }, { hp: parseShortValue("5.481Q"), segments: 3, note: "Fase 3: Peligros", sac: 350 }], sacRequirement: 350, level: 285 },
+          { name: "Extreme", hpPhases: [{ hp: parseShortValue("18.2Q"), segments: 3, note: "Fase 1: Peligros", sac: 480 }, { hp: parseShortValue("6.93Q"), sac: 480 }, { hp: parseShortValue("8.662Q"), note: "Fase 3: Kaling", sac: 480 }, { hp: parseShortValue("20.8Q"), segments: 3, note: "Fase 3: Peligros", sac: 480 }], sacRequirement: 480, level: 285 }
+        ]
+      },
+      {
+        name: "Kalos the Guardian",
+        pdr: "380%",
+        difficulties: [
+          { name: "Easy", hpPhases: [{ hp: parseShortValue("94.5T"), sac: 200 }, { hp: parseShortValue("262.5T"), segments: 4, sac: 200 }], level: 270, sacRequirement: 200 },
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("336T"), sac: 250, level: 275 }, { hp: parseShortValue("720T"), segments: 4, sac: 300 }], level: 280, sacRequirement: 300 },
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("1.06Q"), sac: 330 }, { hp: parseShortValue("4.06Q"), segments: 4, sac: 330 }], level: 285, sacRequirement: 330 },
+          { name: "Extreme", hpPhases: [{ hp: parseShortValue("5.97Q"), sac: 440 }, { hp: parseShortValue("15.6Q"), segments: 4, sac: 440 }], level: 285, sacRequirement: 440 }
+        ]
+      },
+      {
+        name: "Chosen Seren",
+        pdr: "380%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("52.5T"), sac: 150 }, { hp: parseShortValue("155.5T") }], sacRequirement: 200, level: 270 },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("126T"), sac: 150 }, { hp: parseShortValue("357T") }], sacRequirement: 200, level: 275 },
+          { name: "Extreme", hpPhases: [{ hp: parseShortValue("1.32Q"), level: 275, sac: 150 }, { hp: parseShortValue("5.16Q") }], sacRequirement: 200, level: 280 }
+        ]
+      },
+      {
+        name: "Darknell",
+        level: 265,
+        pdr: "300%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("26T") }], afRequirement: 850 },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("157.5T") }], afRequirement: 850 }
+        ]
+      },
+      {
+        name: "Gloom",
+        level: 255,
+        pdr: "300%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("25.5T") }], afRequirement: 730 },
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("127.5T") }], afRequirement: 730 }
+        ]
+      },
+      {
+        name: "Will",
+        pdr: "300%",
+        difficulties: [
+          { name: "Easy", hpPhases: [{ hp: parseShortValue("2.8T"), segments: 3, note: "Fase 1: Dim. Azul" }, { hp: parseShortValue("2.8T"), segments: 3, note: "Fase 1: Dim. Violeta" }, { hp: parseShortValue("4.2T"), segments: 2, note: "Fase 2" }, { hp: parseShortValue("7T"), note: "Fase 3" }], level: 235, afRequirement: 560 },
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("4.2T"), segments: 3, note: "Fase 1: Dim. Azul" }, { hp: parseShortValue("4.2T"), segments: 3, note: "Fase 1: Dim. Violeta" }, { hp: parseShortValue("6.3T"), segments: 2, note: "Fase 2" }, { hp: parseShortValue("10.5T"), note: "Fase 3" }], level: 250, afRequirement: 760 },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("21T"), segments: 3, note: "Fase 1: Dim. Azul" }, { hp: parseShortValue("21T"), segments: 3, note: "Fase 1: Dim. Violeta" }, { hp: parseShortValue("31.5T"), segments: 2, note: "Fase 2" }, { hp: parseShortValue("52.5T"), note: "Fase 3" }], level: 250, afRequirement: 760 }
+        ]
+      },
+      {
+        name: "Verus Hilla",
+        level: 250,
+        pdr: "300%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("88T"), segments: 4 }], afRequirement: 820 },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("176T"), segments: 4 }], afRequirement: 900 }
+        ]
+      },
+      {
+        name: "Lucid",
+        level: 230,
+        pdr: "300%",
+        difficulties: [
+          { name: "Easy", hpPhases: [{ hp: parseShortValue("6T") }, { hp: parseShortValue("6T") }], afRequirement: 360 },
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("12T") }, { hp: parseShortValue("12T") }], afRequirement: 360 },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("50.8T") }, { hp: parseShortValue("54T") }, { hp: parseShortValue("12.8T") }], afRequirement: 360 }
+        ]
+      },
+      {
+        name: "Guardian Angel Slime",
+        level: 220,
+        pdr: "300%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("5T") }] },
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("90T") }] }
+        ]
+      },
+      {
+        name: "Lotus",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("470B") }, { hp: parseShortValue("470B") }, { hp: parseShortValue("630B") }], level: 210, pdr: "300%" },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("10T") }, { hp: parseShortValue("10T") }, { hp: parseShortValue("13.5T") }], level: 210, pdr: "300%" },
+          { name: "Extreme", hpPhases: [{ hp: parseShortValue("545T") }, { hp: parseShortValue("545T") }, { hp: parseShortValue("720T") }], level: 285, pdr: "380%" }
+        ]
+      },
+      {
+        name: "Damien",
+        level: 210,
+        pdr: "300%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("840B") }, { hp: parseShortValue("360B") }] },
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("25.2T") }, { hp: parseShortValue("10.8T") }] }
+        ]
+      },
+      {
+        name: "Akechi Mitsuhide",
+        level: 210,
+        pdr: "300%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("152B") }, { hp: parseShortValue("152B") }] }
+        ]
+      },
+      {
+        name: "Gollux",
+        difficulties: [
+          { name: "Hard", level: 190, pdr: "150%", hpPhases: [{ hp: parseShortValue("75B") }, { hp: parseShortValue("75B") }, { hp: parseShortValue("15B") }] },
+          { name: "Hell", level: 200, pdr: "250%", hpPhases: [{ hp: parseShortValue("350B") }, { hp: parseShortValue("350B") }, { hp: parseShortValue("70B") }] }
+        ]
+      },
+      {
+        name: "Magnus",
+        level: 190,
+        pdr: "120%",
+        difficulties: [
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("120B") }] }
+        ]
+      },
+      {
+        name: "Hilla",
+        level: 190,
+        pdr: "100%",
+        difficulties: [
+          { name: "Hard", hpPhases: [{ hp: parseShortValue("16.8B") }] }
+        ]
+      },
+      {
+        name: "Papulatus",
+        level: 190,
+        pdr: "250%",
+        difficulties: [
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("378B") }, { hp: parseShortValue("126B") }] }
+        ]
+      },
+      {
+        name: "Pierre",
+        level: 190,
+        pdr: "80%",
+        difficulties: [
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("80B") }] }
+        ]
+      },
+      {
+        name: "Von Bon",
+        level: 190,
+        pdr: "100%",
+        difficulties: [
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("100B") }] }
+        ]
+      },
+      {
+        name: "Crimson Queen",
+        level: 190,
+        pdr: "120%",
+        difficulties: [
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("140B") }] }
+        ]
+      },
+      {
+        name: "Vellum",
+        level: 190,
+        pdr: "200%",
+        difficulties: [
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("200B") }] }
+        ]
+      },
+      {
+        name: "Pink Bean",
+        level: 190,
+        pdr: "100%",
+        difficulties: [
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("69.3B") }] }
+        ]
+      },
+      {
+        name: "Princess No",
+        level: 180,
+        pdr: "100%",
+        difficulties: [
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("500B") }] }
+        ]
+      },
+      {
+        name: "Cygnus",
+        level: 140,
+        pdr: "100%",
+        difficulties: [
+          { name: "Easy", hpPhases: [{ hp: parseShortValue("10.5B") }] },
+          { name: "Normal", hpPhases: [{ hp: parseShortValue("63B") }] }
+        ]
+      },
+      {
+        name: "Zakum",
+        level: 180,
+        pdr: "100%",
+        difficulties: [
+          { name: "Chaos", hpPhases: [{ hp: parseShortValue("84B") }] }
+        ]
+      }
+    ];
+
+    // Background and Portrait Maps matching MapleHub
+    const bossBackgroundMap = {
+      "Baldrix": "baldrix.webp",
+      "Black Mage": "blackmage.webp",
+      "Cygnus": "cygnus.webp",
+      "Damien": "damien.webp",
+      "Darknell": "darknell.webp",
+      "Gloom": "gloom.webp",
+      "Hilla": "hilla.webp",
+      "Kaling": "kaling.webp",
+      "Kalos the Guardian": "kalos.webp",
+      "Limbo": "limbo.webp",
+      "Lotus": "lotus.webp",
+      "Lucid": "lucid.webp",
+      "Magnus": "magnus.webp",
+      "Papulatus": "papulatus.webp",
+      "Pierre": "pierre.webp",
+      "Crimson Queen": "queen.webp",
+      "Chosen Seren": "seren.webp",
+      "Guardian Angel Slime": "slime.webp",
+      "Vellum": "vellum.webp",
+      "Verus Hilla": "vhilla.webp",
+      "Von Bon": "vonbon.webp",
+      "Will": "will.webp",
+      "Zakum": "zakum.webp",
+      "The First Adversary": "the-first-adversary.webp"
+    };
+
+    // Selected difficulty state for each boss (persisted to localStorage)
+    const STORAGE_KEY = "maplehub.boss_hp_table.selected_difficulties";
+    let selectedDifficulties = {};
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) selectedDifficulties = JSON.parse(stored);
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Elements
+    const searchInput = document.getElementById("bossSearchInput");
+    const bossGrid = document.getElementById("bossGrid");
+    const emptyState = document.getElementById("emptyState");
+
+    // Function to calculate maximum level of a boss across all difficulties (for sorting)
+    const getBossMaxLevel = boss => {
+      let maxLevel = boss.level || 0;
+      boss.difficulties.forEach(d => {
+        if (d.level && d.level > maxLevel) {
+          maxLevel = d.level;
+        }
+      });
+      return maxLevel;
+    };
+
+    // Render Boss List
+    function renderBosses() {
+      const query = searchInput.value.toLowerCase().trim();
+      
+      // Filter
+      const filtered = bosses.filter(b => b.name.toLowerCase().includes(query));
+      
+      // Sort: highest level boss first
+      filtered.sort((x, y) => getBossMaxLevel(y) - getBossMaxLevel(x));
+
+      if (filtered.length === 0) {
+        bossGrid.innerHTML = "";
+        emptyState.classList.remove("d-none");
+        return;
+      }
+      emptyState.classList.add("d-none");
+
+      let html = "";
+      filtered.forEach(boss => {
+        // Find selected difficulty (fallback to first available)
+        const selectedDiffName = selectedDifficulties[boss.name] || boss.difficulties[0].name;
+        let diff = boss.difficulties.find(d => d.name === selectedDiffName);
+        if (!diff) {
+          diff = boss.difficulties[0];
+        }
+
+        // Compute total HP
+        const totalHp = diff.hpPhases.reduce((acc, phase) => acc + phase.hp, 0);
+
+        // Compute stats
+        const lvl = diff.level || boss.level || 0;
+        const pdr = diff.pdr || boss.pdr || "0%";
+        const sacReq = diff.sacRequirement || boss.sacRequirement;
+        const afReq = diff.afRequirement || boss.afRequirement;
+
+        // Image paths (served locally)
+        const portraitUrl = `/instance/imgmaple/bosses/${boss.name.toLowerCase().replace(/ /g, "-")}.webp`;
+        let bannerBgStyle = "";
+        if (bossBackgroundMap[boss.name]) {
+          const bgFilename = bossBackgroundMap[boss.name];
+          const bgUrl = `/instance/imgmaple/bosses/bigImg/${bgFilename}`;
+          // Alignment overrides matching React code
+          let position = "center -150px";
+          if (boss.name === "Black Mage" || boss.name === "The First Adversary") {
+            position = "center 0px";
+          }
+          bannerBgStyle = `background-image: url('${bgUrl}'); background-position: ${position};`;
+        } else {
+          bannerBgStyle = `background-image: url('${portraitUrl}'); background-position: center;`;
+        }
+
+        // Guides flag
+        const guideBosses = ["Kaling", "Kalos the Guardian", "Limbo", "Baldrix"];
+        const hasGuide = guideBosses.includes(boss.name);
+
+        html += `
+          <div class="col">
+            <div class="card boss-card h-full flex flex-col">
+              <!-- Banner Header -->
+              <div class="boss-banner">
+                <div class="boss-banner-blur" style="${bannerBgStyle}"></div>
+                <div class="boss-banner-grad"></div>
+                <div class="absolute inset-0 bg-black/10"></div>
+                
+                <div class="relative z-10 d-flex align-items-center justify-content-between p-3 h-100">
+                  <div class="d-flex align-items-center gap-3">
+                    <img src="${portraitUrl}" alt="${boss.name}" class="boss-avatar">
+                    <div>
+                      <h4 class="text-white fw-bold mb-0 text-shadow" style="font-size: 1rem; font-family: 'Outfit', sans-serif;">${boss.name}</h4>
+                      <span class="text-white-50 text-shadow" style="font-size: 0.8rem;">Nivel ${lvl}</span>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <div class="text-white-50" style="font-size: 0.7rem;">PDR</div>
+                    <div class="text-white fw-bold fs-5 text-shadow">${pdr}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Content Body -->
+              <div class="card-body p-3 d-flex flex-column" style="background: rgba(15, 23, 42, 0.25);">
+                <!-- Difficulty Tabs -->
+                <div class="diff-tabs mb-3">
+                  ${boss.difficulties.map(d => `
+                    <button class="diff-btn ${d.name === diff.name ? 'active' : ''}" 
+                            onclick="window.setBossDifficulty('${boss.name}', '${d.name}')">
+                      ${d.name}
+                    </button>
+                  `).join('')}
+                </div>
+
+                <!-- Phase HP Bars -->
+                <div class="flex-grow-1 space-y-3">
+                  ${diff.hpPhases.map((phase, index) => {
+                    const phaseNum = index + 1;
+                    const phaseLabel = phase.note || `Fase ${phaseNum}`;
+                    const phaseLvl = phase.level || lvl;
+                    const phaseSac = phase.sac || sacReq;
+                    
+                    let requirementBadge = "";
+                    if (phaseSac) {
+                      requirementBadge = `
+                        <div class="d-flex align-items-center gap-1">
+                          <span class="symbol-sac" title="SAC Requerido"></span>
+                          <span class="text-white fw-semibold" style="font-size: 0.75rem;">${phaseSac}</span>
+                        </div>`;
+                    } else if (afReq) {
+                      requirementBadge = `
+                        <div class="d-flex align-items-center gap-1">
+                          <span class="symbol-af" title="ARC Requerido"></span>
+                          <span class="text-white fw-semibold" style="font-size: 0.75rem;">${afReq}</span>
+                        </div>`;
+                    }
+
+                    const segments = phase.segments || 1;
+                    const segmentHp = phase.hp / segments;
+                    const formattedHp = formatShortValue(segmentHp);
+
+                    return `
+                      <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="text-white-50 fw-medium" style="font-size: 0.8rem;">${phaseLabel}</span>
+                          <div class="d-flex align-items-center gap-2">
+                            <span class="text-white-50" style="font-size: 0.75rem;">LV: ${phaseLvl}</span>
+                            ${requirementBadge}
+                          </div>
+                        </div>
+                        <div class="hp-bar-container">
+                          ${Array.from({ length: segments }).map((_, segIdx) => `
+                            <div class="hp-bar-segment" title="Segmento ${segIdx + 1}: ${formatShortValue(segmentHp)} HP">
+                              ${formattedHp}
+                            </div>
+                          `).join('')}
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                <!-- Boss Guide Link if available -->
+                ${hasGuide ? `
+                  <div class="my-3">
+                    <a href="https://maplehub.app/guide/boss-guides/${boss.name.toLowerCase().replace(/ /g, "-").replace("-the-guardian", "")}" 
+                       target="_blank" 
+                       class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2 fw-semibold" 
+                       style="border-radius: 8px; border-color: rgba(168, 85, 247, 0.45); color: #c084fc;">
+                      <i class="bi bi-journal-text"></i> Guía del Jefe
+                    </a>
+                  </div>
+                ` : ''}
+
+                <!-- Totals & Damage Requirements Footer -->
+                <div class="border-top border-secondary/40 pt-3 mt-auto">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-white-50 small">Vida Total</span>
+                    <span class="text-white fw-bold font-monospace" style="font-size: 0.9rem;">${formatShortValue(totalHp)}</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-white-50 small d-flex align-items-center gap-1">
+                      <span class="d-inline-block rounded-circle bg-primary" style="width: 8px; height: 8px; border: 1px solid #fff;"></span>
+                      Requisito 5%
+                    </span>
+                    <span class="text-primary-emphasis fw-bold font-monospace" style="font-size: 0.85rem; color: #60a5fa !important;">
+                      ${formatShortValue(totalHp * 0.05)}
+                    </span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-white-50 small d-flex align-items-center gap-1">
+                      <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px; border: 1px solid #fff;"></span>
+                      Requisito 10%
+                    </span>
+                    <span class="text-success fw-bold font-monospace" style="font-size: 0.85rem;">
+                      ${formatShortValue(totalHp * 0.10)}
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      bossGrid.innerHTML = html;
+    }
+
+    // Difficulty updates
+    window.setBossDifficulty = (bossName, diffName) => {
+      selectedDifficulties[bossName] = diffName;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedDifficulties));
+      } catch (e) {
+        console.error(e);
+      }
+      renderBosses();
+    };
+
+    // Filter listener
+    searchInput.addEventListener("input", renderBosses);
+
+    // Initial render
+    renderBosses();
+
+  })();
+</script>
+{% endblock %}
