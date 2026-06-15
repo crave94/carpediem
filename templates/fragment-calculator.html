@@ -3,38 +3,33 @@
 
 {% block content %}
 <div class="container py-4">
-  <div class="row mb-4">
-    <div class="col-12">
+  <div class="row mb-4 align-items-center">
+    <div class="col-12 col-md-7">
       <div class="d-flex align-items-center gap-3 mb-2">
         <i class="bi bi-calculator-fill fs-2 text-primary"></i>
         <h2 class="h3 mb-0">Calculadora de Fragmentos HEXA Matrix</h2>
       </div>
-      <p class="text-muted">Planificá tu progresión de 6to trabajo (HEXA Matrix), calculá los materiales (Fragmentos y Sol Erda) restantes y estimá el tiempo necesario según tu ritmo de juego.</p>
+      <p class="text-muted mb-0">Planificá tu progresión de 6to trabajo, calculá los materiales restantes y estimá el tiempo necesario.</p>
+    </div>
+    <div class="col-12 col-md-5 mt-3 mt-md-0">
+      <div class="row g-2">
+        <div class="col-8">
+          <label for="jobSelector" class="form-label small text-muted mb-1">Clase / Job</label>
+          <select id="jobSelector" class="form-select bg-dark text-white border-secondary">
+            <option value="">-- Seleccioná tu Clase --</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label for="hexaPower" class="form-label small text-muted mb-1">HEXA Power</label>
+          <input type="number" id="hexaPower" class="form-control bg-dark text-white border-secondary" value="1000" min="0">
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="row g-4">
     <!-- Panel Izquierdo: Configuración del Personaje y Nodos -->
     <div class="col-12 col-lg-8">
-      <!-- Selector de Clase -->
-      <div class="card bg-dark-subtle border-secondary mb-4">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-person-badge me-2"></i>Clase & Configuración</h5>
-          <div class="row g-3">
-            <div class="col-12 col-sm-6">
-              <label for="jobSelector" class="form-label">Seleccioná tu Clase</label>
-              <select id="jobSelector" class="form-select bg-dark text-white border-secondary">
-                <option value="">-- Seleccioná un Job --</option>
-              </select>
-            </div>
-            <div class="col-12 col-sm-6">
-              <label for="hexaPower" class="form-label">Normal HEXA Power</label>
-              <input type="number" id="hexaPower" class="form-control bg-dark text-white border-secondary" value="1000" min="0">
-              <div class="form-text text-muted">Influye en la recomendación de prioridad.</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Configuración de Habilidades -->
       <div id="skillsContainer" class="d-none">
