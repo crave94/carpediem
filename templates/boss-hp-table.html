@@ -536,7 +536,7 @@
 
         html += `
           <div class="col">
-            <div class="card boss-card h-full flex flex-col">
+            <div class="card boss-card h-100 d-flex flex-column">
               <!-- Banner Header -->
               <div class="boss-banner">
                 <div class="d-flex align-items-center justify-content-between p-3 h-100">
@@ -555,7 +555,7 @@
               </div>
 
               <!-- Content Body -->
-              <div class="card-body p-3 d-flex flex-column" style="background: rgba(15, 23, 42, 0.25);">
+              <div class="card-body p-3 d-flex flex-column flex-grow-1" style="background: rgba(15, 23, 42, 0.25);">
                 <!-- Difficulty Tabs -->
                 <div class="diff-tabs mb-3">
                   ${boss.difficulties.map(d => `
@@ -567,7 +567,7 @@
                 </div>
 
                 <!-- Phase HP Bars -->
-                <div class="flex-grow-1 space-y-3">
+                <div class="flex-grow-1">
                   ${diff.hpPhases.map((phase, index) => {
                     const phaseNum = index + 1;
                     const phaseLabel = phase.note || `Fase ${phaseNum}`;
