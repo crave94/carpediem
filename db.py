@@ -417,3 +417,36 @@ def delete_user(user_id: int) -> None:
     """Delete a user by id."""
     with get_conn() as conn:
         conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+
+
+def get_all_weekly_exp_gains() -> dict[int, int]:
+    """
+    Return a dict of {character_id: weekly_exp_gain} for all characters.
+    The weekly gain is calculated as the difference between the most recent EXP
+    and the EXP from the earliest snapshot in the last 8 days.
+    """
+    from datetime import date, timedelta
+    start_date = (date.today() - timedelta(days=8)).isoformat()
+    with get_conn() as conn:
+        rows = list(conn.execute(
+            "SELECT character_id, exp, day FROM exp_history "
+            "WHERE day >= ? "
+            "ORDER BY character_id, day ASC",
+            (start_date,),
+        ))
+    
+    grouped = {}
+    for r in rows:
+        cid = r["character_id"]
+        if cid not in grouped:
+            grouped[cid] = []
+        grouped[cid].append(r["exp"])
+        
+    gains = {}
+    for cid, exps in grouped.items():
+        if len(exps) >= 2:
+            gains[cid] = exps[-1] - exps[0]
+        else:
+            gains[cid] = 0
+    return gains
+

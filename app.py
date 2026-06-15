@@ -735,6 +735,133 @@ def dashboard_update():
     return redirect(url_for("dashboard"))
 
 
+@app.route("/guild-progress")
+def guild_progress():
+    characters = db.list_characters()
+    if not characters:
+        return render_template(
+            "guild-progress.html",
+            total_members=0,
+            avg_level=0,
+            total_legion=0,
+            liberados_count=0,
+            leaders_count=0,
+            weekly_leaderboard=[],
+            job_distribution=[],
+            milestones=[],
+        )
+
+    total_members = len(characters)
+    avg_level = round(sum(c["level"] for c in characters if c["level"] is not None) / total_members, 1)
+    total_legion = sum(c["legion_level"] for c in characters if c["legion_level"] is not None)
+    liberados_count = sum(1 for c in characters if c["libb"])
+    leaders_count = sum(1 for c in characters if c["leader"])
+
+    # 1. Weekly EXP Leaderboard
+    # Get all weekly exp gains from db helper
+    weekly_gains = db.get_all_weekly_exp_gains()
+    
+    # Map characters with their weekly gains
+    leaderboard_data = []
+    for c in characters:
+        gain = weekly_gains.get(c["id"], 0)
+        leaderboard_data.append({
+            "character": c,
+            "weekly_gain": gain
+        })
+    
+    # Sort by weekly gain descending
+    leaderboard_data.sort(key=lambda x: x["weekly_gain"], reverse=True)
+    weekly_leaderboard = leaderboard_data[:10]
+
+    # 2. Job Distribution
+    job_counts = {}
+    for c in characters:
+        job = c["job"] or "Unknown"
+        job_counts[job] = job_counts.get(job, 0) + 1
+    
+    # Sort job distribution
+    sorted_jobs = sorted(job_counts.items(), key=lambda x: x[1], reverse=True)
+    job_distribution = []
+    for job, count in sorted_jobs:
+        pct = round((count / total_members) * 100, 1)
+        job_distribution.append({
+            "job": job,
+            "count": count,
+            "percentage": pct
+        })
+
+    # 3. Milestones
+    # Define milestone targets
+    legion_target = 100000
+    legion_pct = min(round((total_legion / legion_target) * 100, 1), 100.0) if legion_target > 0 else 0
+    
+    # Members Lv 260+ (Goal: 15)
+    count_260 = sum(1 for c in characters if c["level"] is not None and c["level"] >= 260)
+    target_260 = 15
+    pct_260 = min(round((count_260 / target_260) * 100, 1), 100.0)
+    
+    # Members Lv 275+ (Goal: 5)
+    count_275 = sum(1 for c in characters if c["level"] is not None and c["level"] >= 275)
+    target_275 = 5
+    pct_275 = min(round((count_275 / target_275) * 100, 1), 100.0)
+    
+    # Liberados (Goal: 10)
+    target_libb = 10
+    pct_libb = min(round((liberados_count / target_libb) * 100, 1), 100.0)
+
+    milestones = [
+        {
+            "name": "Legión Colectiva",
+            "icon": "bi-trophy-fill",
+            "color": "var(--ms-purple)",
+            "current": f"{total_legion:,}",
+            "target": f"{legion_target:,}",
+            "percentage": legion_pct,
+            "unit": " Lvl",
+        },
+        {
+            "name": "Miembros 6to Job (Lv 260+)",
+            "icon": "bi-lightning-charge-fill",
+            "color": "var(--ms-blue)",
+            "current": count_260,
+            "target": target_260,
+            "percentage": pct_260,
+            "unit": "",
+        },
+        {
+            "name": "Miembros de Élite (Lv 275+)",
+            "icon": "bi-stars",
+            "color": "#FB7185",
+            "current": count_275,
+            "target": target_275,
+            "percentage": pct_275,
+            "unit": "",
+        },
+        {
+            "name": "Personajes Liberados (Black Mage Cleared)",
+            "icon": "bi-shield-fill-check",
+            "color": "#FCD34D",
+            "current": liberados_count,
+            "target": target_libb,
+            "percentage": pct_libb,
+            "unit": "",
+        }
+    ]
+
+    return render_template(
+        "guild-progress.html",
+        total_members=total_members,
+        avg_level=avg_level,
+        total_legion=total_legion,
+        liberados_count=liberados_count,
+        leaders_count=leaders_count,
+        weekly_leaderboard=weekly_leaderboard,
+        job_distribution=job_distribution,
+        milestones=milestones,
+    )
+
+
 @app.errorhandler(404)
 def not_found(_e):
     return render_template("404.html"), 404
