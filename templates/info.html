@@ -26,7 +26,7 @@
   {% else %}
     <div class="news-grid animate-stagger">
       {% for item in news_list %}
-        <div data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
+        <div data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}" class="news-item-wrapper{% if loop.index > 6 %} d-none extra-news{% endif %}">
           <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="news-card animate__animated animate__fadeInUp">
             <div class="news-card__img-container">
               <span class="news-card__badge badge-category-{{ item.category|lower }}">{{ item.category }}</span>
@@ -53,6 +53,33 @@
         </div>
       {% endfor %}
     </div>
+
+    {% if news_list|length > 6 %}
+      <div class="text-center mt-5" id="loadMoreContainer">
+        <a href="#" id="btnLoadMoreNews" class="text-decoration-none" style="color: var(--ms-purple-glow); font-weight: bold; font-family: 'Outfit', sans-serif; font-size: 1.1rem; transition: color 0.2s;" onmouseover="this.style.color='var(--ms-blue-glow)'" onmouseout="this.style.color='var(--ms-purple-glow)'">
+          (más...)
+        </a>
+      </div>
+    {% endif %}
   {% endif %}
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  'use strict';
+  const btn = document.getElementById('btnLoadMoreNews');
+  const container = document.getElementById('loadMoreContainer');
+  if (!btn) return;
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.extra-news').forEach(el => {
+      el.classList.remove('d-none');
+    });
+    container.style.display = 'none';
+  });
+})();
+</script>
 {% endblock %}
