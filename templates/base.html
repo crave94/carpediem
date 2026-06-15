@@ -102,8 +102,20 @@
                 </a>
               </li>
               <li>
+                  <a class="dropdown-item" href="{{ url_for('flame_calculator') }}" style="color: var(--text-muted); transition: all 0.2s; padding: 0.5rem 1rem;"
+                     onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';"
+                     onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
+                    <i class="bi bi-fire me-2"></i>Flame Calculator
+                  </a>
+                </li>
+              <li>
                 <a class="dropdown-item" href="{{ url_for('symbol_calculator') }}" style="color: var(--text-muted); transition: all 0.2s; padding: 0.5rem 1rem;" onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
                   <i class="bi bi-gem me-2"></i>Symbol Calculator
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('starforce_calculator') }}" style="color: var(--text-muted); transition: all 0.2s; padding: 0.5rem 1rem;" onmouseover="this.style.color='var(--ms-purple)'; this.style.background='rgba(168,85,247,0.1)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='';">
+                  <i class="bi bi-star-fill me-2"></i>Starforce Calculator
                 </a>
               </li>
               <li>
@@ -111,6 +123,7 @@
                   <i class="bi bi-shield-shaded me-2"></i>Boss HP Table
                 </a>
               </li>
+
             </ul>
           </li>
           {% if current_user and current_user.is_admin %}

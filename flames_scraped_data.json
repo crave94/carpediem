@@ -1,0 +1,348 @@
+{
+  "special": [
+    {
+      "category": "Common Flame Stats",
+      "stats": [
+        {
+          "name": "Pure Stats",
+          "values": [
+            "-",
+            "-",
+            "33",
+            "44",
+            "55",
+            "66",
+            "77"
+          ],
+          "image_url": "/static/images/flames/flame-stats-1.png"
+        },
+        {
+          "name": "Mixed Stats",
+          "values": [
+            "-",
+            "-",
+            "18",
+            "24",
+            "30",
+            "36",
+            "42"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Max HP/MP",
+          "values": [
+            "-",
+            "-",
+            "1800",
+            "2400",
+            "3000",
+            "3600",
+            "4200"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Defense",
+          "values": [
+            "-",
+            "-",
+            "33",
+            "44",
+            "55",
+            "66",
+            "77"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "All Stats%",
+          "values": [
+            "-",
+            "-",
+            "3%",
+            "4%",
+            "5%",
+            "6%",
+            "7%"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Equip Level Reduction",
+          "values": [
+            "-",
+            "-",
+            "-15",
+            "-20",
+            "-25",
+            "-30",
+            "-35"
+          ],
+          "image_url": ""
+        }
+      ]
+    },
+    {
+      "category": "Weapon-only Flame Stats",
+      "stats": [
+        {
+          "name": "Weapon WA/MA",
+          "values": [
+            "-",
+            "-",
+            "64",
+            "94",
+            "129",
+            "170",
+            "218"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Boss%",
+          "values": [
+            "-",
+            "-",
+            "6%",
+            "8%",
+            "10%",
+            "12%",
+            "14%"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Damage%",
+          "values": [
+            "-",
+            "-",
+            "3%",
+            "4%",
+            "5%",
+            "6%",
+            "7%"
+          ],
+          "image_url": ""
+        }
+      ]
+    },
+    {
+      "category": "Armor-only Flame Stats",
+      "stats": [
+        {
+          "name": "Armor WA/MA",
+          "values": [
+            "-",
+            "-",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Speed",
+          "values": [
+            "-",
+            "-",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Jump",
+          "values": [
+            "-",
+            "-",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "image_url": ""
+        }
+      ]
+    }
+  ],
+  "normal": [
+    {
+      "category": "Common Flame Stats",
+      "stats": [
+        {
+          "name": "Pure Stats",
+          "values": [
+            "11",
+            "22",
+            "33",
+            "44",
+            "55",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Mixed Stats",
+          "values": [
+            "6",
+            "12",
+            "18",
+            "24",
+            "30",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Max HP/MP",
+          "values": [
+            "600",
+            "1200",
+            "1800",
+            "2400",
+            "3000",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Defense",
+          "values": [
+            "11",
+            "22",
+            "33",
+            "44",
+            "55",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "All Stats%",
+          "values": [
+            "1%",
+            "2%",
+            "3%",
+            "4%",
+            "5%",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Equip Level Reduction",
+          "values": [
+            "-5",
+            "-10",
+            "-15",
+            "-20",
+            "-25",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        }
+      ]
+    },
+    {
+      "category": "Weapon-only Flame Stats",
+      "stats": [
+        {
+          "name": "Weapon WA/MA",
+          "values": [
+            "22",
+            "47",
+            "77",
+            "113",
+            "156",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Boss%",
+          "values": [
+            "2%",
+            "4%",
+            "6%",
+            "8%",
+            "10%",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Damage%",
+          "values": [
+            "1%",
+            "2%",
+            "3%",
+            "4%",
+            "5%",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        }
+      ]
+    },
+    {
+      "category": "Armor-only Flame Stats",
+      "stats": [
+        {
+          "name": "Armor WA/MA",
+          "values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Speed",
+          "values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        },
+        {
+          "name": "Jump",
+          "values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "-",
+            "-"
+          ],
+          "image_url": ""
+        }
+      ]
+    }
+  ]
+}

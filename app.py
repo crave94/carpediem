@@ -425,6 +425,22 @@ def boss_hp_table():
 def symbol_calculator():
     return render_template("symbol-calculator.html")
 
+@app.route("/utils/flame-calculator")
+def flame_calculator():
+    # Gather flame image filenames from static folder
+    flame_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "static", "images", "flames"))
+    try:
+        flame_images = [f for f in os.listdir(flame_dir) if os.path.isfile(os.path.join(flame_dir, f))]
+    except Exception:
+        flame_images = []
+    return render_template("flame-calculator.html", flame_images=flame_images)
+
+
+@app.route("/utils/starforce-calculator")
+def starforce_calculator():
+    return render_template("starforce-calculator.html")
+
+
 
 
 
