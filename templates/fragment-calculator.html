@@ -27,10 +27,84 @@
     </div>
   </div>
 
-  <div class="row g-4">
-    <!-- Panel Izquierdo: Configuración del Personaje y Nodos -->
-    <div class="col-12 col-lg-8">
+  <!-- Hidden containers for active DOM inputs used in JS calculations -->
+  <div class="d-none">
+    <!-- Resumen de Progreso -->
+    <div id="fragmentProgressText">0 / 0</div>
+    <div id="fragmentProgressBar" style="width: 0%"></div>
+    <div id="erdaProgressText">0 / 0</div>
+    <div id="erdaProgressBar" style="width: 0%"></div>
+    <div id="fragmentsRemaining">0</div>
+    <div id="erdaRemaining">0.0</div>
+    <div id="priorityContainer"></div>
+  </div>
 
+  <div class="row g-4">
+    <!-- Estimación de Tiempo (Full Width Horizontal Layout) -->
+    <div class="col-12">
+      <div class="card bg-dark-subtle border-secondary">
+        <div class="card-body">
+          <h5 class="card-title text-primary mb-3"><i class="bi bi-calendar-event-fill me-2"></i>Estimación de Tiempo</h5>
+          
+          <div class="row g-3 align-items-center mb-4">
+            <div class="col-12 col-md-3">
+              <label for="fragmentsPerWap" class="form-label small text-muted mb-1">Fragmentos por WAP (2h)</label>
+              <input type="number" id="fragmentsPerWap" class="form-control bg-dark text-white border-secondary" value="40" min="0">
+            </div>
+
+            <div class="col-12 col-md-3">
+              <label for="wapsPerDay" class="form-label small text-muted mb-1">WAPs por Día</label>
+              <input type="number" id="wapsPerDay" class="form-control bg-dark text-white border-secondary" value="1" min="0" step="0.5">
+            </div>
+
+            <div class="col-12 col-md-3">
+              <label for="weeklyDungeon" class="form-label small text-muted mb-1">Dungeon Semanal</label>
+              <select id="weeklyDungeon" class="form-select bg-dark text-white border-secondary">
+                <option value="0" selected>Ninguno (0)</option>
+                <option value="40">High Mountain (40)</option>
+                <option value="55">Angler Company (55)</option>
+                <option value="70">Nightmare Paradise (70)</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-3 text-md-center pt-md-4">
+              <div class="form-check d-inline-block">
+                <input class="form-check-input" type="checkbox" id="weeklyQuest" checked>
+                <label class="form-check-label text-muted" for="weeklyQuest">
+                  Misión Semanal (+90 fragmentos)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <hr class="border-secondary">
+
+          <div class="row g-3 text-center justify-content-center">
+            <div class="col-12 col-md-4">
+              <div class="card bg-dark border-secondary py-3">
+                <div class="text-muted small" style="font-size: 0.85rem;">Tasa Semanal</div>
+                <h4 id="dailyRateText" class="mb-0 text-info mt-2">0.0</h4>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card bg-dark border-secondary py-3">
+                <div class="text-muted small" style="font-size: 0.85rem;">Días Restantes</div>
+                <h4 id="daysRemaining" class="mb-0 text-warning mt-2">--</h4>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card bg-dark border-secondary py-3">
+                <div class="text-muted small" style="font-size: 0.85rem;">Fecha Estimada</div>
+                <h4 id="estimatedDate" class="mb-0 text-success mt-2">--</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Nodos de Habilidades (Full Width Stacked Below) -->
+    <div class="col-12">
       <!-- Configuración de Habilidades -->
       <div id="skillsContainer" class="d-none">
         <div class="card bg-dark-subtle border-secondary mb-4">
@@ -45,120 +119,6 @@
             <!-- Listado dinámico de habilidades agrupadas -->
             <div class="accordion accordion-flush" id="hexaAccordion">
               <!-- Creadas dinámicamente mediante JS -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Panel Derecho: Resultados, Progreso y Tiempos -->
-    <div class="col-12 col-lg-4">
-      <div class="d-none">
-        <!-- Resumen de Progreso -->
-        <div class="card bg-dark-subtle border-secondary mb-4">
-          <div class="card-body text-center">
-            <h5 class="card-title text-start text-primary"><i class="bi bi-bar-chart-fill me-2"></i>Progreso HEXA</h5>
-            
-            <div class="mb-4">
-              <div class="d-flex justify-content-between mb-1">
-                <span class="text-muted">Fragmentos de Sol Erda</span>
-                <span id="fragmentProgressText" class="fw-bold">0 / 0</span>
-              </div>
-              <div class="progress bg-dark" style="height: 10px;">
-                <div id="fragmentProgressBar" class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <div class="d-flex justify-content-between mb-1">
-                <span class="text-muted">Sol Erda Total</span>
-                <span id="erdaProgressText" class="fw-bold">0 / 0</span>
-              </div>
-              <div class="progress bg-dark" style="height: 10px;">
-                <div id="erdaProgressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
-              </div>
-            </div>
-
-            <hr class="border-secondary">
-
-            <div class="row text-start">
-              <div class="col-6 mb-2">
-                <div class="text-muted small">Restante</div>
-                <h4 id="fragmentsRemaining" class="mb-0 text-warning">0</h4>
-                <span class="small text-muted">Fragmentos</span>
-              </div>
-              <div class="col-6 mb-2">
-                <div class="text-muted small">Restante</div>
-                <h4 id="erdaRemaining" class="mb-0 text-success">0.0</h4>
-                <span class="small text-muted">Sol Erda</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recomendación del Siguiente Paso (Prioridad) -->
-        <div class="card bg-dark-subtle border-secondary mb-4">
-          <div class="card-body">
-            <h5 class="card-title text-primary"><i class="bi bi-lightbulb-fill me-2"></i>Siguiente Mejora Recomendada</h5>
-            <div id="priorityContainer" class="text-center py-3">
-              <p class="text-muted mb-0">Seleccioná un Job para ver la prioridad de mejoras.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Estimador de Tiempos -->
-      <div class="card bg-dark-subtle border-secondary mb-4">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-calendar-event-fill me-2"></i>Estimación de Tiempo</h5>
-          
-          <div class="mb-3">
-            <label for="fragmentsPerWap" class="form-label">Fragmentos por WAP (2h)</label>
-            <input type="number" id="fragmentsPerWap" class="form-control bg-dark text-white border-secondary" value="40" min="0">
-          </div>
-
-          <div class="mb-3">
-            <label for="wapsPerDay" class="form-label">WAPs por Día</label>
-            <input type="number" id="wapsPerDay" class="form-control bg-dark text-white border-secondary" value="1" min="0" step="0.5">
-          </div>
-
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" id="weeklyQuest" checked>
-            <label class="form-check-input-label text-muted" for="weeklyQuest">
-              Misión Semanal (+90 fragmentos)
-            </label>
-          </div>
-
-          <div class="mb-4">
-            <label for="weeklyDungeon" class="form-label">Dungeon Semanal</label>
-            <select id="weeklyDungeon" class="form-select bg-dark text-white border-secondary">
-              <option value="0" selected>Ninguno (0)</option>
-              <option value="40">High Mountain (40)</option>
-              <option value="55">Angler Company (55)</option>
-              <option value="70">Nightmare Paradise (70)</option>
-            </select>
-          </div>
-
-          <hr class="border-secondary">
-
-          <div class="row g-2 text-center">
-            <div class="col-4">
-              <div class="card bg-dark border-secondary py-2 h-100">
-                <div class="text-muted small" style="font-size: 0.75rem;">Tasa Semanal</div>
-                <h5 id="dailyRateText" class="mb-0 text-info mt-1">0.0</h5>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="card bg-dark border-secondary py-2 h-100">
-                <div class="text-muted small" style="font-size: 0.75rem;">Días Restantes</div>
-                <h5 id="daysRemaining" class="mb-0 text-warning mt-1">--</h5>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="card bg-dark border-secondary py-2 h-100">
-                <div class="text-muted small" style="font-size: 0.75rem;">Fecha Estimada</div>
-                <h6 id="estimatedDate" class="mb-0 text-success mt-1" style="font-size: 0.85rem; line-height: 1.5;">--</h6>
-              </div>
             </div>
           </div>
         </div>
