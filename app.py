@@ -735,12 +735,12 @@ def dashboard_update():
     return redirect(url_for("dashboard"))
 
 
-@app.route("/guild-progress")
-def guild_progress():
+@app.route("/stats")
+def stats():
     characters = db.list_characters()
     if not characters:
         return render_template(
-            "guild-progress.html",
+            "stats.html",
             total_members=0,
             avg_level=0,
             total_legion=0,
@@ -850,7 +850,7 @@ def guild_progress():
     ]
 
     return render_template(
-        "guild-progress.html",
+        "stats.html",
         total_members=total_members,
         avg_level=avg_level,
         total_legion=total_legion,
