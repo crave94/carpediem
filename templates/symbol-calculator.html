@@ -9,7 +9,8 @@
         <i class="bi bi-gem fs-2 text-primary"></i>
         <h2 class="h3 mb-0 outfit text-white">Calculadora de Símbolos</h2>
       </div>
-      <p class="text-body-secondary mb-0">Planificá tu progresión de Símbolos Arcane y Sacred (Authentic), calculá el costo de mesos y estimá la fecha de finalización.</p>
+      <p class="text-body-secondary mb-0">Planificá tu progresión de Símbolos Arcane y Sacred (Authentic), calculá el
+        costo de mesos y estimá la fecha de finalización.</p>
     </div>
   </div>
 
@@ -17,31 +18,37 @@
     <!-- Left Column: Settings and Selection -->
     <div class="col-12 col-lg-5">
       <!-- 1. Selection Card -->
-      <div class="card bg-dark border-secondary mb-4" style="background-color: rgba(30, 41, 59, 0.4) !important; border-color: rgba(168, 85, 247, 0.25) !important;">
+      <div class="card bg-dark border-secondary mb-4"
+        style="background-color: rgba(30, 41, 59, 0.4) !important; border-color: rgba(168, 85, 247, 0.25) !important;">
         <div class="card-body p-3">
           <!-- Type Tabs -->
           <ul class="nav nav-pills nav-fill mb-3" id="symbolTypeTabs" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active fw-bold px-3 py-2" id="arcane-tab" data-bs-toggle="pill" data-bs-target="#arcane-pane" type="button" role="tab" aria-controls="arcane-pane" aria-selected="true" style="border-radius: 6px; transition: all 0.2s;">
-                Arcane Symbols (1 - 20)
+              <button class="nav-link active fw-bold px-3 py-2" id="arcane-tab" data-bs-toggle="pill"
+                data-bs-target="#arcane-pane" type="button" role="tab" aria-controls="arcane-pane" aria-selected="true"
+                style="border-radius: 6px; transition: all 0.2s;">
+                Arcane Symbols
               </button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link fw-bold px-3 py-2" id="sacred-tab" data-bs-toggle="pill" data-bs-target="#sacred-pane" type="button" role="tab" aria-controls="sacred-pane" aria-selected="false" style="border-radius: 6px; transition: all 0.2s;">
-                Sacred Symbols (1 - 11)
+              <button class="nav-link fw-bold px-3 py-2" id="sacred-tab" data-bs-toggle="pill"
+                data-bs-target="#sacred-pane" type="button" role="tab" aria-controls="sacred-pane" aria-selected="false"
+                style="border-radius: 6px; transition: all 0.2s;">
+                Sacred Symbols
               </button>
             </li>
           </ul>
 
           <div class="tab-content" id="symbolTypeTabContent">
             <!-- Arcane Symbols List -->
-            <div class="tab-pane fade show active" id="arcane-pane" role="tabpanel" aria-labelledby="arcane-tab" tabindex="0">
+            <div class="tab-pane fade show active" id="arcane-pane" role="tabpanel" aria-labelledby="arcane-tab"
+              tabindex="0">
               <label class="form-label small text-body-secondary mb-2">Selecciona un Símbolo Arcane:</label>
               <div class="grid-symbol-selectors" id="arcaneSymbolsGrid">
                 <!-- Injected via JS -->
               </div>
             </div>
-            
+
             <!-- Sacred Symbols List -->
             <div class="tab-pane fade" id="sacred-pane" role="tabpanel" aria-labelledby="sacred-tab" tabindex="0">
               <label class="form-label small text-body-secondary mb-2">Selecciona un Símbolo Sacred (Authentic):</label>
@@ -54,8 +61,10 @@
       </div>
 
       <!-- 2. Inputs Form -->
-      <div class="card bg-dark border-secondary" style="background-color: rgba(30, 41, 59, 0.4) !important; border-color: rgba(168, 85, 247, 0.25) !important;">
-        <div class="card-header bg-transparent border-secondary" style="border-color: rgba(168, 85, 247, 0.2) !important;">
+      <div class="card bg-dark border-secondary"
+        style="background-color: rgba(30, 41, 59, 0.4) !important; border-color: rgba(168, 85, 247, 0.25) !important;">
+        <div class="card-header bg-transparent border-secondary"
+          style="border-color: rgba(168, 85, 247, 0.2) !important;">
           <h5 class="card-title mb-0 text-white fw-bold d-flex align-items-center gap-2">
             <i class="bi bi-sliders text-primary"></i>
             <span>Parámetros del Símbolo</span>
@@ -71,7 +80,8 @@
               </div>
               <div class="col-6">
                 <label for="currExp" class="form-label small text-body-secondary mb-1">EXP Actual</label>
-                <input type="number" id="currExp" class="form-control bg-dark text-white border-secondary" value="0" min="0">
+                <input type="number" id="currExp" class="form-control bg-dark text-white border-secondary" value="0"
+                  min="0">
               </div>
             </div>
 
@@ -88,11 +98,13 @@
             <div class="row g-2">
               <div class="col-6" id="dailyGainCol">
                 <label for="dailyGain" class="form-label small text-body-secondary mb-1">Símbolos Diarios</label>
-                <input type="number" id="dailyGain" class="form-control bg-dark text-white border-secondary" value="20" min="0">
+                <input type="number" id="dailyGain" class="form-control bg-dark text-white border-secondary" value="20"
+                  min="0">
               </div>
               <div class="col-6" id="weeklyGainCol">
                 <label for="weeklyGain" class="form-label small text-body-secondary mb-1">Símbolos Semanales</label>
-                <input type="number" id="weeklyGain" class="form-control bg-dark text-white border-secondary" value="45" min="0">
+                <input type="number" id="weeklyGain" class="form-control bg-dark text-white border-secondary" value="45"
+                  min="0">
               </div>
             </div>
           </form>
@@ -102,8 +114,10 @@
 
     <!-- Right Column: Results Dashboard -->
     <div class="col-12 col-lg-7">
-      <div class="card bg-dark border-secondary h-100" style="background-color: rgba(30, 41, 59, 0.4) !important; border-color: rgba(168, 85, 247, 0.25) !important;">
-        <div class="card-header bg-transparent border-secondary" style="border-color: rgba(168, 85, 247, 0.2) !important;">
+      <div class="card bg-dark border-secondary h-100"
+        style="background-color: rgba(30, 41, 59, 0.4) !important; border-color: rgba(168, 85, 247, 0.25) !important;">
+        <div class="card-header bg-transparent border-secondary"
+          style="border-color: rgba(168, 85, 247, 0.2) !important;">
           <h5 class="card-title mb-0 text-white fw-bold d-flex align-items-center gap-2">
             <i class="bi bi-pie-chart-fill text-success"></i>
             <span>Resultado de la Progresión</span>
@@ -111,8 +125,10 @@
         </div>
         <div class="card-body p-4 d-flex flex-column justify-content-between gap-4">
           <!-- Active Symbol Header -->
-          <div class="d-flex align-items-center gap-3 p-3 rounded bg-black bg-opacity-25 border border-secondary" style="border-color: rgba(255, 255, 255, 0.05) !important;">
-            <div id="resultSymbolIcon" class="d-flex align-items-center justify-content-center rounded-circle" style="width: 50px; height: 50px; background: rgba(168, 85, 247, 0.15); font-size: 1.5rem;">
+          <div class="d-flex align-items-center gap-3 p-3 rounded bg-black bg-opacity-25 border border-secondary"
+            style="border-color: rgba(255, 255, 255, 0.05) !important;">
+            <div id="resultSymbolIcon" class="d-flex align-items-center justify-content-center rounded-circle"
+              style="width: 50px; height: 50px; background: rgba(168, 85, 247, 0.15); font-size: 1.5rem;">
               <i class="bi bi-gem text-primary"></i>
             </div>
             <div>
@@ -122,7 +138,8 @@
           </div>
 
           <!-- Active Symbol Description & Effects -->
-          <div id="symbolDetailsContainer" class="p-3 rounded bg-black bg-opacity-20 border border-secondary" style="border-color: rgba(255, 255, 255, 0.05) !important; margin-top: -10px;">
+          <div id="symbolDetailsContainer" class="p-3 rounded bg-black bg-opacity-20 border border-secondary"
+            style="border-color: rgba(255, 255, 255, 0.05) !important; margin-top: -10px;">
             <p id="symbolDescText" class="small text-body-secondary mb-0"></p>
             <div id="symbolEffectsList" class="mt-2 d-none">
               <span class="small text-white fw-bold d-block mb-1">Efectos Adicionales (Nivel Máximo):</span>
@@ -135,14 +152,16 @@
           <!-- Meso & Symbols Stats Grid -->
           <div class="row g-3">
             <div class="col-12 col-sm-6">
-              <div class="p-3 rounded bg-black bg-opacity-20 border border-secondary text-center" style="border-color: rgba(255, 255, 255, 0.05) !important;">
+              <div class="p-3 rounded bg-black bg-opacity-20 border border-secondary text-center"
+                style="border-color: rgba(255, 255, 255, 0.05) !important;">
                 <div class="text-body-secondary small mb-1">Símbolos Necesarios</div>
                 <div id="symbolsNeededText" class="fs-3 fw-bold text-white outfit">0</div>
                 <div class="small text-body-secondary mt-1">EXP de progreso considerada</div>
               </div>
             </div>
             <div class="col-12 col-sm-6">
-              <div class="p-3 rounded bg-black bg-opacity-20 border border-secondary text-center" style="border-color: rgba(255, 255, 255, 0.05) !important;">
+              <div class="p-3 rounded bg-black bg-opacity-20 border border-secondary text-center"
+                style="border-color: rgba(255, 255, 255, 0.05) !important;">
                 <div class="text-body-secondary small mb-1">Costo Estimado en Mesos</div>
                 <div id="mesoCostText" class="fs-3 fw-bold text-success outfit">0</div>
                 <div id="mesoCostRaw" class="small text-body-secondary mt-1">0 mesos</div>
@@ -151,7 +170,8 @@
           </div>
 
           <!-- Time estimation indicators -->
-          <div class="p-3 rounded bg-black bg-opacity-20 border border-secondary" style="border-color: rgba(255, 255, 255, 0.05) !important;">
+          <div class="p-3 rounded bg-black bg-opacity-20 border border-secondary"
+            style="border-color: rgba(255, 255, 255, 0.05) !important;">
             <h6 class="text-white fw-bold mb-3 d-flex align-items-center gap-2">
               <i class="bi bi-calendar-event text-warning"></i>
               <span>Estimación de Tiempo</span>
@@ -179,7 +199,9 @@
               <span id="progressBarLabel" class="text-white fw-bold">0%</span>
             </div>
             <div class="progress" style="height: 10px; background-color: rgba(255,255,255,0.05); border-radius: 5px;">
-              <div id="progressBarEl" class="progress-bar" role="progressbar" style="width: 0%; background: linear-gradient(90deg, var(--ms-purple) 0%, var(--ms-blue) 100%); border-radius: 5px;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+              <div id="progressBarEl" class="progress-bar" role="progressbar"
+                style="width: 0%; background: linear-gradient(90deg, var(--ms-purple) 0%, var(--ms-blue) 100%); border-radius: 5px;"
+                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
           </div>
         </div>
@@ -189,567 +211,579 @@
 </div>
 
 <style>
-.grid-symbol-selectors {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 8px;
-}
-.symbol-selector-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background-color: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(168, 85, 247, 0.15);
-  border-radius: 8px;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-}
-.symbol-selector-btn:hover {
-  background-color: rgba(168, 85, 247, 0.1);
-  border-color: rgba(168, 85, 247, 0.4);
-  color: var(--text);
-  transform: translateY(-2px);
-}
-.symbol-selector-btn.active {
-  background: rgba(168, 85, 247, 0.2) !important;
-  border-color: var(--ms-purple) !important;
-  color: white !important;
-  box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
-}
-.symbol-selector-btn i {
-  font-size: 1.5rem;
-  margin-bottom: 4px;
-}
-.outfit {
-  font-family: 'Outfit', sans-serif;
-}
-#symbolTypeTabs .nav-link {
-  color: var(--text-muted);
-  background: transparent;
-  border: 1px solid transparent;
-}
-#symbolTypeTabs .nav-link.active {
-  background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue));
-  color: white;
-  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
-}
-/* Glassmorphism details */
-.card {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-.form-select, .form-control {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(168, 85, 247, 0.2) !important;
-  transition: all 0.2s ease-in-out;
-}
-.form-select:focus, .form-control:focus {
-  background-color: rgba(15, 23, 42, 0.8) !important;
-  border-color: rgba(168, 85, 247, 0.6) !important;
-  box-shadow: 0 0 0 0.25rem rgba(168, 85, 247, 0.25) !important;
-  color: #fff !important;
-}
+  .grid-symbol-selectors {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+  }
+
+  .symbol-selector-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .symbol-selector-btn:hover {
+    background-color: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: var(--text);
+    transform: translateY(-2px);
+  }
+
+  .symbol-selector-btn.active {
+    background: rgba(168, 85, 247, 0.2) !important;
+    border-color: var(--ms-purple) !important;
+    color: white !important;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+  }
+
+  .symbol-selector-btn i {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+
+  .outfit {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  #symbolTypeTabs .nav-link {
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+
+  #symbolTypeTabs .nav-link.active {
+    background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue));
+    color: white;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
+  }
+
+  /* Glassmorphism details */
+  .card {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .form-select,
+  .form-control {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid rgba(168, 85, 247, 0.2) !important;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .form-select:focus,
+  .form-control:focus {
+    background-color: rgba(15, 23, 42, 0.8) !important;
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 0 0 0.25rem rgba(168, 85, 247, 0.25) !important;
+    color: #fff !important;
+  }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-(function() {
-  'use strict';
+  (function () {
+    'use strict';
 
-  // Static files base path
-  const STATIC_URL_BASE = "{{ url_for('static', filename='images/symbols/') }}";
+    // Static files base path
+    const STATIC_URL_BASE = "{{ url_for('static', filename='images/symbols/') }}";
 
-  // Data Arrays
-  const ARCANE_SYMBOLS = [
-    { 
-      name: "Road to Extinction", 
-      image: "symbol-rte.png", 
-      color: "#3B82F6", 
-      defaultDaily: 20, 
-      defaultWeekly: 45,
-      desc: "Otorga Fuerza Arcana (Arcane Force) y estadísticas principales. Se obtiene completando las misiones diarias de Vanishing Journey y el minijuego semanal Erda Spectrum.",
-      effects: []
-    },
-    { 
-      name: "Chew Chew Island", 
-      image: "symbol-cci.png", 
-      color: "#10B981", 
-      defaultDaily: 20, 
-      defaultWeekly: 45,
-      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Chew Chew Island y el minijuego semanal Hungry Muto.",
-      effects: []
-    },
-    { 
-      name: "Lachelein", 
-      image: "symbol-lacheln.png", 
-      color: "#A855F7", 
-      defaultDaily: 20, 
-      defaultWeekly: 45,
-      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene completando las misiones diarias de Lachelein y el minijuego semanal Midnight Chaser.",
-      effects: []
-    },
-    { 
-      name: "Arcana", 
-      image: "symbol-arcana.png", 
-      color: "#60A5FA", 
-      defaultDaily: 20, 
-      defaultWeekly: 45,
-      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene completando las misiones diarias de Arcana y el minijuego semanal Spirit Savior.",
-      effects: []
-    },
-    { 
-      name: "Morass", 
-      image: "symbol-moras.png", 
-      color: "#F43F5E", 
-      defaultDaily: 20, 
-      defaultWeekly: 45,
-      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Morass y el minijuego semanal Ranheim Defense.",
-      effects: []
-    },
-    { 
-      name: "Esfera", 
-      image: "symbol-esfera.png", 
-      color: "#F59E0B", 
-      defaultDaily: 20, 
-      defaultWeekly: 45,
-      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Esfera y el minijuego semanal Esfera Guardian.",
-      effects: []
-    }
-  ];
+    // Data Arrays
+    const ARCANE_SYMBOLS = [
+      {
+        name: "Road to Extinction",
+        image: "symbol-rte.png",
+        color: "#3B82F6",
+        defaultDaily: 20,
+        defaultWeekly: 45,
+        desc: "Otorga Fuerza Arcana (Arcane Force) y estadísticas principales. Se obtiene completando las misiones diarias de Vanishing Journey y el minijuego semanal Erda Spectrum.",
+        effects: []
+      },
+      {
+        name: "Chew Chew Island",
+        image: "symbol-cci.png",
+        color: "#10B981",
+        defaultDaily: 20,
+        defaultWeekly: 45,
+        desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Chew Chew Island y el minijuego semanal Hungry Muto.",
+        effects: []
+      },
+      {
+        name: "Lachelein",
+        image: "symbol-lacheln.png",
+        color: "#A855F7",
+        defaultDaily: 20,
+        defaultWeekly: 45,
+        desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene completando las misiones diarias de Lachelein y el minijuego semanal Midnight Chaser.",
+        effects: []
+      },
+      {
+        name: "Arcana",
+        image: "symbol-arcana.png",
+        color: "#60A5FA",
+        defaultDaily: 20,
+        defaultWeekly: 45,
+        desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene completando las misiones diarias de Arcana y el minijuego semanal Spirit Savior.",
+        effects: []
+      },
+      {
+        name: "Morass",
+        image: "symbol-moras.png",
+        color: "#F43F5E",
+        defaultDaily: 20,
+        defaultWeekly: 45,
+        desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Morass y el minijuego semanal Ranheim Defense.",
+        effects: []
+      },
+      {
+        name: "Esfera",
+        image: "symbol-esfera.png",
+        color: "#F59E0B",
+        defaultDaily: 20,
+        defaultWeekly: 45,
+        desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Esfera y el minijuego semanal Esfera Guardian.",
+        effects: []
+      }
+    ];
 
-  const SACRED_SYMBOLS = [
-    { 
-      name: "Cernium", 
-      image: "symbol-cernium.png", 
-      color: "#FCD34D", 
-      defaultDaily: 30, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada (Sacred Force) y estadísticas principales. Se obtiene completando la misión diaria en Cernium.",
-      effects: [
-        "+20% de daño al atacar a Chosen Seren",
-        "+10% de obtención de experiencia (EXP) adicional"
-      ]
-    },
-    { 
-      name: "Hotel Arcus", 
-      image: "symbol-hotel-arcs.png", 
-      color: "#FB7185", 
-      defaultDaily: 15, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Hotel Arcus.",
-      effects: [
-        "+20% de daño al atacar a Watcher Kalos",
-        "+10% de obtención de experiencia (EXP) adicional"
-      ]
-    },
-    { 
-      name: "Odium", 
-      image: "symbol-odium.png", 
-      color: "#34D399", 
-      defaultDaily: 15, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Odium.",
-      effects: [
-        "+20% de daño al atacar a First Adversary",
-        "+10% de obtención de experiencia (EXP) adicional"
-      ]
-    },
-    { 
-      name: "Shangri-La", 
-      image: "symbol-shangri-la.png", 
-      color: "#A78BFA", 
-      defaultDaily: 15, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Shangri-La.",
-      effects: [
-        "+20% de daño al atacar a Kaling",
-        "+10% de obtención de experiencia (EXP) adicional"
-      ]
-    },
-    { 
-      name: "Arteria", 
-      image: "symbol-arteria.png", 
-      color: "#60A5FA", 
-      defaultDaily: 15, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Arteria.",
-      effects: [
-        "+10% de obtención de experiencia (EXP) adicional"
-      ]
-    },
-    { 
-      name: "Carcion", 
-      image: "symbol-carcion.png", 
-      color: "#F43F5E", 
-      defaultDaily: 15, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Carcion.",
-      effects: [
-        "+20% de daño al atacar a Limbo",
-        "+10% de obtención de experiencia (EXP) adicional"
-      ]
-    },
-    { 
-      name: "Tallahart", 
-      image: "symbol-tallahart.png", 
-      color: "#A3E635", 
-      defaultDaily: 10, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada, estadísticas principales y bonificaciones especiales. Se obtiene en la región de Tallahart.",
-      effects: [
-        "+20% de daño al atacar a Baldrix",
-        "+10% EXP, +5% Mesos Obtenidos y +5% Drop Rate base (aumenta por nivel hasta un máximo de +50% EXP, +15% Mesos, +15% Drop a Nivel 11)"
-      ]
-    },
-    { 
-      name: "Geardrak", 
-      image: "symbol-geardrak.png", 
-      color: "#94A3B8", 
-      defaultDaily: 15, 
-      defaultWeekly: 0,
-      desc: "Otorga Fuerza Sagrada, estadísticas principales y bonificaciones especiales. Se obtiene en la región de Geardrak.",
-      effects: [
-        "+10% EXP, +5% Mesos Obtenidos y +5% Drop Rate base (aumenta por nivel hasta un máximo de +50% EXP, +15% Mesos, +15% Drop a Nivel 11)"
-      ]
-    }
-  ];
+    const SACRED_SYMBOLS = [
+      {
+        name: "Cernium",
+        image: "symbol-cernium.png",
+        color: "#FCD34D",
+        defaultDaily: 30,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada (Sacred Force) y estadísticas principales. Se obtiene completando la misión diaria en Cernium.",
+        effects: [
+          "+20% de daño al atacar a Chosen Seren",
+          "+10% de obtención de experiencia (EXP) adicional"
+        ]
+      },
+      {
+        name: "Hotel Arcus",
+        image: "symbol-hotel-arcs.png",
+        color: "#FB7185",
+        defaultDaily: 15,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Hotel Arcus.",
+        effects: [
+          "+20% de daño al atacar a Watcher Kalos",
+          "+10% de obtención de experiencia (EXP) adicional"
+        ]
+      },
+      {
+        name: "Odium",
+        image: "symbol-odium.png",
+        color: "#34D399",
+        defaultDaily: 15,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Odium.",
+        effects: [
+          "+20% de daño al atacar a First Adversary",
+          "+10% de obtención de experiencia (EXP) adicional"
+        ]
+      },
+      {
+        name: "Shangri-La",
+        image: "symbol-shangri-la.png",
+        color: "#A78BFA",
+        defaultDaily: 15,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Shangri-La.",
+        effects: [
+          "+20% de daño al atacar a Kaling",
+          "+10% de obtención de experiencia (EXP) adicional"
+        ]
+      },
+      {
+        name: "Arteria",
+        image: "symbol-arteria.png",
+        color: "#60A5FA",
+        defaultDaily: 15,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Arteria.",
+        effects: [
+          "+10% de obtención de experiencia (EXP) adicional"
+        ]
+      },
+      {
+        name: "Carcion",
+        image: "symbol-carcion.png",
+        color: "#F43F5E",
+        defaultDaily: 15,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Carcion.",
+        effects: [
+          "+20% de daño al atacar a Limbo",
+          "+10% de obtención de experiencia (EXP) adicional"
+        ]
+      },
+      {
+        name: "Tallahart",
+        image: "symbol-tallahart.png",
+        color: "#A3E635",
+        defaultDaily: 10,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada, estadísticas principales y bonificaciones especiales. Se obtiene en la región de Tallahart.",
+        effects: [
+          "+20% de daño al atacar a Baldrix",
+          "+10% EXP, +5% Mesos Obtenidos y +5% Drop Rate base (aumenta por nivel hasta un máximo de +50% EXP, +15% Mesos, +15% Drop a Nivel 11)"
+        ]
+      },
+      {
+        name: "Geardrak",
+        image: "symbol-geardrak.png",
+        color: "#94A3B8",
+        defaultDaily: 15,
+        defaultWeekly: 0,
+        desc: "Otorga Fuerza Sagrada, estadísticas principales y bonificaciones especiales. Se obtiene en la región de Geardrak.",
+        effects: [
+          "+10% EXP, +5% Mesos Obtenidos y +5% Drop Rate base (aumenta por nivel hasta un máximo de +50% EXP, +15% Mesos, +15% Drop a Nivel 11)"
+        ]
+      }
+    ];
 
-  // State
-  let currentTab = 'arcane'; // 'arcane' or 'sacred'
-  let activeSymbolIndex = 0;
+    // State
+    let currentTab = 'arcane'; // 'arcane' or 'sacred'
+    let activeSymbolIndex = 0;
 
-  // DOM Elements
-  const arcaneGrid = document.getElementById('arcaneSymbolsGrid');
-  const sacredGrid = document.getElementById('sacredSymbolsGrid');
-  const currLevelSelect = document.getElementById('currLevel');
-  const targetLevelSelect = document.getElementById('targetLevel');
-  const currExpInput = document.getElementById('currExp');
-  const dailyGainInput = document.getElementById('dailyGain');
-  const weeklyGainInput = document.getElementById('weeklyGain');
-  
-  // Result Display Elements
-  const resultSymbolName = document.getElementById('resultSymbolName');
-  const resultSymbolType = document.getElementById('resultSymbolType');
-  const resultSymbolIcon = document.getElementById('resultSymbolIcon');
-  const symbolsNeededText = document.getElementById('symbolsNeededText');
-  const mesoCostText = document.getElementById('mesoCostText');
-  const mesoCostRaw = document.getElementById('mesoCostRaw');
-  const daysRemainingText = document.getElementById('daysRemainingText');
-  const weeksRemainingText = document.getElementById('weeksRemainingText');
-  const completionDateText = document.getElementById('completionDateText');
-  const progressBarLabel = document.getElementById('progressBarLabel');
-  const progressBarEl = document.getElementById('progressBarEl');
+    // DOM Elements
+    const arcaneGrid = document.getElementById('arcaneSymbolsGrid');
+    const sacredGrid = document.getElementById('sacredSymbolsGrid');
+    const currLevelSelect = document.getElementById('currLevel');
+    const targetLevelSelect = document.getElementById('targetLevel');
+    const currExpInput = document.getElementById('currExp');
+    const dailyGainInput = document.getElementById('dailyGain');
+    const weeklyGainInput = document.getElementById('weeklyGain');
 
-  // Load select options based on current symbol type
-  function populateLevelSelects() {
-    const maxLevel = currentTab === 'arcane' ? 20 : 11;
-    
-    // Save current values if any
-    const prevCurrLevel = currLevelSelect.value;
-    const prevTargetLevel = targetLevelSelect.value;
+    // Result Display Elements
+    const resultSymbolName = document.getElementById('resultSymbolName');
+    const resultSymbolType = document.getElementById('resultSymbolType');
+    const resultSymbolIcon = document.getElementById('resultSymbolIcon');
+    const symbolsNeededText = document.getElementById('symbolsNeededText');
+    const mesoCostText = document.getElementById('mesoCostText');
+    const mesoCostRaw = document.getElementById('mesoCostRaw');
+    const daysRemainingText = document.getElementById('daysRemainingText');
+    const weeksRemainingText = document.getElementById('weeksRemainingText');
+    const completionDateText = document.getElementById('completionDateText');
+    const progressBarLabel = document.getElementById('progressBarLabel');
+    const progressBarEl = document.getElementById('progressBarEl');
 
-    currLevelSelect.innerHTML = '';
-    targetLevelSelect.innerHTML = '';
+    // Load select options based on current symbol type
+    function populateLevelSelects() {
+      const maxLevel = currentTab === 'arcane' ? 20 : 11;
 
-    for (let i = 1; i <= maxLevel; i++) {
-      const opt1 = document.createElement('option');
-      opt1.value = i;
-      opt1.textContent = i;
-      currLevelSelect.appendChild(opt1);
+      // Save current values if any
+      const prevCurrLevel = currLevelSelect.value;
+      const prevTargetLevel = targetLevelSelect.value;
 
-      const opt2 = document.createElement('option');
-      opt2.value = i;
-      opt2.textContent = i;
-      targetLevelSelect.appendChild(opt2);
-    }
+      currLevelSelect.innerHTML = '';
+      targetLevelSelect.innerHTML = '';
 
-    // Set values back or defaults
-    currLevelSelect.value = prevCurrLevel && parseInt(prevCurrLevel) <= maxLevel ? prevCurrLevel : "1";
-    targetLevelSelect.value = prevTargetLevel && parseInt(prevTargetLevel) <= maxLevel ? prevTargetLevel : maxLevel;
-  }
+      for (let i = 1; i <= maxLevel; i++) {
+        const opt1 = document.createElement('option');
+        opt1.value = i;
+        opt1.textContent = i;
+        currLevelSelect.appendChild(opt1);
 
-  // Calculate experience requirement for specific level-up transition
-  function getExpRequiredForLevel(level) {
-    if (currentTab === 'arcane') {
-      // Level 1 need 12, level 2 need 15, etc.
-      return level * level + 11;
-    } else {
-      // Sacred symbols: 9 * level^2 + 20 * level
-      return 9 * level * level + 20 * level;
-    }
-  }
+        const opt2 = document.createElement('option');
+        opt2.value = i;
+        opt2.textContent = i;
+        targetLevelSelect.appendChild(opt2);
+      }
 
-  // Calculate Meso cost for specific level transition
-  function getUpgradeMesoCost(level) {
-    // level is the CURRENT level (transitioning to level + 1)
-    if (currentTab === 'arcane') {
-      const targetLevel = level + 1;
-      const A = 85000 + activeSymbolIndex * 20000;
-      const B = -165000 - activeSymbolIndex * 40000;
-      const C = 960000 + activeSymbolIndex * 240000;
-      return A * targetLevel * targetLevel + B * targetLevel + C;
-    } else {
-      const requiredSymbols = 9 * level * level + 20 * level;
-      const baseMultiplier = 13.2 + activeSymbolIndex * 1.8;
-      const multiplier = baseMultiplier - 0.6 * level;
-      return 100000 * Math.floor(requiredSymbols * multiplier);
-    }
-  }
-
-  // Formats large numbers into clean string
-  function formatLargeNumber(value) {
-    if (value === 0) return "0";
-    if (value >= 1000000000) {
-      return (value / 1000000000).toFixed(2) + " B";
-    }
-    if (value >= 1000000) {
-      return (value / 1000000).toFixed(1) + " M";
-    }
-    return value.toLocaleString();
-  }
-
-  // Main Calculation Logic
-  function calculateProgression() {
-    const cLvl = parseInt(currLevelSelect.value) || 1;
-    const tLvl = parseInt(targetLevelSelect.value) || 1;
-    const cExp = parseInt(currExpInput.value) || 0;
-    const daily = parseFloat(dailyGainInput.value) || 0;
-    const weekly = parseFloat(weeklyGainInput.value) || 0;
-
-    // Validate target >= current
-    if (tLvl < cLvl) {
-      targetLevelSelect.value = cLvl;
-      calculateProgression();
-      return;
+      // Set values back or defaults
+      currLevelSelect.value = prevCurrLevel && parseInt(prevCurrLevel) <= maxLevel ? prevCurrLevel : "1";
+      targetLevelSelect.value = prevTargetLevel && parseInt(prevTargetLevel) <= maxLevel ? prevTargetLevel : maxLevel;
     }
 
-    // Limit maximum EXP input based on current level requirement
-    const expNeededForCurrentLevel = getExpRequiredForLevel(cLvl);
-    if (cExp > expNeededForCurrentLevel && cLvl < (currentTab === 'arcane' ? 20 : 11)) {
-      currExpInput.value = expNeededForCurrentLevel;
-      calculateProgression();
-      return;
+    // Calculate experience requirement for specific level-up transition
+    function getExpRequiredForLevel(level) {
+      if (currentTab === 'arcane') {
+        // Level 1 need 12, level 2 need 15, etc.
+        return level * level + 11;
+      } else {
+        // Sacred symbols: 9 * level^2 + 20 * level
+        return 9 * level * level + 20 * level;
+      }
     }
 
-    // Calculate total symbols & mesos required
-    let totalSymbolsNeeded = 0;
-    let totalMesoCost = 0;
-    let totalSymbolsGoal = 0;
-    
-    // Total symbols for the target range
-    for (let i = cLvl; i < tLvl; i++) {
-      totalSymbolsGoal += getExpRequiredForLevel(i);
-      totalMesoCost += getUpgradeMesoCost(i);
-    }
-    
-    totalSymbolsNeeded = Math.max(0, totalSymbolsGoal - cExp);
-    
-    // Update stats text
-    symbolsNeededText.textContent = totalSymbolsNeeded.toLocaleString();
-    mesoCostText.textContent = formatLargeNumber(totalMesoCost);
-    mesoCostRaw.textContent = totalMesoCost.toLocaleString() + " mesos";
-
-    // Progress percentage
-    let progressPercentage = 0;
-    if (totalSymbolsGoal > 0) {
-      progressPercentage = Math.min(100, Math.round((cExp / totalSymbolsGoal) * 100));
-    } else {
-      progressPercentage = 100;
-    }
-    progressBarLabel.textContent = progressPercentage + "%";
-    progressBarEl.style.width = progressPercentage + "%";
-    progressBarEl.setAttribute('aria-valuenow', progressPercentage);
-
-    // Time estimate
-    const weeklyRate = daily * 7 + (currentTab === 'arcane' ? weekly : 0);
-    const dailyRate = weeklyRate / 7.0;
-
-    if (totalSymbolsNeeded === 0) {
-      daysRemainingText.textContent = "0";
-      weeksRemainingText.textContent = "0";
-      completionDateText.textContent = "Completado";
-      return;
+    // Calculate Meso cost for specific level transition
+    function getUpgradeMesoCost(level) {
+      // level is the CURRENT level (transitioning to level + 1)
+      if (currentTab === 'arcane') {
+        const targetLevel = level + 1;
+        const A = 85000 + activeSymbolIndex * 20000;
+        const B = -165000 - activeSymbolIndex * 40000;
+        const C = 960000 + activeSymbolIndex * 240000;
+        return A * targetLevel * targetLevel + B * targetLevel + C;
+      } else {
+        const requiredSymbols = 9 * level * level + 20 * level;
+        const baseMultiplier = 13.2 + activeSymbolIndex * 1.8;
+        const multiplier = baseMultiplier - 0.6 * level;
+        return 100000 * Math.floor(requiredSymbols * multiplier);
+      }
     }
 
-    if (dailyRate <= 0) {
-      daysRemainingText.textContent = "--";
-      weeksRemainingText.textContent = "--";
-      completionDateText.textContent = "--";
-      return;
+    // Formats large numbers into clean string
+    function formatLargeNumber(value) {
+      if (value === 0) return "0";
+      if (value >= 1000000000) {
+        return (value / 1000000000).toFixed(2) + " B";
+      }
+      if (value >= 1000000) {
+        return (value / 1000000).toFixed(1) + " M";
+      }
+      return value.toLocaleString();
     }
 
-    const days = Math.ceil(totalSymbolsNeeded / dailyRate);
-    const weeks = (days / 7).toFixed(1);
+    // Main Calculation Logic
+    function calculateProgression() {
+      const cLvl = parseInt(currLevelSelect.value) || 1;
+      const tLvl = parseInt(targetLevelSelect.value) || 1;
+      const cExp = parseInt(currExpInput.value) || 0;
+      const daily = parseFloat(dailyGainInput.value) || 0;
+      const weekly = parseFloat(weeklyGainInput.value) || 0;
 
-    daysRemainingText.textContent = days.toLocaleString();
-    weeksRemainingText.textContent = weeks;
+      // Validate target >= current
+      if (tLvl < cLvl) {
+        targetLevelSelect.value = cLvl;
+        calculateProgression();
+        return;
+      }
 
-    const compDate = new Date();
-    compDate.setDate(compDate.getDate() + days);
-    completionDateText.textContent = compDate.toLocaleDateString();
-  }
+      // Limit maximum EXP input based on current level requirement
+      const expNeededForCurrentLevel = getExpRequiredForLevel(cLvl);
+      if (cExp > expNeededForCurrentLevel && cLvl < (currentTab === 'arcane' ? 20 : 11)) {
+        currExpInput.value = expNeededForCurrentLevel;
+        calculateProgression();
+        return;
+      }
 
-  // Draw Symbol Selector Grid items
-  function renderSymbolSelectors() {
-    const list = currentTab === 'arcane' ? ARCANE_SYMBOLS : SACRED_SYMBOLS;
-    const grid = currentTab === 'arcane' ? arcaneGrid : sacredGrid;
-    grid.innerHTML = '';
+      // Calculate total symbols & mesos required
+      let totalSymbolsNeeded = 0;
+      let totalMesoCost = 0;
+      let totalSymbolsGoal = 0;
 
-    list.forEach((item, index) => {
-      const btn = document.createElement('div');
-      btn.className = 'symbol-selector-btn' + (index === activeSymbolIndex ? ' active' : '');
-      btn.innerHTML = `
+      // Total symbols for the target range
+      for (let i = cLvl; i < tLvl; i++) {
+        totalSymbolsGoal += getExpRequiredForLevel(i);
+        totalMesoCost += getUpgradeMesoCost(i);
+      }
+
+      totalSymbolsNeeded = Math.max(0, totalSymbolsGoal - cExp);
+
+      // Update stats text
+      symbolsNeededText.textContent = totalSymbolsNeeded.toLocaleString();
+      mesoCostText.textContent = formatLargeNumber(totalMesoCost);
+      mesoCostRaw.textContent = totalMesoCost.toLocaleString() + " mesos";
+
+      // Progress percentage
+      let progressPercentage = 0;
+      if (totalSymbolsGoal > 0) {
+        progressPercentage = Math.min(100, Math.round((cExp / totalSymbolsGoal) * 100));
+      } else {
+        progressPercentage = 100;
+      }
+      progressBarLabel.textContent = progressPercentage + "%";
+      progressBarEl.style.width = progressPercentage + "%";
+      progressBarEl.setAttribute('aria-valuenow', progressPercentage);
+
+      // Time estimate
+      const weeklyRate = daily * 7 + (currentTab === 'arcane' ? weekly : 0);
+      const dailyRate = weeklyRate / 7.0;
+
+      if (totalSymbolsNeeded === 0) {
+        daysRemainingText.textContent = "0";
+        weeksRemainingText.textContent = "0";
+        completionDateText.textContent = "Completado";
+        return;
+      }
+
+      if (dailyRate <= 0) {
+        daysRemainingText.textContent = "--";
+        weeksRemainingText.textContent = "--";
+        completionDateText.textContent = "--";
+        return;
+      }
+
+      const days = Math.ceil(totalSymbolsNeeded / dailyRate);
+      const weeks = (days / 7).toFixed(1);
+
+      daysRemainingText.textContent = days.toLocaleString();
+      weeksRemainingText.textContent = weeks;
+
+      const compDate = new Date();
+      compDate.setDate(compDate.getDate() + days);
+      completionDateText.textContent = compDate.toLocaleDateString();
+    }
+
+    // Draw Symbol Selector Grid items
+    function renderSymbolSelectors() {
+      const list = currentTab === 'arcane' ? ARCANE_SYMBOLS : SACRED_SYMBOLS;
+      const grid = currentTab === 'arcane' ? arcaneGrid : sacredGrid;
+      grid.innerHTML = '';
+
+      list.forEach((item, index) => {
+        const btn = document.createElement('div');
+        btn.className = 'symbol-selector-btn' + (index === activeSymbolIndex ? ' active' : '');
+        btn.innerHTML = `
         <img src="${STATIC_URL_BASE}${item.image}" alt="${item.name}" width="32" height="32" class="mb-1" style="filter: drop-shadow(0 0 4px ${item.color}66); object-fit: contain;">
         <span class="small font-bold text-center mt-1" style="font-size: 0.75rem; line-height: 1.1;">${item.name}</span>
       `;
-      btn.addEventListener('click', () => {
-        // Toggle active state
-        const siblings = grid.querySelectorAll('.symbol-selector-btn');
-        siblings.forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        
-        activeSymbolIndex = index;
-        updateActiveSymbol();
-        saveCalculatorData();
-      });
-      grid.appendChild(btn);
-    });
-  }
+        btn.addEventListener('click', () => {
+          // Toggle active state
+          const siblings = grid.querySelectorAll('.symbol-selector-btn');
+          siblings.forEach(el => el.classList.remove('active'));
+          btn.classList.add('active');
 
-  // Update visual result header and update inputs for active symbol
-  function updateActiveSymbol() {
-    const list = currentTab === 'arcane' ? ARCANE_SYMBOLS : SACRED_SYMBOLS;
-    const symbol = list[activeSymbolIndex];
-
-    resultSymbolName.textContent = symbol.name;
-    resultSymbolType.textContent = currentTab === 'arcane' ? "Arcane Symbol" : "Sacred (Authentic) Symbol";
-    
-    // Style icon
-    resultSymbolIcon.innerHTML = `<img src="${STATIC_URL_BASE}${symbol.image}" alt="${symbol.name}" width="36" height="36" style="filter: drop-shadow(0 0 6px ${symbol.color}88); object-fit: contain;">`;
-    resultSymbolIcon.style.backgroundColor = `${symbol.color}18`;
-    resultSymbolIcon.style.boxShadow = `0 0 16px ${symbol.color}25`;
-
-    // Render description and effects
-    const descText = document.getElementById('symbolDescText');
-    const effectsList = document.getElementById('symbolEffectsList');
-    const ul = effectsList.querySelector('ul');
-
-    descText.textContent = symbol.desc || '';
-    ul.innerHTML = '';
-    if (symbol.effects && symbol.effects.length > 0) {
-      effectsList.classList.remove('d-none');
-      symbol.effects.forEach(eff => {
-        const li = document.createElement('li');
-        li.textContent = eff;
-        ul.appendChild(li);
-      });
-    } else {
-      effectsList.classList.add('d-none');
-    }
-
-    // Toggle weekly gain container visibility
-    const dailyGainCol = document.getElementById('dailyGainCol');
-    const weeklyGainCol = document.getElementById('weeklyGainCol');
-    
-    if (currentTab === 'arcane') {
-      weeklyGainCol.classList.remove('d-none');
-      dailyGainCol.className = 'col-6';
-    } else {
-      weeklyGainCol.classList.add('d-none');
-      dailyGainCol.className = 'col-12';
-    }
-
-    // Load saved settings if any exist, otherwise set default rates based on selected symbol
-    loadCalculatorData();
-    populateLevelSelects();
-    calculateProgression();
-  }
-
-  // Setup Pill listeners
-  function initTabListeners() {
-    document.getElementById('arcane-tab').addEventListener('click', () => {
-      if (currentTab === 'arcane') return;
-      currentTab = 'arcane';
-      activeSymbolIndex = 0;
-      renderSymbolSelectors();
-      updateActiveSymbol();
-    });
-
-    document.getElementById('sacred-tab').addEventListener('click', () => {
-      if (currentTab === 'sacred') return;
-      currentTab = 'sacred';
-      activeSymbolIndex = 0;
-      renderSymbolSelectors();
-      updateActiveSymbol();
-    });
-  }
-
-  // Bind input element events
-  function initFormListeners() {
-    [currLevelSelect, targetLevelSelect, currExpInput, dailyGainInput, weeklyGainInput].forEach(el => {
-      ['input', 'change'].forEach(evt => {
-        el.addEventListener(evt, () => {
-          calculateProgression();
+          activeSymbolIndex = index;
+          updateActiveSymbol();
           saveCalculatorData();
         });
+        grid.appendChild(btn);
       });
-    });
-  }
-
-  // --- LocalStorage helpers ---
-  const STORAGE_KEY = 'carpediem_symbol_calc_v3';
-
-  function saveCalculatorData() {
-    const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    const symbolKey = `${currentTab}_${activeSymbolIndex}`;
-    
-    savedData[symbolKey] = {
-      currLevel: currLevelSelect.value,
-      currExp: currExpInput.value,
-      targetLevel: targetLevelSelect.value,
-      dailyGain: dailyGainInput.value,
-      weeklyGain: weeklyGainInput.value
-    };
-    
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
-  }
-
-  function loadCalculatorData() {
-    const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    const symbolKey = `${currentTab}_${activeSymbolIndex}`;
-    const data = savedData[symbolKey];
-    
-    const list = currentTab === 'arcane' ? ARCANE_SYMBOLS : SACRED_SYMBOLS;
-    const symbol = list[activeSymbolIndex];
-
-    if (data) {
-      currLevelSelect.value = data.currLevel || "1";
-      currExpInput.value = data.currExp || "0";
-      targetLevelSelect.value = data.targetLevel || (currentTab === 'arcane' ? "20" : "11");
-      dailyGainInput.value = data.dailyGain !== undefined ? data.dailyGain : symbol.defaultDaily;
-      weeklyGainInput.value = data.weeklyGain !== undefined ? data.weeklyGain : symbol.defaultWeekly;
-    } else {
-      // Set defaults
-      currLevelSelect.value = "1";
-      currExpInput.value = "0";
-      targetLevelSelect.value = currentTab === 'arcane' ? "20" : "11";
-      dailyGainInput.value = symbol.defaultDaily;
-      weeklyGainInput.value = symbol.defaultWeekly;
     }
-  }
 
-  // --- Initialization ---
-  renderSymbolSelectors();
-  populateLevelSelects();
-  updateActiveSymbol();
-  initTabListeners();
-  initFormListeners();
+    // Update visual result header and update inputs for active symbol
+    function updateActiveSymbol() {
+      const list = currentTab === 'arcane' ? ARCANE_SYMBOLS : SACRED_SYMBOLS;
+      const symbol = list[activeSymbolIndex];
 
-})();
+      resultSymbolName.textContent = symbol.name;
+      resultSymbolType.textContent = currentTab === 'arcane' ? "Arcane Symbol" : "Sacred (Authentic) Symbol";
+
+      // Style icon
+      resultSymbolIcon.innerHTML = `<img src="${STATIC_URL_BASE}${symbol.image}" alt="${symbol.name}" width="36" height="36" style="filter: drop-shadow(0 0 6px ${symbol.color}88); object-fit: contain;">`;
+      resultSymbolIcon.style.backgroundColor = `${symbol.color}18`;
+      resultSymbolIcon.style.boxShadow = `0 0 16px ${symbol.color}25`;
+
+      // Render description and effects
+      const descText = document.getElementById('symbolDescText');
+      const effectsList = document.getElementById('symbolEffectsList');
+      const ul = effectsList.querySelector('ul');
+
+      descText.textContent = symbol.desc || '';
+      ul.innerHTML = '';
+      if (symbol.effects && symbol.effects.length > 0) {
+        effectsList.classList.remove('d-none');
+        symbol.effects.forEach(eff => {
+          const li = document.createElement('li');
+          li.textContent = eff;
+          ul.appendChild(li);
+        });
+      } else {
+        effectsList.classList.add('d-none');
+      }
+
+      // Toggle weekly gain container visibility
+      const dailyGainCol = document.getElementById('dailyGainCol');
+      const weeklyGainCol = document.getElementById('weeklyGainCol');
+
+      if (currentTab === 'arcane') {
+        weeklyGainCol.classList.remove('d-none');
+        dailyGainCol.className = 'col-6';
+      } else {
+        weeklyGainCol.classList.add('d-none');
+        dailyGainCol.className = 'col-12';
+      }
+
+      // Load saved settings if any exist, otherwise set default rates based on selected symbol
+      loadCalculatorData();
+      populateLevelSelects();
+      calculateProgression();
+    }
+
+    // Setup Pill listeners
+    function initTabListeners() {
+      document.getElementById('arcane-tab').addEventListener('click', () => {
+        if (currentTab === 'arcane') return;
+        currentTab = 'arcane';
+        activeSymbolIndex = 0;
+        renderSymbolSelectors();
+        updateActiveSymbol();
+      });
+
+      document.getElementById('sacred-tab').addEventListener('click', () => {
+        if (currentTab === 'sacred') return;
+        currentTab = 'sacred';
+        activeSymbolIndex = 0;
+        renderSymbolSelectors();
+        updateActiveSymbol();
+      });
+    }
+
+    // Bind input element events
+    function initFormListeners() {
+      [currLevelSelect, targetLevelSelect, currExpInput, dailyGainInput, weeklyGainInput].forEach(el => {
+        ['input', 'change'].forEach(evt => {
+          el.addEventListener(evt, () => {
+            calculateProgression();
+            saveCalculatorData();
+          });
+        });
+      });
+    }
+
+    // --- LocalStorage helpers ---
+    const STORAGE_KEY = 'carpediem_symbol_calc_v3';
+
+    function saveCalculatorData() {
+      const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const symbolKey = `${currentTab}_${activeSymbolIndex}`;
+
+      savedData[symbolKey] = {
+        currLevel: currLevelSelect.value,
+        currExp: currExpInput.value,
+        targetLevel: targetLevelSelect.value,
+        dailyGain: dailyGainInput.value,
+        weeklyGain: weeklyGainInput.value
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
+    }
+
+    function loadCalculatorData() {
+      const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const symbolKey = `${currentTab}_${activeSymbolIndex}`;
+      const data = savedData[symbolKey];
+
+      const list = currentTab === 'arcane' ? ARCANE_SYMBOLS : SACRED_SYMBOLS;
+      const symbol = list[activeSymbolIndex];
+
+      if (data) {
+        currLevelSelect.value = data.currLevel || "1";
+        currExpInput.value = data.currExp || "0";
+        targetLevelSelect.value = data.targetLevel || (currentTab === 'arcane' ? "20" : "11");
+        dailyGainInput.value = data.dailyGain !== undefined ? data.dailyGain : symbol.defaultDaily;
+        weeklyGainInput.value = data.weeklyGain !== undefined ? data.weeklyGain : symbol.defaultWeekly;
+      } else {
+        // Set defaults
+        currLevelSelect.value = "1";
+        currExpInput.value = "0";
+        targetLevelSelect.value = currentTab === 'arcane' ? "20" : "11";
+        dailyGainInput.value = symbol.defaultDaily;
+        weeklyGainInput.value = symbol.defaultWeekly;
+      }
+    }
+
+    // --- Initialization ---
+    renderSymbolSelectors();
+    populateLevelSelects();
+    updateActiveSymbol();
+    initTabListeners();
+    initFormListeners();
+
+  })();
 </script>
 {% endblock %}
