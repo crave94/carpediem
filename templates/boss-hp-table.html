@@ -69,19 +69,17 @@
     height: 110px;
     overflow: hidden;
   }
-  .boss-banner-blur {
+  .boss-banner-bg {
     position: absolute;
     inset: 0;
     background-size: cover;
     background-repeat: no-repeat;
-    filter: blur(10px) brightness(0.65);
-    mask-image: linear-gradient(to right, black 0%, black 40%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black 0%, black 40%, transparent 100%);
+    filter: brightness(0.55);
   }
   .boss-banner-grad {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, transparent, rgba(15, 23, 42, 0.7));
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%);
   }
   .boss-avatar {
     width: 64px;
@@ -563,9 +561,8 @@
             <div class="card boss-card h-full flex flex-col">
               <!-- Banner Header -->
               <div class="boss-banner">
-                <div class="boss-banner-blur" style="${bannerBgStyle}"></div>
+                <div class="boss-banner-bg" style="${bannerBgStyle}"></div>
                 <div class="boss-banner-grad"></div>
-                <div class="absolute inset-0 bg-black/10"></div>
                 
                 <div class="relative z-10 d-flex align-items-center justify-content-between p-3 h-100">
                   <div class="d-flex align-items-center gap-3">
@@ -642,17 +639,7 @@
                   }).join('')}
                 </div>
 
-                <!-- Boss Guide Link if available -->
-                ${hasGuide ? `
-                  <div class="my-3">
-                    <a href="https://maplehub.app/guide/boss-guides/${boss.name.toLowerCase().replace(/ /g, "-").replace("-the-guardian", "")}" 
-                       target="_blank" 
-                       class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2 fw-semibold" 
-                       style="border-radius: 8px; border-color: rgba(168, 85, 247, 0.45); color: #c084fc;">
-                      <i class="bi bi-journal-text"></i> Guía del Jefe
-                    </a>
-                  </div>
-                ` : ''}
+
 
                 <!-- Totals & Damage Requirements Footer -->
                 <div class="border-top border-secondary/40 pt-3 mt-auto">
