@@ -250,25 +250,28 @@
 (function() {
   'use strict';
 
+  // Static files base path
+  const STATIC_URL_BASE = "{{ url_for('static', filename='images/symbols/') }}";
+
   // Data Arrays
   const ARCANE_SYMBOLS = [
-    { name: "Road to Extinction", icon: "bi-fire", color: "#3B82F6", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Chew Chew Island", icon: "bi-egg-fried", color: "#10B981", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Lachelein", icon: "bi-clock-fill", color: "#A855F7", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Arcana", icon: "bi-tree-fill", color: "#60A5FA", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Morass", icon: "bi-droplet-half", color: "#F43F5E", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Esfera", icon: "bi-globe-americas", color: "#F59E0B", defaultDaily: 20, defaultWeekly: 45 }
+    { name: "Road to Extinction", image: "symbol-rte.png", color: "#3B82F6", defaultDaily: 20, defaultWeekly: 45 },
+    { name: "Chew Chew Island", image: "symbol-cci.png", color: "#10B981", defaultDaily: 20, defaultWeekly: 45 },
+    { name: "Lachelein", image: "symbol-lacheln.png", color: "#A855F7", defaultDaily: 20, defaultWeekly: 45 },
+    { name: "Arcana", image: "symbol-arcana.png", color: "#60A5FA", defaultDaily: 20, defaultWeekly: 45 },
+    { name: "Morass", image: "symbol-moras.png", color: "#F43F5E", defaultDaily: 20, defaultWeekly: 45 },
+    { name: "Esfera", image: "symbol-esfera.png", color: "#F59E0B", defaultDaily: 20, defaultWeekly: 45 }
   ];
 
   const SACRED_SYMBOLS = [
-    { name: "Cernium", icon: "bi-sun-fill", color: "#FCD34D", defaultDaily: 30, defaultWeekly: 0 },
-    { name: "Hotel Arcus", icon: "bi-building-fill", color: "#FB7185", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Odium", icon: "bi-book-half", color: "#34D399", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Shangri-La", icon: "bi-cloud-sun-fill", color: "#A78BFA", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Arteria", icon: "bi-airplane-engines-fill", color: "#60A5FA", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Carcion", icon: "bi-flower1", color: "#F43F5E", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Tallahart", icon: "bi-award-fill", color: "#A3E635", defaultDaily: 10, defaultWeekly: 0 },
-    { name: "Geardrak", icon: "bi-gear-fill", color: "#94A3B8", defaultDaily: 15, defaultWeekly: 0 }
+    { name: "Cernium", image: "symbol-cernium.png", color: "#FCD34D", defaultDaily: 30, defaultWeekly: 0 },
+    { name: "Hotel Arcus", image: "symbol-hotel-arcs.png", color: "#FB7185", defaultDaily: 15, defaultWeekly: 0 },
+    { name: "Odium", image: "symbol-odium.png", color: "#34D399", defaultDaily: 15, defaultWeekly: 0 },
+    { name: "Shangri-La", image: "symbol-shangri-la.png", color: "#A78BFA", defaultDaily: 15, defaultWeekly: 0 },
+    { name: "Arteria", image: "symbol-arteria.png", color: "#60A5FA", defaultDaily: 15, defaultWeekly: 0 },
+    { name: "Carcion", image: "symbol-carcion.png", color: "#F43F5E", defaultDaily: 15, defaultWeekly: 0 },
+    { name: "Tallahart", image: "symbol-tallahart.png", color: "#A3E635", defaultDaily: 10, defaultWeekly: 0 },
+    { name: "Geardrak", image: "symbol-geardrak.png", color: "#94A3B8", defaultDaily: 15, defaultWeekly: 0 }
   ];
 
   // State
@@ -456,7 +459,7 @@
       const btn = document.createElement('div');
       btn.className = 'symbol-selector-btn' + (index === activeSymbolIndex ? ' active' : '');
       btn.innerHTML = `
-        <i class="bi ${item.icon}" style="color: ${item.color}; text-shadow: 0 0 10px ${item.color}33;"></i>
+        <img src="${STATIC_URL_BASE}${item.image}" alt="${item.name}" width="32" height="32" class="mb-1" style="filter: drop-shadow(0 0 4px ${item.color}66); object-fit: contain;">
         <span class="small font-bold text-center mt-1" style="font-size: 0.75rem; line-height: 1.1;">${item.name}</span>
       `;
       btn.addEventListener('click', () => {
@@ -482,8 +485,7 @@
     resultSymbolType.textContent = currentTab === 'arcane' ? "Arcane Symbol" : "Sacred (Authentic) Symbol";
     
     // Style icon
-    resultSymbolIcon.innerHTML = `<i class="bi ${symbol.icon}"></i>`;
-    resultSymbolIcon.style.color = symbol.color;
+    resultSymbolIcon.innerHTML = `<img src="${STATIC_URL_BASE}${symbol.image}" alt="${symbol.name}" width="36" height="36" style="filter: drop-shadow(0 0 6px ${symbol.color}88); object-fit: contain;">`;
     resultSymbolIcon.style.backgroundColor = `${symbol.color}18`;
     resultSymbolIcon.style.boxShadow = `0 0 16px ${symbol.color}25`;
 
