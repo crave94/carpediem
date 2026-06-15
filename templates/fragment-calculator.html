@@ -53,54 +53,56 @@
 
     <!-- Panel Derecho: Resultados, Progreso y Tiempos -->
     <div class="col-12 col-lg-4">
-      <!-- Resumen de Progreso -->
-      <div class="card bg-dark-subtle border-secondary mb-4">
-        <div class="card-body text-center">
-          <h5 class="card-title text-start text-primary"><i class="bi bi-bar-chart-fill me-2"></i>Progreso HEXA</h5>
-          
-          <div class="mb-4">
-            <div class="d-flex justify-content-between mb-1">
-              <span class="text-muted">Fragmentos de Sol Erda</span>
-              <span id="fragmentProgressText" class="fw-bold">0 / 0</span>
+      <div class="d-none">
+        <!-- Resumen de Progreso -->
+        <div class="card bg-dark-subtle border-secondary mb-4">
+          <div class="card-body text-center">
+            <h5 class="card-title text-start text-primary"><i class="bi bi-bar-chart-fill me-2"></i>Progreso HEXA</h5>
+            
+            <div class="mb-4">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted">Fragmentos de Sol Erda</span>
+                <span id="fragmentProgressText" class="fw-bold">0 / 0</span>
+              </div>
+              <div class="progress bg-dark" style="height: 10px;">
+                <div id="fragmentProgressBar" class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
+              </div>
             </div>
-            <div class="progress bg-dark" style="height: 10px;">
-              <div id="fragmentProgressBar" class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
-            </div>
-          </div>
 
-          <div class="mb-4">
-            <div class="d-flex justify-content-between mb-1">
-              <span class="text-muted">Sol Erda Total</span>
-              <span id="erdaProgressText" class="fw-bold">0 / 0</span>
+            <div class="mb-4">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted">Sol Erda Total</span>
+                <span id="erdaProgressText" class="fw-bold">0 / 0</span>
+              </div>
+              <div class="progress bg-dark" style="height: 10px;">
+                <div id="erdaProgressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+              </div>
             </div>
-            <div class="progress bg-dark" style="height: 10px;">
-              <div id="erdaProgressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
-            </div>
-          </div>
 
-          <hr class="border-secondary">
+            <hr class="border-secondary">
 
-          <div class="row text-start">
-            <div class="col-6 mb-2">
-              <div class="text-muted small">Restante</div>
-              <h4 id="fragmentsRemaining" class="mb-0 text-warning">0</h4>
-              <span class="small text-muted">Fragmentos</span>
-            </div>
-            <div class="col-6 mb-2">
-              <div class="text-muted small">Restante</div>
-              <h4 id="erdaRemaining" class="mb-0 text-success">0.0</h4>
-              <span class="small text-muted">Sol Erda</span>
+            <div class="row text-start">
+              <div class="col-6 mb-2">
+                <div class="text-muted small">Restante</div>
+                <h4 id="fragmentsRemaining" class="mb-0 text-warning">0</h4>
+                <span class="small text-muted">Fragmentos</span>
+              </div>
+              <div class="col-6 mb-2">
+                <div class="text-muted small">Restante</div>
+                <h4 id="erdaRemaining" class="mb-0 text-success">0.0</h4>
+                <span class="small text-muted">Sol Erda</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Recomendación del Siguiente Paso (Prioridad) -->
-      <div class="card bg-dark-subtle border-secondary mb-4">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-lightbulb-fill me-2"></i>Siguiente Mejora Recomendada</h5>
-          <div id="priorityContainer" class="text-center py-3">
-            <p class="text-muted mb-0">Seleccioná un Job para ver la prioridad de mejoras.</p>
+        <!-- Recomendación del Siguiente Paso (Prioridad) -->
+        <div class="card bg-dark-subtle border-secondary mb-4">
+          <div class="card-body">
+            <h5 class="card-title text-primary"><i class="bi bi-lightbulb-fill me-2"></i>Siguiente Mejora Recomendada</h5>
+            <div id="priorityContainer" class="text-center py-3">
+              <p class="text-muted mb-0">Seleccioná un Job para ver la prioridad de mejoras.</p>
+            </div>
           </div>
         </div>
       </div>
