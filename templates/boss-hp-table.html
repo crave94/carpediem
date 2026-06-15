@@ -66,24 +66,14 @@
   /* Banner overlay for background portrait */
   .boss-banner {
     position: relative;
-    height: 110px;
+    height: 80px;
     overflow: hidden;
-  }
-  .boss-banner-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-repeat: no-repeat;
-    filter: brightness(0.55);
-  }
-  .boss-banner-grad {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   }
   .boss-avatar {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     border: 2px solid #fff;
     object-fit: cover;
@@ -538,19 +528,7 @@
 
         // Image paths (served locally)
         const portraitUrl = `/instance/imgmaple/bosses/${boss.name.toLowerCase().replace(/ /g, "-")}.webp`;
-        let bannerBgStyle = "";
-        if (bossBackgroundMap[boss.name]) {
-          const bgFilename = bossBackgroundMap[boss.name];
-          const bgUrl = `/instance/imgmaple/bosses/bigImg/${bgFilename}`;
-          // Alignment overrides matching React code
-          let position = "center -150px";
-          if (boss.name === "Black Mage" || boss.name === "The First Adversary") {
-            position = "center 0px";
-          }
-          bannerBgStyle = `background-image: url('${bgUrl}'); background-position: ${position};`;
-        } else {
-          bannerBgStyle = `background-image: url('${portraitUrl}'); background-position: center;`;
-        }
+
 
         // Guides flag
         const guideBosses = ["Kaling", "Kalos the Guardian", "Limbo", "Baldrix"];
@@ -561,20 +539,17 @@
             <div class="card boss-card h-full flex flex-col">
               <!-- Banner Header -->
               <div class="boss-banner">
-                <div class="boss-banner-bg" style="${bannerBgStyle}"></div>
-                <div class="boss-banner-grad"></div>
-                
-                <div class="relative z-10 d-flex align-items-center justify-content-between p-3 h-100">
+                <div class="d-flex align-items-center justify-content-between p-3 h-100">
                   <div class="d-flex align-items-center gap-3">
                     <img src="${portraitUrl}" alt="${boss.name}" class="boss-avatar">
                     <div>
-                      <h4 class="text-white fw-bold mb-0 text-shadow" style="font-size: 1rem; font-family: 'Outfit', sans-serif;">${boss.name}</h4>
-                      <span class="text-white-50 text-shadow" style="font-size: 0.8rem;">Nivel ${lvl}</span>
+                      <h4 class="text-white fw-bold mb-0" style="font-size: 1.1rem; font-family: 'Outfit', sans-serif;">${boss.name}</h4>
+                      <span class="text-white-50" style="font-size: 0.85rem;">Level ${lvl}</span>
                     </div>
                   </div>
                   <div class="text-end">
-                    <div class="text-white-50" style="font-size: 0.7rem;">PDR</div>
-                    <div class="text-white fw-bold fs-5 text-shadow">${pdr}</div>
+                    <div class="text-white-50" style="font-size: 0.75rem;">PDR</div>
+                    <div class="text-white fw-bold fs-5">${pdr}</div>
                   </div>
                 </div>
               </div>
