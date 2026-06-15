@@ -86,11 +86,11 @@
 
             <!-- Gain Rates -->
             <div class="row g-2">
-              <div class="col-6">
+              <div class="col-6" id="dailyGainCol">
                 <label for="dailyGain" class="form-label small text-body-secondary mb-1">Símbolos Diarios</label>
                 <input type="number" id="dailyGain" class="form-control bg-dark text-white border-secondary" value="20" min="0">
               </div>
-              <div class="col-6">
+              <div class="col-6" id="weeklyGainCol">
                 <label for="weeklyGain" class="form-label small text-body-secondary mb-1">Símbolos Semanales</label>
                 <input type="number" id="weeklyGain" class="form-control bg-dark text-white border-secondary" value="45" min="0">
               </div>
@@ -118,6 +118,17 @@
             <div>
               <h4 id="resultSymbolName" class="h5 mb-0 text-white fw-bold">Road to Extinction</h4>
               <span id="resultSymbolType" class="text-body-secondary small">Arcane Symbol</span>
+            </div>
+          </div>
+
+          <!-- Active Symbol Description & Effects -->
+          <div id="symbolDetailsContainer" class="p-3 rounded bg-black bg-opacity-20 border border-secondary" style="border-color: rgba(255, 255, 255, 0.05) !important; margin-top: -10px;">
+            <p id="symbolDescText" class="small text-body-secondary mb-0"></p>
+            <div id="symbolEffectsList" class="mt-2 d-none">
+              <span class="small text-white fw-bold d-block mb-1">Efectos Adicionales (Nivel Máximo):</span>
+              <ul class="mb-0 ps-3 text-success small" style="list-style-type: square; line-height: 1.4;">
+                <!-- Injected via JS -->
+              </ul>
             </div>
           </div>
 
@@ -255,23 +266,157 @@
 
   // Data Arrays
   const ARCANE_SYMBOLS = [
-    { name: "Road to Extinction", image: "symbol-rte.png", color: "#3B82F6", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Chew Chew Island", image: "symbol-cci.png", color: "#10B981", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Lachelein", image: "symbol-lacheln.png", color: "#A855F7", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Arcana", image: "symbol-arcana.png", color: "#60A5FA", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Morass", image: "symbol-moras.png", color: "#F43F5E", defaultDaily: 20, defaultWeekly: 45 },
-    { name: "Esfera", image: "symbol-esfera.png", color: "#F59E0B", defaultDaily: 20, defaultWeekly: 45 }
+    { 
+      name: "Road to Extinction", 
+      image: "symbol-rte.png", 
+      color: "#3B82F6", 
+      defaultDaily: 20, 
+      defaultWeekly: 45,
+      desc: "Otorga Fuerza Arcana (Arcane Force) y estadísticas principales. Se obtiene completando las misiones diarias de Vanishing Journey y el minijuego semanal Erda Spectrum.",
+      effects: []
+    },
+    { 
+      name: "Chew Chew Island", 
+      image: "symbol-cci.png", 
+      color: "#10B981", 
+      defaultDaily: 20, 
+      defaultWeekly: 45,
+      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Chew Chew Island y el minijuego semanal Hungry Muto.",
+      effects: []
+    },
+    { 
+      name: "Lachelein", 
+      image: "symbol-lacheln.png", 
+      color: "#A855F7", 
+      defaultDaily: 20, 
+      defaultWeekly: 45,
+      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene completando las misiones diarias de Lachelein y el minijuego semanal Midnight Chaser.",
+      effects: []
+    },
+    { 
+      name: "Arcana", 
+      image: "symbol-arcana.png", 
+      color: "#60A5FA", 
+      defaultDaily: 20, 
+      defaultWeekly: 45,
+      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene completando las misiones diarias de Arcana y el minijuego semanal Spirit Savior.",
+      effects: []
+    },
+    { 
+      name: "Morass", 
+      image: "symbol-moras.png", 
+      color: "#F43F5E", 
+      defaultDaily: 20, 
+      defaultWeekly: 45,
+      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Morass y el minijuego semanal Ranheim Defense.",
+      effects: []
+    },
+    { 
+      name: "Esfera", 
+      image: "symbol-esfera.png", 
+      color: "#F59E0B", 
+      defaultDaily: 20, 
+      defaultWeekly: 45,
+      desc: "Otorga Fuerza Arcana y estadísticas principales. Se obtiene mediante las misiones diarias de Esfera y el minijuego semanal Esfera Guardian.",
+      effects: []
+    }
   ];
 
   const SACRED_SYMBOLS = [
-    { name: "Cernium", image: "symbol-cernium.png", color: "#FCD34D", defaultDaily: 30, defaultWeekly: 0 },
-    { name: "Hotel Arcus", image: "symbol-hotel-arcs.png", color: "#FB7185", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Odium", image: "symbol-odium.png", color: "#34D399", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Shangri-La", image: "symbol-shangri-la.png", color: "#A78BFA", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Arteria", image: "symbol-arteria.png", color: "#60A5FA", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Carcion", image: "symbol-carcion.png", color: "#F43F5E", defaultDaily: 15, defaultWeekly: 0 },
-    { name: "Tallahart", image: "symbol-tallahart.png", color: "#A3E635", defaultDaily: 10, defaultWeekly: 0 },
-    { name: "Geardrak", image: "symbol-geardrak.png", color: "#94A3B8", defaultDaily: 15, defaultWeekly: 0 }
+    { 
+      name: "Cernium", 
+      image: "symbol-cernium.png", 
+      color: "#FCD34D", 
+      defaultDaily: 30, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada (Sacred Force) y estadísticas principales. Se obtiene completando la misión diaria en Cernium.",
+      effects: [
+        "+20% de daño al atacar a Chosen Seren",
+        "+10% de obtención de experiencia (EXP) adicional"
+      ]
+    },
+    { 
+      name: "Hotel Arcus", 
+      image: "symbol-hotel-arcs.png", 
+      color: "#FB7185", 
+      defaultDaily: 15, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Hotel Arcus.",
+      effects: [
+        "+20% de daño al atacar a Watcher Kalos",
+        "+10% de obtención de experiencia (EXP) adicional"
+      ]
+    },
+    { 
+      name: "Odium", 
+      image: "symbol-odium.png", 
+      color: "#34D399", 
+      defaultDaily: 15, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Odium.",
+      effects: [
+        "+20% de daño al atacar a First Adversary",
+        "+10% de obtención de experiencia (EXP) adicional"
+      ]
+    },
+    { 
+      name: "Shangri-La", 
+      image: "symbol-shangri-la.png", 
+      color: "#A78BFA", 
+      defaultDaily: 15, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Shangri-La.",
+      effects: [
+        "+20% de daño al atacar a Kaling",
+        "+10% de obtención de experiencia (EXP) adicional"
+      ]
+    },
+    { 
+      name: "Arteria", 
+      image: "symbol-arteria.png", 
+      color: "#60A5FA", 
+      defaultDaily: 15, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Arteria.",
+      effects: [
+        "+10% de obtención de experiencia (EXP) adicional"
+      ]
+    },
+    { 
+      name: "Carcion", 
+      image: "symbol-carcion.png", 
+      color: "#F43F5E", 
+      defaultDaily: 15, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada y estadísticas principales. Se obtiene completando la misión diaria en Carcion.",
+      effects: [
+        "+20% de daño al atacar a Limbo",
+        "+10% de obtención de experiencia (EXP) adicional"
+      ]
+    },
+    { 
+      name: "Tallahart", 
+      image: "symbol-tallahart.png", 
+      color: "#A3E635", 
+      defaultDaily: 10, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada, estadísticas principales y bonificaciones especiales. Se obtiene en la región de Tallahart.",
+      effects: [
+        "+20% de daño al atacar a Baldrix",
+        "+10% EXP, +5% Mesos Obtenidos y +5% Drop Rate base (aumenta por nivel hasta un máximo de +50% EXP, +15% Mesos, +15% Drop a Nivel 11)"
+      ]
+    },
+    { 
+      name: "Geardrak", 
+      image: "symbol-geardrak.png", 
+      color: "#94A3B8", 
+      defaultDaily: 15, 
+      defaultWeekly: 0,
+      desc: "Otorga Fuerza Sagrada, estadísticas principales y bonificaciones especiales. Se obtiene en la región de Geardrak.",
+      effects: [
+        "+10% EXP, +5% Mesos Obtenidos y +5% Drop Rate base (aumenta por nivel hasta un máximo de +50% EXP, +15% Mesos, +15% Drop a Nivel 11)"
+      ]
+    }
   ];
 
   // State
@@ -421,7 +566,7 @@
     progressBarEl.setAttribute('aria-valuenow', progressPercentage);
 
     // Time estimate
-    const weeklyRate = daily * 7 + weekly;
+    const weeklyRate = daily * 7 + (currentTab === 'arcane' ? weekly : 0);
     const dailyRate = weeklyRate / 7.0;
 
     if (totalSymbolsNeeded === 0) {
@@ -488,6 +633,36 @@
     resultSymbolIcon.innerHTML = `<img src="${STATIC_URL_BASE}${symbol.image}" alt="${symbol.name}" width="36" height="36" style="filter: drop-shadow(0 0 6px ${symbol.color}88); object-fit: contain;">`;
     resultSymbolIcon.style.backgroundColor = `${symbol.color}18`;
     resultSymbolIcon.style.boxShadow = `0 0 16px ${symbol.color}25`;
+
+    // Render description and effects
+    const descText = document.getElementById('symbolDescText');
+    const effectsList = document.getElementById('symbolEffectsList');
+    const ul = effectsList.querySelector('ul');
+
+    descText.textContent = symbol.desc || '';
+    ul.innerHTML = '';
+    if (symbol.effects && symbol.effects.length > 0) {
+      effectsList.classList.remove('d-none');
+      symbol.effects.forEach(eff => {
+        const li = document.createElement('li');
+        li.textContent = eff;
+        ul.appendChild(li);
+      });
+    } else {
+      effectsList.classList.add('d-none');
+    }
+
+    // Toggle weekly gain container visibility
+    const dailyGainCol = document.getElementById('dailyGainCol');
+    const weeklyGainCol = document.getElementById('weeklyGainCol');
+    
+    if (currentTab === 'arcane') {
+      weeklyGainCol.classList.remove('d-none');
+      dailyGainCol.className = 'col-6';
+    } else {
+      weeklyGainCol.classList.add('d-none');
+      dailyGainCol.className = 'col-12';
+    }
 
     // Load saved settings if any exist, otherwise set default rates based on selected symbol
     loadCalculatorData();
