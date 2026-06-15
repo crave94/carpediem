@@ -421,6 +421,11 @@ def boss_hp_table():
     return render_template("boss-hp-table.html")
 
 
+@app.route("/utils/symbol-calculator")
+def symbol_calculator():
+    return render_template("symbol-calculator.html")
+
+
 
 
 
