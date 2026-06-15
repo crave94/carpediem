@@ -10,7 +10,9 @@
 <section class="card character-detail mb-4" {% set job_bg=char['job']|job_img %} {% if job_bg
   %}style="background-image: url('{{ job_bg }}');" {% endif %}>
   {% if char['libb'] %}
-  <img class="character-detail__libb-mark" src="{{ url_for('serve_job_image', filename='Black_Mage.png') }}" alt="">
+  <div class="character-detail__libb-mark">
+    <img src="{{ url_for('serve_job_image', filename='Black_Mage.png') }}" alt="">
+  </div>
   {% endif %}
   <div class="character-detail__header d-flex gap-3 align-items-center flex-wrap p-3">
     <div class="character-detail__img">

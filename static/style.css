@@ -987,6 +987,12 @@ footer {
   .character-detail__progress-labels {
     justify-content: center;
   }
+  .character-detail__libb-mark {
+    height: 180px;
+    top: 0.5rem;
+    right: 0.5rem;
+    opacity: 0.85;
+  }
 }
 
 .character-detail__progress {
@@ -1127,15 +1133,20 @@ footer {
   position: absolute;
   top: 1rem;
   right: 1.5rem;
-  height: 95%;
-  max-height: 460px;
+  height: 300px;
   width: auto;
-  opacity: 0.55;
+  opacity: 0.8;
   filter:
     drop-shadow(0 0 24px rgba(56, 189, 248, 0.85)) drop-shadow(0 0 56px rgba(99, 102, 241, 0.55)) drop-shadow(0 0 12px rgba(0, 0, 0, 0.6));
   z-index: 0;
   pointer-events: none;
   user-select: none;
+}
+
+.character-detail__libb-mark img {
+  height: 100%;
+  width: auto;
+  display: block;
 }
 
 .character-detail__libb-mark::before {
