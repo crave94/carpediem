@@ -627,6 +627,71 @@
   <!-- Maple Leaf Particle System Loader -->
   <script src="{{ url_for('static', filename='maple-particles.js') }}?v=10"></script>
 
+  {% if upcoming_maintenance %}
+  <!-- Maintenance Global Popup -->
+  <div id="maintenancePopup" class="maintenance-popup-overlay" style="display: none;" aria-live="assertive">
+    <div class="maintenance-popup" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%); border: 1px solid rgba(168, 85, 247, 0.4); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 15px rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 20px; text-align: center; max-width: 400px; position: fixed; bottom: 20px; right: 20px; z-index: 9999; backdrop-filter: blur(10px); transition: opacity 0.3s ease;">
+      <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" id="closeMaintenancePopup" aria-label="Cerrar aviso"></button>
+      <div class="d-flex align-items-center justify-content-center mb-2">
+        <i class="bi bi-exclamation-triangle-fill text-warning fs-3 me-2"></i>
+        <h5 class="m-0 fw-bold" style="color: var(--ms-purple);">¡Aviso de Mantenimiento!</h5>
+      </div>
+      <p class="mb-2 small text-light">Los servidores entrarán en mantenimiento.</p>
+      <div class="fw-bold fs-5 text-warning mb-1" id="maintenanceCountdown" data-timestamp="{{ upcoming_maintenance.timestamp }}">
+        Calculando tiempo...
+      </div>
+      <a href="{{ upcoming_maintenance.url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2 w-100" style="border-color: rgba(168,85,247,0.5); color: #c084fc;">Ver Detalles</a>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+    const popup = document.getElementById('maintenancePopup');
+    const closeBtn = document.getElementById('closeMaintenancePopup');
+    const countdownEl = document.getElementById('maintenanceCountdown');
+    if (!popup || !countdownEl) return;
+
+    const maintTimestamp = parseInt(countdownEl.dataset.timestamp, 10);
+    
+    // Check if dismissed for this specific maintenance
+    const dismissKey = 'maint_dismissed_' + maintTimestamp;
+    if (sessionStorage.getItem(dismissKey) === 'true') {
+      return;
+    }
+
+    function updateCountdown() {
+      const now = Date.now();
+      const diff = maintTimestamp - now;
+      
+      if (diff > 0) {
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        countdownEl.textContent = `Faltan: ${hours}h ${mins}m ${secs}s`;
+        popup.style.display = 'block';
+      } else if (diff > -86400000) { // Within 24 hours after start
+        countdownEl.textContent = 'Mantenimiento en progreso';
+        popup.style.display = 'block';
+      } else {
+        popup.style.display = 'none';
+      }
+    }
+
+    updateCountdown();
+    const intervalId = setInterval(updateCountdown, 1000);
+
+    closeBtn.addEventListener('click', () => {
+      popup.style.opacity = '0';
+      setTimeout(() => {
+        popup.style.display = 'none';
+        sessionStorage.setItem(dismissKey, 'true');
+      }, 300);
+    });
+  })();
+  </script>
+  {% endif %}
+
   {% block scripts %}{% endblock %}
 </body>
 </html>

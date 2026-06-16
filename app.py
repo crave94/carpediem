@@ -257,6 +257,39 @@ def admin_required(view):
     return wrapper
 
 
+def get_upcoming_maintenance() -> Optional[dict]:
+    import json, re
+    from datetime import datetime, timezone, timedelta
+    cache_path = os.path.join(_DATA_DIR, "news_cache.json")
+    if not os.path.exists(cache_path):
+        return None
+    try:
+        with open(cache_path, "r", encoding="utf-8") as f:
+            news_items = json.load(f)
+            for item in news_items:
+                if item.get("category") == "maintenance":
+                    summary = item.get("summary", "")
+                    match = re.search(r'starting on\s+.*?,\s+([A-Za-z]+ \d{1,2}, \d{4} at \d{1,2}:\d{2} [AP]M P[DS]T)', summary)
+                    if match:
+                        dt_str = match.group(1)
+                        is_pdt = 'PDT' in dt_str
+                        dt_str_clean = dt_str.replace(' PDT', '').replace(' PST', '')
+                        dt = datetime.strptime(dt_str_clean, '%B %d, %Y at %I:%M %p')
+                        offset = timedelta(hours=-7) if is_pdt else timedelta(hours=-8)
+                        dt = dt.replace(tzinfo=timezone(offset))
+                        timestamp = dt.timestamp()
+                        
+                        # Only return if it's within the last 24 hours or in the future
+                        if timestamp > datetime.now().timestamp() - 86400:
+                            return {
+                                "timestamp": timestamp * 1000, # JS uses milliseconds
+                                "title": item.get("title"),
+                                "url": item.get("url")
+                            }
+    except Exception:
+        pass
+    return None
+
 @app.context_processor
 def inject_global_data():
     welcome_char = None
@@ -268,7 +301,8 @@ def inject_global_data():
         pass
     return {
         "current_user": current_user(),
-        "welcome_char": welcome_char
+        "welcome_char": welcome_char,
+        "upcoming_maintenance": get_upcoming_maintenance()
     }
 
 
