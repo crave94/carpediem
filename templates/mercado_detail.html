@@ -114,15 +114,15 @@
       try {
         const successful = document.execCommand('copy');
         if (successful) {
-          alert("¡El texto se ha copiado al portapapeles! 📋\\n\\nDiscord no permite precargar mensajes por enlace, así que hemos copiado el texto por ti.\\n\\nAl darle 'Aceptar', se abrirá el chat con el vendedor y solo tendrás que darle a Pegar (Ctrl+V).");
-          window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+          alert("¡El texto se ha copiado al portapapeles! 📋\\n\\nAbriendo la aplicación de Discord... Solo dale a Pegar (Ctrl+V) en el chat con el vendedor.");
+          window.location.href = "discord://-/users/{{ post.discord_id }}";
         } else {
           alert("No se pudo copiar automáticamente. Por favor copia este texto:\\n\\n" + text);
-          window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+          window.location.href = "discord://-/users/{{ post.discord_id }}";
         }
       } catch (err) {
         console.error('Fallback: Oops, unable to copy', err);
-        window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+        window.location.href = "discord://-/users/{{ post.discord_id }}";
       }
       
       document.body.removeChild(textArea);
@@ -135,8 +135,8 @@
     
     // Si estamos en HTTPS, usar navigator.clipboard
     navigator.clipboard.writeText(message).then(() => {
-      alert("¡El texto se ha copiado al portapapeles! 📋\\n\\nDiscord no permite precargar mensajes por enlace, así que hemos copiado el texto por ti.\\n\\nAl darle 'Aceptar', se abrirá el chat con el vendedor y solo tendrás que darle a Pegar (Ctrl+V).");
-      window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+      alert("¡El texto se ha copiado al portapapeles! 📋\\n\\nAbriendo la aplicación de Discord... Solo dale a Pegar (Ctrl+V) en el chat con el vendedor.");
+      window.location.href = "discord://-/users/{{ post.discord_id }}";
     }).catch(err => {
       console.error("Failed to copy text: ", err);
       fallbackCopyTextToClipboard(message);
