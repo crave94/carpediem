@@ -4,10 +4,12 @@
 {% block content %}
 <style>
   .market-img-zoom {
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease-in-out !important;
   }
+  a:hover .market-img-zoom,
+  .hover-lift:hover .market-img-zoom,
   .glass-card:hover .market-img-zoom {
-    transform: scale(1.1);
+    transform: scale(1.1) !important;
   }
 </style>
 <div class="row mb-4 align-items-center">
