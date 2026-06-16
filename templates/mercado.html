@@ -35,7 +35,7 @@
         style="overflow: hidden; border-radius: 12px; border: 1px solid var(--ms-purple); transition: transform 0.2s;">
         <!-- Post Image -->
         <div
-          style="height: 360px; overflow: hidden; position: relative; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+          style="height: 460px; overflow: hidden; position: relative; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
           <img src="{{ url_for('serve_market_image', filename=post.image_filename) }}" alt="{{ post.title }}"
             style="width: 100%; height: 100%; object-fit: contain;">
           <div
@@ -61,7 +61,8 @@
               <span class="small fw-semibold" style="color: var(--ms-blue-glow);">{{ post.username }}</span>
             </div>
             <div class="d-flex flex-column align-items-end gap-1">
-              <span class="badge" style="background: rgba(168, 85, 247, 0.2); color: var(--ms-purple-light); font-size: 0.7rem;">
+              <span class="badge"
+                style="background: rgba(168, 85, 247, 0.2); color: var(--ms-purple-light); font-size: 0.7rem;">
                 <i class="bi bi-chat-text me-1"></i> {{ post.offers_count }} ofertas
               </span>
               <small class="text-muted" style="font-size: 0.7rem;">{{ post.created_at[:10] }}</small>
