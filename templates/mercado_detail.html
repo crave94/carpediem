@@ -16,7 +16,7 @@
   </div>
   <div class="col-md-4 text-md-end mt-3 mt-md-0">
     {% if is_owner or is_admin %}
-    <form action="{{ url_for('delete_market_post', post_id=post.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este ítem? Esta acción no se puede deshacer.');">
+    <form action="{{ url_for('delete_market_post', encoded_id=post.id|encode_id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este ítem? Esta acción no se puede deshacer.');">
       <button type="submit" class="btn btn-lg fw-semibold py-3 px-4" style="
         background: linear-gradient(135deg, #ef4444, #b91c1c);
         border: none;
@@ -122,7 +122,7 @@
                   </span>
                   
                   {% if current_user and (current_user.id == offer.user_id or current_user.is_admin) %}
-                    <form action="{{ url_for('delete_market_offer_route', offer_id=offer.id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta oferta?');">
+                    <form action="{{ url_for('delete_market_offer_route', encoded_offer_id=offer.id|encode_id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta oferta?');">
                       <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Eliminar oferta">
                         <i class="bi bi-trash"></i>
                       </button>
@@ -142,7 +142,7 @@
       {% if current_user %}
         <hr style="border-color: rgba(168, 85, 247, 0.3);">
         <h5 class="fw-bold mb-3 mt-4">Hacer una oferta</h5>
-        <form action="{{ url_for('add_market_offer_route', post_id=post.id) }}" method="POST">
+        <form action="{{ url_for('add_market_offer_route', encoded_id=post.id|encode_id) }}" method="POST">
           <div class="row g-3">
             <div class="col-md-3">
               <label for="price_offer" class="form-label" style="color: var(--ms-purple-light);">Oferta (en Billones)</label>

@@ -21,6 +21,7 @@ from flask import (
 import requests
 from werkzeug.utils import secure_filename
 import uuid
+from itsdangerous import URLSafeSerializer, BadData
 
 import db
 
@@ -188,6 +189,12 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "maplestory-scraper-dev-key")
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB (was 64 KB)
 
+market_id_serializer = URLSafeSerializer(app.config["SECRET_KEY"], salt="market-post-id")
+
+@app.template_filter("encode_id")
+def encode_id_filter(post_id: int) -> str:
+    """Jinja2 filter: encrypts a market post ID."""
+    return market_id_serializer.dumps(post_id)
 
 @app.template_filter("job_img")
 def _job_img_filter(job: str) -> Optional[str]:
@@ -497,8 +504,13 @@ def new_market_post():
     flash("Ítem publicado exitosamente.", "success")
     return redirect(url_for("mercado"))
 
-@app.route("/mercado/<int:post_id>")
-def mercado_detail(post_id):
+@app.route("/mercado/<encoded_id>")
+def mercado_detail(encoded_id):
+    try:
+        post_id = market_id_serializer.loads(encoded_id)
+    except BadData:
+        abort(404)
+        
     post = db.get_market_post_by_id(post_id)
     if not post:
         flash("El ítem no existe o fue eliminado.", "error")
@@ -517,8 +529,13 @@ def mercado_detail(post_id):
             
     return render_template("mercado_detail.html", post=post, offers=offers, is_owner=is_owner, is_admin=is_admin)
 
-@app.route("/mercado/<int:post_id>/offer", methods=["POST"])
-def add_market_offer_route(post_id):
+@app.route("/mercado/<encoded_id>/offer", methods=["POST"])
+def add_market_offer_route(encoded_id):
+    try:
+        post_id = market_id_serializer.loads(encoded_id)
+    except BadData:
+        abort(404)
+        
     if "user_id" not in session:
         return redirect(url_for("login"))
         
@@ -532,23 +549,28 @@ def add_market_offer_route(post_id):
     
     if not price_offer or not comment:
         flash("Debes ingresar un precio y un comentario.", "error")
-        return redirect(url_for("mercado_detail", post_id=post_id))
+        return redirect(url_for("mercado_detail", encoded_id=encoded_id))
         
     try:
         price_val = float(price_offer)
         if price_val < 0:
             flash("El precio no puede ser negativo.", "error")
-            return redirect(url_for("mercado_detail", post_id=post_id))
+            return redirect(url_for("mercado_detail", encoded_id=encoded_id))
     except ValueError:
         flash("El precio debe ser un número válido.", "error")
-        return redirect(url_for("mercado_detail", post_id=post_id))
+        return redirect(url_for("mercado_detail", encoded_id=encoded_id))
         
     db.add_market_offer(post_id, session["user_id"], price_offer, comment)
     flash("Tu oferta ha sido publicada.", "success")
-    return redirect(url_for("mercado_detail", post_id=post_id))
+    return redirect(url_for("mercado_detail", encoded_id=encoded_id))
 
-@app.route("/mercado/offer/<int:offer_id>/delete", methods=["POST"])
-def delete_market_offer_route(offer_id):
+@app.route("/mercado/offer/<encoded_offer_id>/delete", methods=["POST"])
+def delete_market_offer_route(encoded_offer_id):
+    try:
+        offer_id = market_id_serializer.loads(encoded_offer_id)
+    except BadData:
+        abort(404)
+        
     if "user_id" not in session:
         return redirect(url_for("login"))
         
@@ -571,15 +593,20 @@ def delete_market_offer_route(offer_id):
                 
         if not is_authorized:
             flash("No tienes permiso para eliminar esta oferta.", "error")
-            return redirect(url_for("mercado_detail", post_id=offer["post_id"]))
+            return redirect(url_for("mercado_detail", encoded_id=market_id_serializer.dumps(offer["post_id"])))
             
         conn.execute("DELETE FROM market_offers WHERE id = ?", (offer_id,))
         
     flash("Oferta eliminada correctamente.", "success")
-    return redirect(url_for("mercado_detail", post_id=offer["post_id"]))
+    return redirect(url_for("mercado_detail", encoded_id=market_id_serializer.dumps(offer["post_id"])))
 
-@app.route("/mercado/<int:post_id>/delete", methods=["POST"])
-def delete_market_post(post_id):
+@app.route("/mercado/<encoded_id>/delete", methods=["POST"])
+def delete_market_post(encoded_id):
+    try:
+        post_id = market_id_serializer.loads(encoded_id)
+    except BadData:
+        abort(404)
+        
     if "user_id" not in session:
         return redirect(url_for("login"))
         
@@ -599,7 +626,7 @@ def delete_market_post(post_id):
             
     if not is_authorized:
         flash("No tienes permiso para eliminar este ítem.", "error")
-        return redirect(url_for("mercado_detail", post_id=post_id))
+        return redirect(url_for("mercado_detail", encoded_id=encoded_id))
         
     # Try to remove image
     try:
