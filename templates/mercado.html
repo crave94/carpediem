@@ -27,8 +27,9 @@
   {% if posts %}
     {% for post in posts %}
       <div class="col-sm-6 col-md-4 col-lg-3">
-        <div class="glass-card h-100 d-flex flex-column" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--ms-purple);">
-          <!-- Post Image -->
+        <a href="{{ url_for('mercado_detail', post_id=post.id) }}" class="text-decoration-none" style="display: block; height: 100%;">
+          <div class="glass-card h-100 d-flex flex-column hover-lift" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--ms-purple); transition: transform 0.2s;">
+            <!-- Post Image -->
           <div style="height: 200px; overflow: hidden; position: relative;">
             <img src="{{ url_for('serve_market_image', filename=post.image_filename) }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
             <div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
@@ -43,7 +44,7 @@
             <div class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center gap-2">
                 {% if post.discord_avatar %}
-                  <img src="https://cdn.discordapp.com/avatars/{{ post.user_id }}/{{ post.discord_avatar }}.png" alt="Avatar" style="width: 24px; height: 24px; border-radius: 50%;">
+                  <img src="https://cdn.discordapp.com/avatars/{{ post.discord_id }}/{{ post.discord_avatar }}.png" alt="Avatar" style="width: 24px; height: 24px; border-radius: 50%;">
                 {% else %}
                   <i class="bi bi-person-circle fs-5" style="color: var(--ms-purple-light);"></i>
                 {% endif %}
@@ -53,6 +54,7 @@
             </div>
           </div>
         </div>
+        </a>
       </div>
     {% endfor %}
   {% else %}
@@ -88,8 +90,11 @@
           </div>
           
           <div class="mb-3">
-            <label for="price" class="form-label text-light fw-semibold">Precio</label>
-            <input type="text" class="form-control" id="price" name="price" required placeholder="Ej: 50M Mesos o $10 USD" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: white;">
+            <label for="price" class="form-label text-light fw-semibold">Precio (en Billones)</label>
+            <div class="input-group">
+              <input type="number" step="0.1" min="0" class="form-control" id="price" name="price" required placeholder="Ej: 1.5" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: white;">
+              <span class="input-group-text" style="background: var(--ms-purple); color: white; border: 1px solid rgba(168, 85, 247, 0.4);">B</span>
+            </div>
           </div>
           
           <div class="mb-3">

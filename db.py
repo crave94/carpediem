@@ -471,7 +471,7 @@ def get_all_market_posts() -> list[dict]:
         rows = conn.execute(
             """
             SELECT p.id, p.title, p.description, p.price, p.image_filename, p.created_at,
-                   u.username, u.discord_avatar
+                   u.username, u.discord_avatar, p.user_id, u.discord_id
             FROM market_posts p
             JOIN users u ON p.user_id = u.id
             ORDER BY p.created_at DESC
@@ -479,12 +479,31 @@ def get_all_market_posts() -> list[dict]:
         ).fetchall()
         return [dict(r) for r in rows]
 
+def get_market_post_by_id(post_id: int) -> Optional[dict]:
+    """Return a single market post with its author's info, or None."""
+    with get_conn() as conn:
+        row = conn.execute(
+            """
+            SELECT p.id, p.title, p.description, p.price, p.image_filename, p.created_at,
+                   u.username, u.discord_avatar, p.user_id, u.discord_id
+            FROM market_posts p
+            JOIN users u ON p.user_id = u.id
+            WHERE p.id = ?
+            """,
+            (post_id,)
+        ).fetchone()
+        return dict(row) if row else None
+
+def delete_market_post(post_id: int) -> None:
+    """Delete a market post by its ID."""
+    with get_conn() as conn:
+        conn.execute("DELETE FROM market_posts WHERE id = ?", (post_id,))
 
 def get_user_by_id(user_id: int) -> Optional[dict]:
     """Return the user row for `user_id`, or None if not found."""
     with get_conn() as conn:
         row = conn.execute(
-            "SELECT id, username, password_hash, is_admin, created_at "
+            "SELECT id, username, password_hash, is_admin, created_at, discord_id "
             "FROM users WHERE id = ?",
             (user_id,),
         ).fetchone()

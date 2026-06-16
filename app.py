@@ -477,12 +477,15 @@ def new_market_post():
         
     title = request.form.get("title")
     description = request.form.get("description")
-    price = request.form.get("price")
+    price_val = request.form.get("price")
     image = request.files.get("image")
     
-    if not title or not description or not price or not image or image.filename == '':
+    if not title or not description or not price_val or not image or image.filename == '':
         flash("Todos los campos (incluyendo la imagen) son obligatorios.", "error")
         return redirect(url_for("mercado"))
+        
+    # Append 'B' if not already present
+    price = f"{price_val} B"
         
     # Save image with unique filename
     ext = os.path.splitext(image.filename)[1]
@@ -492,6 +495,58 @@ def new_market_post():
     
     db.insert_market_post(session["user_id"], title, description, price, unique_filename)
     flash("Ítem publicado exitosamente.", "success")
+    return redirect(url_for("mercado"))
+
+@app.route("/mercado/<int:post_id>")
+def mercado_detail(post_id):
+    post = db.get_market_post_by_id(post_id)
+    if not post:
+        flash("El ítem no existe o fue eliminado.", "error")
+        return redirect(url_for("mercado"))
+        
+    # Check if current user is owner or admin
+    is_owner = False
+    is_admin = False
+    if "user_id" in session:
+        if session["user_id"] == post["user_id"]:
+            is_owner = True
+        user = db.get_user_by_id(session["user_id"])
+        if user and user.get("discord_id") == "1099502242152853584":
+            is_admin = True
+            
+    return render_template("mercado_detail.html", post=post, is_owner=is_owner, is_admin=is_admin)
+
+@app.route("/mercado/<int:post_id>/delete", methods=["POST"])
+def delete_market_post(post_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+        
+    post = db.get_market_post_by_id(post_id)
+    if not post:
+        flash("El ítem no existe.", "error")
+        return redirect(url_for("mercado"))
+        
+    # Check authorization
+    is_authorized = False
+    if session["user_id"] == post["user_id"]:
+        is_authorized = True
+    else:
+        user = db.get_user_by_id(session["user_id"])
+        if user and user.get("discord_id") == "1099502242152853584":
+            is_authorized = True
+            
+    if not is_authorized:
+        flash("No tienes permiso para eliminar este ítem.", "error")
+        return redirect(url_for("mercado_detail", post_id=post_id))
+        
+    # Try to remove image
+    try:
+        os.remove(os.path.join(MARKET_IMG_DIR, post["image_filename"]))
+    except OSError:
+        pass
+        
+    db.delete_market_post(post_id)
+    flash("Ítem eliminado correctamente.", "success")
     return redirect(url_for("mercado"))
 
 @app.route("/market_image/<filename>")
