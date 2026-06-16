@@ -47,7 +47,8 @@
     border-bottom: 2px solid rgba(168, 85, 247, 0.3);
   }
 
-  .stat-table th, .stat-table td {
+  .stat-table th,
+  .stat-table td {
     padding: 14px 16px;
     vertical-align: middle;
     border-color: rgba(255, 255, 255, 0.04);
@@ -77,7 +78,7 @@
   }
 
   /* Switch styling */
-  .btn-check:checked + label.switch-label {
+  .btn-check:checked+label.switch-label {
     background: var(--ms-gradient) !important;
     color: white !important;
     box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
@@ -125,10 +126,9 @@
   <div class="row mb-4 align-items-center text-center">
     <div class="col-12 text-center">
       <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
-        <i class="bi bi-fire fs-2" style="color: var(--ms-purple) !important;"></i>
-        <h2 class="h3 mb-0 outfit text-white">Valores de Flames (Adicionales)</h2>
       </div>
-      <p class="text-body-secondary mb-0">Consulta los valores máximos y mínimos que puede otorgar cada tier de flame para equipamiento normal y de boss.</p>
+      <p class="text-body-secondary mb-0">Consulta los valores máximos y mínimos que puede otorgar cada tier de flame
+        para equipamiento normal y de boss.</p>
     </div>
   </div>
 
@@ -138,19 +138,22 @@
       <!-- Equip Level -->
       <div class="col-md-3">
         <label class="form-label text-muted small fw-bold mb-2">Equip Level</label>
-        <input type="number" id="equipLevel" class="form-control bg-dark text-white border-secondary" value="200" min="0" max="250">
+        <input type="number" id="equipLevel" class="form-control bg-dark text-white border-secondary" value="200"
+          min="0" max="250">
       </div>
-      
+
       <!-- Weapon Base WA/MA -->
       <div class="col-md-3">
         <label class="form-label text-muted small fw-bold mb-2">Weapon WA / MA</label>
-        <input type="number" id="weaponBase" class="form-control bg-dark text-white border-secondary" value="257" min="0">
+        <input type="number" id="weaponBase" class="form-control bg-dark text-white border-secondary" value="257"
+          min="0">
       </div>
 
       <!-- Equip Type -->
       <div class="col-md-6 d-flex flex-column align-items-md-end">
         <label class="form-label text-muted small fw-bold mb-2">Equip Type</label>
-        <div class="btn-group p-1" role="group" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50px;">
+        <div class="btn-group p-1" role="group"
+          style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50px;">
           <input type="radio" class="btn-check" name="equipType" id="equipSpecial" checked autocomplete="off">
           <label class="btn switch-label" for="equipSpecial">
             <i class="bi bi-gem me-2"></i>Special
@@ -169,7 +172,8 @@
     <div class="col-md-4">
       <div class="flame-card p-3 d-flex align-items-center gap-3" data-flame="crimson">
         <div class="p-2 rounded-3" style="background: rgba(239, 68, 68, 0.1);">
-          <img src="{{ url_for('static', filename='images/flames/flame-crimson.png') }}" alt="Crimson" style="width: 36px; height: auto;">
+          <img src="{{ url_for('static', filename='images/flames/flame-crimson.png') }}" alt="Crimson"
+            style="width: 36px; height: auto;">
         </div>
         <div>
           <h6 class="mb-0 text-white fw-bold">Poderosa (Crimson)</h6>
@@ -180,7 +184,8 @@
     <div class="col-md-4">
       <div class="flame-card p-3 d-flex align-items-center gap-3" data-flame="eternal">
         <div class="p-2 rounded-3" style="background: rgba(168, 85, 247, 0.1);">
-          <img src="{{ url_for('static', filename='images/flames/flame-rainbow.png') }}" alt="Eternal" style="width: 36px; height: auto;">
+          <img src="{{ url_for('static', filename='images/flames/flame-rainbow.png') }}" alt="Eternal"
+            style="width: 36px; height: auto;">
         </div>
         <div>
           <h6 class="mb-0 text-white fw-bold">Eterna (Rainbow)</h6>
@@ -191,7 +196,8 @@
     <div class="col-md-4">
       <div class="flame-card p-3 d-flex align-items-center gap-3" data-flame="black">
         <div class="p-2 rounded-3" style="background: rgba(59, 130, 246, 0.1);">
-          <img src="{{ url_for('static', filename='images/flames/flame-black.png') }}" alt="Black" style="width: 36px; height: auto;">
+          <img src="{{ url_for('static', filename='images/flames/flame-black.png') }}" alt="Black"
+            style="width: 36px; height: auto;">
         </div>
         <div>
           <h6 class="mb-0 text-white fw-bold">Negra / Karma (Black)</h6>
@@ -203,19 +209,19 @@
 
   <!-- Stats Tables Section -->
   <div class="d-flex flex-column gap-5">
-    
+
     <!-- Category: Weapon-only Flame Stats -->
     <div class="stat-table-card">
       <div class="stat-table-header p-4">
         <h4 class="mb-0 text-white fw-bold d-flex align-items-center gap-2">
-          <i class="bi bi-shield-fill text-danger"></i> Solo Armas
+          <i class="text-danger"></i> Armas
         </h4>
       </div>
       <div class="table-responsive">
         <table class="table table-dark mb-0 stat-table text-center align-middle">
           <thead>
             <tr>
-              <th class="text-start" style="width: 250px;">Estadística</th>
+              <th class="text-start" style="width: 250px;">Stat</th>
               <th data-tier="1">Tier 1</th>
               <th data-tier="2">Tier 2</th>
               <th data-tier="3">Tier 3</th>
@@ -236,14 +242,14 @@
     <div class="stat-table-card">
       <div class="stat-table-header p-4">
         <h4 class="mb-0 text-white fw-bold d-flex align-items-center gap-2">
-          <i class="bi bi-grid-fill text-primary"></i> Estadísticas Comunes
+          <i class=" text-primary"></i> Estadísticas Comunes
         </h4>
       </div>
       <div class="table-responsive">
         <table class="table table-dark mb-0 stat-table text-center align-middle">
           <thead>
             <tr>
-              <th class="text-start" style="width: 250px;">Estadística</th>
+              <th class="text-start" style="width: 250px;">Stat</th>
               <th data-tier="1">Tier 1</th>
               <th data-tier="2">Tier 2</th>
               <th data-tier="3">Tier 3</th>
@@ -264,14 +270,14 @@
     <div class="stat-table-card">
       <div class="stat-table-header p-4">
         <h4 class="mb-0 text-white fw-bold d-flex align-items-center gap-2">
-          <i class="bi bi-suit-spade-fill text-success"></i> Solo Armaduras / Accesorios
+          <i class=" text-success"></i> Armaduras / Accesorios
         </h4>
       </div>
       <div class="table-responsive">
         <table class="table table-dark mb-0 stat-table text-center align-middle">
           <thead>
             <tr>
-              <th class="text-start" style="width: 250px;">Estadística</th>
+              <th class="text-start" style="width: 250px;">Stat</th>
               <th data-tier="1">Tier 1</th>
               <th data-tier="2">Tier 2</th>
               <th data-tier="3">Tier 3</th>
@@ -303,11 +309,11 @@
     const mixedStats = (t) => ((Math.floor(level / 40) + 1) * t).toString();
     const hpMp = (t) => ((Math.floor(level / 10) * 30) * t).toString();
     const defense = (t) => ((Math.floor(level / 20) + 1) * t).toString();
-    
+
     // Multipliers derived exactly from the standard MapleStory formula
     // Boss (Special) has 5 visible tiers (T3 to T7)
     const bossMultipliers = [0.03, 0.044, 0.0605, 0.08, 0.1025];
-    
+
     // Normal equipment has 5 visible tiers (T1 to T5)
     // Common multiplier distribution: [0.01, 0.015, 0.022, 0.032, 0.043]
     const normalMultipliers = [0.01, 0.015, 0.022, 0.032, 0.043];
@@ -339,9 +345,9 @@
       // 2. Fallback to math formula
       const levelFactor = Math.floor(level / 40) + 1;
       const multipliers = mode === 'special' ? bossMultipliers : normalMultipliers;
-      
+
       if (tierIndex < 0 || tierIndex >= multipliers.length) return "-";
-      
+
       const m = multipliers[tierIndex];
       return Math.ceil(baseWa * m * levelFactor).toString();
     };
@@ -406,7 +412,7 @@
     tbody.innerHTML = "";
     statList.forEach(stat => {
       const tr = document.createElement('tr');
-      
+
       // Stat label cell
       const tdLabel = document.createElement('td');
       tdLabel.className = "text-start stat-label-cell";
@@ -417,7 +423,7 @@
       stat.values.forEach((val, idx) => {
         const tdVal = document.createElement('td');
         tdVal.dataset.tier = (idx + 1).toString();
-        
+
         if (val === "-") {
           tdVal.innerHTML = `<span class="tier-val tier-null">-</span>`;
         } else {
@@ -435,7 +441,7 @@
     const level = parseInt(equipLevelInput.value) || 200;
     const baseWa = parseInt(weaponBaseInput.value) || 257;
     const flameData = generateFlameData(level, baseWa);
-    
+
     // Update active configurations descriptions on cards
     if (mode === "special") {
       crimsonDesc.textContent = "Special: Tiers 3 ~ 6";
@@ -498,7 +504,7 @@
   [equipLevelInput, weaponBaseInput].forEach(el => {
     el.addEventListener('input', updateTables);
   });
-  
+
   equipSpecial.addEventListener('change', () => {
     updateTables();
     clearHighlights();
