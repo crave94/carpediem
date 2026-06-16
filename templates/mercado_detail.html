@@ -97,15 +97,49 @@
     const postUrl = window.location.href;
     const message = `Hola, me interesa ${postTitle} ${postUrl}`;
     
-    // Copy to clipboard
+    // Función de fallback para HTTP (ya que navigator.clipboard requiere HTTPS)
+    const fallbackCopyTextToClipboard = (text) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // Evitar scrolling
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          alert("¡El texto se ha copiado al portapapeles! 📋\\n\\nDiscord no permite precargar mensajes por enlace, así que hemos copiado el texto por ti.\\n\\nAl darle 'Aceptar', se abrirá el chat con el vendedor y solo tendrás que darle a Pegar (Ctrl+V).");
+          window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+        } else {
+          alert("No se pudo copiar automáticamente. Por favor copia este texto:\\n\\n" + text);
+          window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+        }
+      } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+        window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+      }
+      
+      document.body.removeChild(textArea);
+    };
+
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(message);
+      return;
+    }
+    
+    // Si estamos en HTTPS, usar navigator.clipboard
     navigator.clipboard.writeText(message).then(() => {
       alert("¡El texto se ha copiado al portapapeles! 📋\\n\\nDiscord no permite precargar mensajes por enlace, así que hemos copiado el texto por ti.\\n\\nAl darle 'Aceptar', se abrirá el chat con el vendedor y solo tendrás que darle a Pegar (Ctrl+V).");
-      // Redirect to Discord user profile
       window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
     }).catch(err => {
       console.error("Failed to copy text: ", err);
-      // Fallback
-      window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
+      fallbackCopyTextToClipboard(message);
     });
   }
 </script>
