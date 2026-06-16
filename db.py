@@ -89,6 +89,17 @@ CREATE TABLE IF NOT EXISTS market_posts (
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS market_offers (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id         INTEGER NOT NULL,
+    user_id         INTEGER NOT NULL,
+    price_offer     TEXT    NOT NULL,
+    comment         TEXT    NOT NULL,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES market_posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 
@@ -587,4 +598,37 @@ def get_all_weekly_exp_gains() -> dict[int, int]:
         else:
             gains[cid] = 0
     return gains
+
+
+def add_market_offer(post_id: int, user_id: int, price_offer: str, comment: str) -> None:
+    """Add a new offer/comment to a market post."""
+    with get_conn() as conn:
+        conn.execute(
+            "INSERT INTO market_offers (post_id, user_id, price_offer, comment) "
+            "VALUES (?, ?, ?, ?)",
+            (post_id, user_id, price_offer, comment),
+        )
+
+
+def get_market_offers(post_id: int) -> list[sqlite3.Row]:
+    """Get all offers for a specific market post, ordered by oldest first."""
+    with get_conn() as conn:
+        rows = conn.execute(
+            """
+            SELECT o.id, o.post_id, o.user_id, o.price_offer, o.comment, o.created_at,
+                   u.username, u.discord_id, u.discord_avatar
+            FROM market_offers o
+            JOIN users u ON o.user_id = u.id
+            WHERE o.post_id = ?
+            ORDER BY o.created_at ASC
+            """,
+            (post_id,),
+        ).fetchall()
+        return list(rows)
+
+
+def delete_market_offer(offer_id: int) -> None:
+    """Delete a market offer by ID."""
+    with get_conn() as conn:
+        conn.execute("DELETE FROM market_offers WHERE id = ?", (offer_id,))
 

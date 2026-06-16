@@ -513,8 +513,70 @@ def mercado_detail(post_id):
         user = db.get_user_by_id(session["user_id"])
         if user and user.get("discord_id") == "1099502242152853584":
             is_admin = True
+    offers = db.get_market_offers(post_id)
             
-    return render_template("mercado_detail.html", post=post, is_owner=is_owner, is_admin=is_admin)
+    return render_template("mercado_detail.html", post=post, offers=offers, is_owner=is_owner, is_admin=is_admin)
+
+@app.route("/mercado/<int:post_id>/offer", methods=["POST"])
+def add_market_offer_route(post_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+        
+    post = db.get_market_post_by_id(post_id)
+    if not post:
+        flash("El ítem no existe.", "error")
+        return redirect(url_for("mercado"))
+        
+    price_offer = request.form.get("price_offer")
+    comment = request.form.get("comment")
+    
+    if not price_offer or not comment:
+        flash("Debes ingresar un precio y un comentario.", "error")
+        return redirect(url_for("mercado_detail", post_id=post_id))
+        
+    try:
+        price_val = float(price_offer)
+        if price_val < 0:
+            flash("El precio no puede ser negativo.", "error")
+            return redirect(url_for("mercado_detail", post_id=post_id))
+    except ValueError:
+        flash("El precio debe ser un número válido.", "error")
+        return redirect(url_for("mercado_detail", post_id=post_id))
+        
+    db.add_market_offer(post_id, session["user_id"], price_offer, comment)
+    flash("Tu oferta ha sido publicada.", "success")
+    return redirect(url_for("mercado_detail", post_id=post_id))
+
+@app.route("/mercado/offer/<int:offer_id>/delete", methods=["POST"])
+def delete_market_offer_route(offer_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+        
+    # We need to find the offer to know its post_id and user_id. 
+    # Since we don't have a get_offer_by_id, we can just get all offers for all posts? No, let's query it or add a helper function. 
+    # Let's add db.execute directly here since it's simple, or we can just run a DELETE with user_id check.
+    with db.get_conn() as conn:
+        offer = conn.execute("SELECT post_id, user_id FROM market_offers WHERE id = ?", (offer_id,)).fetchone()
+        if not offer:
+            flash("La oferta no existe.", "error")
+            return redirect(url_for("mercado"))
+            
+        is_authorized = False
+        if session["user_id"] == offer["user_id"]:
+            is_authorized = True
+        else:
+            user = db.get_user_by_id(session["user_id"])
+            if user and user.get("discord_id") == "1099502242152853584":
+                is_authorized = True
+                
+        if not is_authorized:
+            flash("No tienes permiso para eliminar esta oferta.", "error")
+            return redirect(url_for("mercado_detail", post_id=offer["post_id"]))
+            
+        conn.execute("DELETE FROM market_offers WHERE id = ?", (offer_id,))
+        
+    flash("Oferta eliminada correctamente.", "success")
+    return redirect(url_for("mercado_detail", post_id=offer["post_id"]))
 
 @app.route("/mercado/<int:post_id>/delete", methods=["POST"])
 def delete_market_post(post_id):

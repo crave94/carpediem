@@ -88,6 +88,86 @@
     </div>
   </div>
 </div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="glass-card p-4">
+      <h4 class="fw-bold mb-4" style="color: var(--ms-blue-glow);"><i class="bi bi-chat-left-text me-2"></i>Ofertas y Comentarios</h4>
+      
+      <!-- List of offers -->
+      {% if offers %}
+        <div class="d-flex flex-column gap-3 mb-4">
+          {% for offer in offers %}
+            <div class="p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(168, 85, 247, 0.2);">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  {% if offer.discord_avatar %}
+                    <img src="https://cdn.discordapp.com/avatars/{{ offer.discord_id }}/{{ offer.discord_avatar }}.png" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;">
+                  {% else %}
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--ms-purple); display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">
+                      {{ offer.username[0]|upper }}
+                    </div>
+                  {% endif %}
+                  <div>
+                    <h6 class="mb-0 fw-bold" style="color: var(--text);">{{ offer.username }}</h6>
+                    <small class="text-muted">{{ offer.created_at.split()[0] }}</small>
+                  </div>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                  <span class="badge" style="background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue)); font-size: 1rem;">
+                    {{ offer.price_offer | format_short }} B
+                  </span>
+                  
+                  {% if current_user and (current_user.id == offer.user_id or current_user.is_admin) %}
+                    <form action="{{ url_for('delete_market_offer_route', offer_id=offer.id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta oferta?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Eliminar oferta">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              </div>
+              <p class="mb-0 mt-2" style="color: var(--text-muted); white-space: pre-wrap;">{{ offer.comment }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted fst-italic mb-4">No hay ofertas aún. ¡Sé el primero en ofertar!</p>
+      {% endif %}
+      
+      <!-- New Offer Form -->
+      {% if current_user %}
+        <hr style="border-color: rgba(168, 85, 247, 0.3);">
+        <h5 class="fw-bold mb-3 mt-4">Hacer una oferta</h5>
+        <form action="{{ url_for('add_market_offer_route', post_id=post.id) }}" method="POST">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label for="price_offer" class="form-label" style="color: var(--ms-purple-light);">Oferta (en Billones)</label>
+              <div class="input-group">
+                <input type="number" step="0.1" min="0" class="form-control" id="price_offer" name="price_offer" required placeholder="Ej: 1.5" style="background: var(--bg); border-color: rgba(168, 85, 247, 0.4); color: white;">
+                <span class="input-group-text fw-bold" style="background: rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.4); color: var(--ms-purple-light);">B</span>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <label for="comment" class="form-label" style="color: var(--ms-purple-light);">Comentario</label>
+              <input type="text" class="form-control" id="comment" name="comment" required placeholder="Ej: Te lo compro ahora mismo, manda DM" style="background: var(--bg); border-color: rgba(168, 85, 247, 0.4); color: white;">
+            </div>
+          </div>
+          <div class="text-end mt-3">
+            <button type="submit" class="btn px-4 py-2 fw-semibold" style="background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue)); border: none; border-radius: 8px; color: white;">
+              <i class="bi bi-send me-2"></i>Enviar Oferta
+            </button>
+          </div>
+        </form>
+      {% else %}
+        <div class="alert alert-secondary mt-3 mb-0 text-center" style="background: rgba(15, 23, 42, 0.8); border-color: var(--ms-purple);">
+          <i class="bi bi-info-circle me-2"></i><a href="{{ url_for('login') }}" class="fw-bold" style="color: var(--ms-purple-light);">Inicia sesión</a> para hacer una oferta.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
