@@ -543,19 +543,12 @@
       const closeBtn = document.getElementById('closeWelcomePopup');
       if (!popup || !closeBtn) return;
 
-      // Check if user dismissed it in this session
-      if (sessionStorage.getItem('welcomeDismissed') === 'true') {
-        popup.style.display = 'none';
-        return;
-      }
-
       closeBtn.addEventListener('click', () => {
         popup.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
         popup.style.opacity = '0';
         popup.style.transform = 'translateY(10px) scale(0.9)';
         setTimeout(() => {
           popup.style.display = 'none';
-          sessionStorage.setItem('welcomeDismissed', 'true');
         }, 300);
       });
 
@@ -661,12 +654,6 @@
 
     const maintTimestamp = parseInt(countdownEl.dataset.timestamp, 10);
     
-    // Check if dismissed for this specific maintenance
-    const dismissKey = 'maint_dismissed_' + maintTimestamp;
-    if (sessionStorage.getItem(dismissKey) === 'true') {
-      return;
-    }
-
     function updateCountdown() {
       const now = Date.now();
       const diff = maintTimestamp - now;
@@ -690,7 +677,7 @@
 
     // Adjust position if welcome popup is present
     const welcomePopup = document.querySelector('.welcome-popup-container');
-    if (welcomePopup && sessionStorage.getItem('welcomeDismissed') !== 'true') {
+    if (welcomePopup) {
       document.querySelector('.maintenance-popup').style.bottom = '120px';
     }
 
@@ -698,7 +685,6 @@
       popup.style.opacity = '0';
       setTimeout(() => {
         popup.style.display = 'none';
-        sessionStorage.setItem(dismissKey, 'true');
       }, 300);
     });
 
