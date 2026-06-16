@@ -2,19 +2,110 @@
 {% block title %}Mercado - Carpediem{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-  <div class="col">
-    <div class="glass-card text-center p-4">
-      <h2 class="fw-bold mb-3" style="color: var(--ms-blue-glow);"><i class="bi bi-shop me-2"></i>MERCADO</h2>
+<div class="row mb-4 align-items-center">
+  <div class="col-md-8">
+    <div class="glass-card p-4">
+      <h2 class="fw-bold mb-2" style="color: var(--ms-blue-glow);"><i class="bi bi-shop me-2"></i>MERCADO</h2>
       <p class="fs-5 mb-0">Estás logeado como <strong style="color: var(--ms-purple);">{{ session['username'] }}</strong></p>
     </div>
   </div>
+  <div class="col-md-4 text-md-end mt-3 mt-md-0">
+    <button type="button" class="btn btn-lg fw-semibold py-3 px-4" data-bs-toggle="modal" data-bs-target="#newPostModal" style="
+      background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+      transition: all 0.2s ease;
+    ">
+      <i class="bi bi-plus-circle me-2"></i>Publicar Ítem
+    </button>
+  </div>
 </div>
 
-<div class="row">
-  <div class="col">
-    <div class="glass-card p-4 text-center" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
-      <p class="text-muted fs-5 mb-0"><i class="bi bi-tools me-2"></i>El mercado está en construcción. ¡Pronto habrá novedades!</p>
+<div class="row g-4">
+  {% if posts %}
+    {% for post in posts %}
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="glass-card h-100 d-flex flex-column" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--ms-purple);">
+          <!-- Post Image -->
+          <div style="height: 200px; overflow: hidden; position: relative;">
+            <img src="{{ url_for('serve_market_image', filename=post.image_filename) }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+              <span class="badge fw-bold fs-6" style="background-color: var(--ms-purple);">{{ post.price }}</span>
+            </div>
+          </div>
+          <!-- Post Content -->
+          <div class="p-3 d-flex flex-column flex-grow-1">
+            <h5 class="fw-bold mb-2" style="color: var(--text);">{{ post.title }}</h5>
+            <p class="small text-muted flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ post.description }}</p>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center gap-2">
+                {% if post.discord_avatar %}
+                  <img src="https://cdn.discordapp.com/avatars/{{ post.user_id }}/{{ post.discord_avatar }}.png" alt="Avatar" style="width: 24px; height: 24px; border-radius: 50%;">
+                {% else %}
+                  <i class="bi bi-person-circle fs-5" style="color: var(--ms-purple-light);"></i>
+                {% endif %}
+                <span class="small fw-semibold" style="color: var(--ms-blue-glow);">{{ post.username }}</span>
+              </div>
+              <small class="text-muted" style="font-size: 0.75rem;">{{ post.created_at[:10] }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="col-12">
+      <div class="glass-card p-5 text-center">
+        <i class="bi bi-inbox-fill mb-3" style="font-size: 3rem; color: var(--ms-purple-light); opacity: 0.5;"></i>
+        <p class="text-muted fs-5 mb-0">Aún no hay ítems publicados en el mercado.</p>
+        <p class="text-muted">¡Sé el primero en publicar uno!</p>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Modal for New Post -->
+<div class="modal fade" id="newPostModal" tabindex="-1" aria-labelledby="newPostModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: linear-gradient(145deg, #1e1e2e 0%, #161622 100%); border: 1px solid var(--ms-purple); border-radius: 16px;">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="newPostModalLabel" style="color: var(--ms-blue-glow);">
+          <i class="bi bi-plus-circle me-2"></i>Nuevo Ítem
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('new_market_post') }}" enctype="multipart/form-data">
+          
+          <div class="mb-3">
+            <label for="title" class="form-label text-light fw-semibold">Título</label>
+            <input type="text" class="form-control" id="title" name="title" required placeholder="Ej: Vendo Arco Lv. 150" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: white;">
+          </div>
+          
+          <div class="mb-3">
+            <label for="price" class="form-label text-light fw-semibold">Precio</label>
+            <input type="text" class="form-control" id="price" name="price" required placeholder="Ej: 50M Mesos o $10 USD" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: white;">
+          </div>
+          
+          <div class="mb-3">
+            <label for="image" class="form-label text-light fw-semibold">Imagen del Ítem (Obligatoria)</label>
+            <input class="form-control" type="file" id="image" name="image" required accept="image/*" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: white;">
+          </div>
+          
+          <div class="mb-4">
+            <label for="description" class="form-label text-light fw-semibold">Descripción</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required placeholder="Detalles del ítem, stats, cómo contactarte, etc." style="background: rgba(0,0,0,0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: white;"></textarea>
+          </div>
+          
+          <div class="d-grid">
+            <button type="submit" class="btn btn-lg fw-semibold" style="background: linear-gradient(135deg, var(--ms-purple), var(--ms-blue)); border: none; color: white;">
+              Publicar ahora
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>

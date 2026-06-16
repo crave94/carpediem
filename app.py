@@ -19,6 +19,8 @@ from flask import (
     flash, abort, send_from_directory, session, jsonify,
 )
 import requests
+from werkzeug.utils import secure_filename
+import uuid
 
 import db
 
@@ -43,10 +45,12 @@ else:
     _DATA_DIR = os.path.join(BASE_DIR, "instance")
 
 IMAGE_DIR = os.path.join(_DATA_DIR, "images")
+MARKET_IMG_DIR = os.path.join(_DATA_DIR, "market_images")
 JOB_IMG_DIR = os.path.join(BASE_DIR, "instance", "imgmaple")
 
 # Ensure directories exist
 os.makedirs(IMAGE_DIR, exist_ok=True)
+os.makedirs(MARKET_IMG_DIR, exist_ok=True)
 os.makedirs(JOB_IMG_DIR, exist_ok=True)
 
 DEFAULT_ADMIN_USERNAME = "admin"
@@ -463,7 +467,36 @@ def mercado():
     if "user_id" not in session:
         flash("Debes iniciar sesión para acceder al Mercado.", "error")
         return redirect(url_for("login"))
-    return render_template("mercado.html")
+    posts = db.get_all_market_posts()
+    return render_template("mercado.html", posts=posts)
+
+@app.route("/mercado/new", methods=["POST"])
+def new_market_post():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+        
+    title = request.form.get("title")
+    description = request.form.get("description")
+    price = request.form.get("price")
+    image = request.files.get("image")
+    
+    if not title or not description or not price or not image or image.filename == '':
+        flash("Todos los campos (incluyendo la imagen) son obligatorios.", "error")
+        return redirect(url_for("mercado"))
+        
+    # Save image with unique filename
+    ext = os.path.splitext(image.filename)[1]
+    unique_filename = f"{uuid.uuid4().hex}{ext}"
+    image_path = os.path.join(MARKET_IMG_DIR, unique_filename)
+    image.save(image_path)
+    
+    db.insert_market_post(session["user_id"], title, description, price, unique_filename)
+    flash("Ítem publicado exitosamente.", "success")
+    return redirect(url_for("mercado"))
+
+@app.route("/market_image/<filename>")
+def serve_market_image(filename):
+    return send_from_directory(MARKET_IMG_DIR, filename)
 
 
 @app.route("/directory")

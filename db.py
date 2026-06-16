@@ -78,6 +78,17 @@ CREATE TABLE IF NOT EXISTS users (
     discord_avatar  TEXT,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS market_posts (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id         INTEGER NOT NULL,
+    title           TEXT    NOT NULL,
+    description     TEXT    NOT NULL,
+    price           TEXT    NOT NULL,
+    image_filename  TEXT    NOT NULL,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 
@@ -134,6 +145,22 @@ def _migrate(conn: sqlite3.Connection) -> None:
         conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_discord_id ON users(discord_id)")
     if "discord_avatar" not in user_existing:
         conn.execute("ALTER TABLE users ADD COLUMN discord_avatar TEXT")
+        
+    try:
+        conn.execute("SELECT id FROM market_posts LIMIT 1")
+    except sqlite3.OperationalError:
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS market_posts (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id         INTEGER NOT NULL,
+            title           TEXT    NOT NULL,
+            description     TEXT    NOT NULL,
+            price           TEXT    NOT NULL,
+            image_filename  TEXT    NOT NULL,
+            created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+        """)
 
 
 def upsert_character(
@@ -422,7 +449,35 @@ def get_user_by_username(username: str) -> Optional[dict]:
             "FROM users WHERE username = ?",
             (username,),
         ).fetchone()
-    return dict(row) if row else None
+        return dict(row) if row else None
+
+
+def insert_market_post(user_id: int, title: str, description: str, price: str, image_filename: str) -> int:
+    """Insert a new market post and return its ID."""
+    with get_conn() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO market_posts (user_id, title, description, price, image_filename)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (user_id, title, description, price, image_filename)
+        )
+        return cur.lastrowid
+
+
+def get_all_market_posts() -> list[dict]:
+    """Return all market posts joined with their author's info, ordered by newest first."""
+    with get_conn() as conn:
+        rows = conn.execute(
+            """
+            SELECT p.id, p.title, p.description, p.price, p.image_filename, p.created_at,
+                   u.username, u.discord_avatar
+            FROM market_posts p
+            JOIN users u ON p.user_id = u.id
+            ORDER BY p.created_at DESC
+            """
+        ).fetchall()
+        return [dict(r) for r in rows]
 
 
 def get_user_by_id(user_id: int) -> Optional[dict]:
