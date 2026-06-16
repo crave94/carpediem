@@ -93,17 +93,19 @@
 {% block scripts %}
 <script>
   function offerMe() {
-    const message = "Hola me interesa {{ post.title | replace('\"', '\\\"') | safe }}";
+    const postTitle = "{{ post.title | replace('\"', '\\\"') | safe }}";
+    const postUrl = window.location.href;
+    const message = `Hola, me interesa ${postTitle} ${postUrl}`;
     
     // Copy to clipboard
     navigator.clipboard.writeText(message).then(() => {
-      alert("¡Mensaje copiado al portapapeles! Ahora se abrirá el perfil de Discord para que puedas enviarlo.");
+      alert("¡El texto se ha copiado al portapapeles! 📋\\n\\nDiscord no permite precargar mensajes por enlace, así que hemos copiado el texto por ti.\\n\\nAl darle 'Aceptar', se abrirá el chat con el vendedor y solo tendrás que darle a Pegar (Ctrl+V).");
       // Redirect to Discord user profile
-      window.open("https://discordapp.com/users/{{ post.discord_id }}", "_blank");
+      window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
     }).catch(err => {
       console.error("Failed to copy text: ", err);
       // Fallback
-      window.open("https://discordapp.com/users/{{ post.discord_id }}", "_blank");
+      window.open("https://discord.com/users/{{ post.discord_id }}", "_blank");
     });
   }
 </script>
