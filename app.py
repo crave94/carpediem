@@ -502,6 +502,13 @@ DEFAULT_RANKING_URL = (
 )
 
 
+@app.route('/favicon.ico')
+def favicon():
+    import os
+    from flask import send_from_directory
+    return send_from_directory(os.path.join(app.root_path, 'static', 'images'),
+                               'mushroom_favicon.png', mimetype='image/png')
+
 def _build_url_for(name: str) -> str:
     """Build the fixed ranking URL, URL-encoding the character name."""
     from requests.utils import quote
