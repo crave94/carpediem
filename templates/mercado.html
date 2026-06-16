@@ -60,7 +60,12 @@
               {% endif %}
               <span class="small fw-semibold" style="color: var(--ms-blue-glow);">{{ post.username }}</span>
             </div>
-            <small class="text-muted" style="font-size: 0.75rem;">{{ post.created_at[:10] }}</small>
+            <div class="d-flex flex-column align-items-end gap-1">
+              <span class="badge" style="background: rgba(168, 85, 247, 0.2); color: var(--ms-purple-light); font-size: 0.7rem;">
+                <i class="bi bi-chat-text me-1"></i> {{ post.offers_count }} ofertas
+              </span>
+              <small class="text-muted" style="font-size: 0.7rem;">{{ post.created_at[:10] }}</small>
+            </div>
           </div>
         </div>
       </div>

@@ -482,7 +482,8 @@ def get_all_market_posts() -> list[dict]:
         rows = conn.execute(
             """
             SELECT p.id, p.title, p.description, p.price, p.image_filename, p.created_at,
-                   u.username, u.discord_avatar, p.user_id, u.discord_id
+                   u.username, u.discord_avatar, p.user_id, u.discord_id,
+                   (SELECT COUNT(*) FROM market_offers o WHERE o.post_id = p.id) as offers_count
             FROM market_posts p
             JOIN users u ON p.user_id = u.id
             ORDER BY p.created_at DESC
