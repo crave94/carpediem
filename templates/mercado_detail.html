@@ -71,10 +71,40 @@
         </div>
       </div>
       
+      <button onclick="offerMe()" class="btn btn-lg fw-bold w-100 py-3 mb-3" style="
+        background: linear-gradient(135deg, #5865F2, #4752C4);
+        border: none;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+        transition: all 0.2s;
+      ">
+        <i class="bi bi-discord me-2"></i>Offer me
+      </button>
+
       <a href="{{ url_for('mercado') }}" class="btn btn-outline-light w-100 py-2">
         <i class="bi bi-arrow-left me-2"></i>Volver al Mercado
       </a>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function offerMe() {
+    const message = "Hola me interesa {{ post.title | replace('\"', '\\\"') | safe }}";
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(message).then(() => {
+      alert("¡Mensaje copiado al portapapeles! Ahora se abrirá el perfil de Discord para que puedas enviarlo.");
+      // Redirect to Discord user profile
+      window.open("https://discordapp.com/users/{{ post.discord_id }}", "_blank");
+    }).catch(err => {
+      console.error("Failed to copy text: ", err);
+      // Fallback
+      window.open("https://discordapp.com/users/{{ post.discord_id }}", "_blank");
+    });
+  }
+</script>
 {% endblock %}
