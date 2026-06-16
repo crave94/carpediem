@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS characters (
     guild           TEXT,
     libb            INTEGER NOT NULL DEFAULT 0,
     leader          INTEGER NOT NULL DEFAULT 0,
+    amigo           INTEGER NOT NULL DEFAULT 0,
     legion_level    INTEGER,
     scraped_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (region, world, name, ranking_type)
@@ -73,6 +74,8 @@ CREATE TABLE IF NOT EXISTS users (
     username        TEXT    NOT NULL UNIQUE,
     password_hash   TEXT    NOT NULL,
     is_admin        INTEGER NOT NULL DEFAULT 0,
+    discord_id      TEXT    UNIQUE,
+    discord_avatar  TEXT,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 """
@@ -117,11 +120,26 @@ def _migrate(conn: sqlite3.Connection) -> None:
         )
     if "legion_level" not in existing:
         conn.execute("ALTER TABLE characters ADD COLUMN legion_level INTEGER")
+    if "amigo" not in existing:
+        conn.execute(
+            "ALTER TABLE characters ADD COLUMN amigo INTEGER NOT NULL DEFAULT 0"
+        )
+        
+    user_existing = {
+        row["name"]
+        for row in conn.execute("PRAGMA table_info(users)")
+    }
+    if "discord_id" not in user_existing:
+        conn.execute("ALTER TABLE users ADD COLUMN discord_id TEXT")
+        conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_discord_id ON users(discord_id)")
+    if "discord_avatar" not in user_existing:
+        conn.execute("ALTER TABLE users ADD COLUMN discord_avatar TEXT")
 
 
 def upsert_character(
     char: Character, image_path: Optional[str] = None, guild: Optional[str] = None,
     libb: Optional[int] = None, legion_level: Optional[int] = None,
+    amigo: Optional[int] = None,
 ) -> int:
     """
     Insert or update a character. Returns the row id.
@@ -165,6 +183,9 @@ def upsert_character(
             if libb is not None:
                 updates.append("libb = ?")
                 params.append(1 if libb else 0)
+            if amigo is not None:
+                updates.append("amigo = ?")
+                params.append(1 if amigo else 0)
             if legion_level is not None:
                 updates.append("legion_level = ?")
                 params.append(int(legion_level))
@@ -181,8 +202,8 @@ def upsert_character(
             INSERT INTO characters
                 (name, region, world, world_id, job, level, exp,
                  rank_position, image_url, ranking_type, search_url,
-                 image_path, guild, libb, legion_level)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 image_path, guild, libb, legion_level, amigo)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 char.name, char.region, char.world, char.world_id,
@@ -191,6 +212,7 @@ def upsert_character(
                 image_path, guild,
                 libb if libb is not None else 0,
                 legion_level,
+                amigo if amigo is not None else 0,
             ),
         )
         return cur.lastrowid
@@ -277,6 +299,15 @@ def set_leader(char_id: int, leader: int) -> None:
         )
 
 
+def set_amigo(char_id: int, amigo: int) -> None:
+    """Set the amigo flag for a character (0 or 1)."""
+    with get_conn() as conn:
+        conn.execute(
+            "UPDATE characters SET amigo = ? WHERE id = ?",
+            (1 if amigo else 0, char_id),
+        )
+
+
 def set_legion_level(char_id: int, legion_level: int) -> None:
     """Set the legion_level for a character."""
     with get_conn() as conn:
@@ -347,6 +378,39 @@ def create_user(
             )
         except sqlite3.IntegrityError:
             return None
+        return cur.lastrowid
+
+
+def upsert_discord_user(discord_id: str, username: str, avatar: str, is_admin: bool = False) -> int:
+    """
+    Insert or update a Discord user. 
+    If it's a new user and username collides, appends part of discord_id to username.
+    """
+    with get_conn() as conn:
+        cur = conn.execute("SELECT id, is_admin FROM users WHERE discord_id = ?", (discord_id,))
+        row = cur.fetchone()
+        if row:
+            # Update info, but never revoke admin here, only grant if requested
+            new_is_admin = 1 if is_admin or row["is_admin"] else 0
+            conn.execute(
+                "UPDATE users SET username = ?, discord_avatar = ?, is_admin = ? WHERE id = ?",
+                (username, avatar, new_is_admin, row["id"])
+            )
+            return row["id"]
+        
+        # Resolve username collision
+        final_username = username
+        while True:
+            cur = conn.execute("SELECT id FROM users WHERE username = ?", (final_username,))
+            if not cur.fetchone():
+                break
+            final_username = f"{username}_{discord_id[-4:]}"
+
+        cur = conn.execute(
+            "INSERT INTO users (username, password_hash, is_admin, discord_id, discord_avatar) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (final_username, "discord_oauth", 1 if is_admin else 0, discord_id, avatar)
+        )
         return cur.lastrowid
 
 

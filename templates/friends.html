@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Miembros del clan · Carpediem{% endblock %}
+{% block title %}Amigos · Carpediem{% endblock %}
 
 {% block content %}
 <section class="mb-4">
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h2 class="h3 mb-0">
-      <i class="bi bi-people-fill me-2"></i>Miembros del clan
-      <span class="badge text-bg-secondary ms-2">{{ characters|length }}</span>
+      <i class="bi bi-person-heart me-2"></i>Amigos
+      <span class="badge text-bg-secondary ms-2">{{ amigo_chars|length }}</span>
     </h2>
   </div>
 
-  {% if not characters %}
-    <div class="alert alert-info">Aún no hay personajes.</div>
+  {% if not amigo_chars %}
+    <div class="alert alert-info">Aún no hay amigos guardados.</div>
   {% else %}
     <!-- Skeleton Loading State -->
     <div class="row g-3 skeleton-grid" id="skeletonGrid" aria-hidden="true">
-      {% for _ in range(6) %}
+      {% for _ in range(4) %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <article class="char-card skeleton-card d-flex flex-column h-100">
             <div class="skeleton skeleton-img" aria-hidden="true"></div>
@@ -36,7 +36,7 @@
 
     <!-- Actual Content -->
     <div class="row g-3 animate-stagger" id="characterGrid" style="display: none;">
-      {% for c in characters %}
+      {% for c in amigo_chars %}
         {% set is_leader = c['leader'] %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 30 }}">
           <a class="char-card text-decoration-none text-reset d-flex flex-column h-100 w-100 animate__animated animate__fadeInUp"
@@ -58,24 +58,19 @@
                 {% if c['libb'] %}
                   <span class="badge badge-liberado d-flex align-items-center badge-pop">LIBERADO</span>
                 {% endif %}
-                {% if is_leader %}
-                  <span class="badge badge-leader d-flex align-items-center badge-pop">LIDER</span>
-                {% endif %}
+                <span class="badge text-bg-success d-flex align-items-center badge-pop">AMIGO</span>
               </div>
               <div class="char-card__info d-flex flex-column gap-2">
-                <!-- Only keeping badges for visual identification -->
               </div>
             </div>
 
             <!-- Uniform info section -->
             <div class="char-card__uniform-info p-3 text-center">
               <h3 class="mb-1">
-                {% if is_leader %}<i class="bi bi-crown-fill text-warning me-1"></i>{% endif %}
                 {{ c['name'] }}
               </h3>
               <div class="exp-guild-info">
                 <span class="text-warning fw-semibold">{{ c['exp']|format_short }} EXP</span>
-                <span>Guild: <strong>CARPEDIEM</strong></span>
               </div>
             </div>
           </a>
@@ -84,14 +79,12 @@
     </div>
   {% endif %}
 </section>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
 (function() {
   'use strict';
-  // Show skeleton for 800ms minimum, then fade to content
   const skeletonGrid = document.getElementById('skeletonGrid');
   const characterGrid = document.getElementById('characterGrid');
   if (!skeletonGrid || !characterGrid) return;
@@ -111,11 +104,9 @@
         characterGrid.style.display = 'flex';
         characterGrid.style.opacity = '0';
         characterGrid.style.transition = 'opacity 0.4s ease';
-
         requestAnimationFrame(() => {
           characterGrid.style.opacity = '1';
         });
-        // Trigger AOS refresh for new elements
         if (typeof AOS !== 'undefined') {
           AOS.refresh();
         }
@@ -123,14 +114,12 @@
     }, delay);
   }
 
-  // If images are already cached, show quickly
   if (document.readyState === 'complete') {
     showContent();
   } else {
     window.addEventListener('load', showContent);
   }
 
-  // Fallback: force show after 3s max
   setTimeout(showContent, 3000);
 })();
 </script>

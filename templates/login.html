@@ -132,6 +132,21 @@
             </button>
           </div>
         </form>
+
+        <hr class="my-4" style="border-color: var(--ms-purple); opacity: 0.3;">
+        <div class="d-grid mt-3">
+          <a href="{{ url_for('login_discord') }}" class="btn btn-lg fw-semibold py-3" style="
+            background-color: #5865F2;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(88, 101, 242, 0.4);
+            transition: all 0.2s ease;
+          " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 28px rgba(88, 101, 242, 0.6)';"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(88, 101, 242, 0.4)';">
+            <i class="bi bi-discord me-2"></i>Iniciar sesión con Discord
+          </a>
+        </div>
       </div>
     </div>
   </div>

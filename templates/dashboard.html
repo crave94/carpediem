@@ -51,6 +51,12 @@
                 Liberado
               </label>
             </div>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="amigo" name="amigo" value="1">
+              <label class="form-check-label fw-semibold" for="amigo">
+                Amigo
+              </label>
+            </div>
           </div>
           <div class="col-12 col-md-2">
             <button type="submit" class="btn btn-primary w-100">
@@ -72,6 +78,7 @@
             <tr>
               <th class="text-center">Lib.</th>
               <th class="text-center">LIDER</th>
+              <th class="text-center">Amigo</th>
               <th></th>
               <th>Nombre</th>
               <th class="text-end">Lv</th>
@@ -90,6 +97,9 @@
                 </td>
                 <td class="text-center">
                   <input class="form-check-input" type="checkbox" name="leader_{{ c['id'] }}" value="1" {% if c['leader'] %}checked{% endif %}>
+                </td>
+                <td class="text-center">
+                  <input class="form-check-input" type="checkbox" name="amigo_{{ c['id'] }}" value="1" {% if c['amigo'] %}checked{% endif %}>
                 </td>
                 <td class="dashboard-td-img">
                   {% if c['image_path'] %}

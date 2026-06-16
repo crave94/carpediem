@@ -18,6 +18,7 @@ from flask import (
     Flask, render_template, request, redirect, url_for,
     flash, abort, send_from_directory, session, jsonify,
 )
+import requests
 
 import db
 
@@ -342,6 +343,79 @@ def login():
 
     return render_template("login.html", next=request.args.get("next") or "")
 
+DISCORD_CLIENT_ID = os.environ.get("DISCORD_CLIENT_ID")
+DISCORD_CLIENT_SECRET = os.environ.get("DISCORD_CLIENT_SECRET")
+DISCORD_REDIRECT_URI = os.environ.get("DISCORD_REDIRECT_URI", "http://127.0.0.1:5000/login/discord/callback")
+
+@app.route("/login/discord")
+def login_discord():
+    if not DISCORD_CLIENT_ID:
+        flash("El login con Discord no está configurado (falta DISCORD_CLIENT_ID).", "error")
+        return redirect(url_for("login"))
+    
+    url = (
+        f"https://discord.com/api/oauth2/authorize"
+        f"?client_id={DISCORD_CLIENT_ID}"
+        f"&redirect_uri={DISCORD_REDIRECT_URI}"
+        f"&response_type=code"
+        f"&scope=identify"
+    )
+    return redirect(url)
+
+@app.route("/login/discord/callback")
+def login_discord_callback():
+    code = request.args.get("code")
+    if not code:
+        flash("Autenticación con Discord cancelada.", "error")
+        return redirect(url_for("login"))
+        
+    data = {
+        "client_id": DISCORD_CLIENT_ID,
+        "client_secret": DISCORD_CLIENT_SECRET,
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": DISCORD_REDIRECT_URI
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    r = requests.post("https://discord.com/api/oauth2/token", data=data, headers=headers)
+    if not r.ok:
+        flash("Error al autenticar con Discord (Token).", "error")
+        return redirect(url_for("login"))
+        
+    token_json = r.json()
+    access_token = token_json.get("access_token")
+    
+    r_user = requests.get("https://discord.com/api/users/@me", headers={
+        "Authorization": f"Bearer {access_token}"
+    })
+    if not r_user.ok:
+        flash("Error al obtener información de Discord.", "error")
+        return redirect(url_for("login"))
+        
+    user_data = r_user.json()
+    discord_id = user_data.get("id")
+    username = user_data.get("username")
+    avatar = user_data.get("avatar")
+    
+    is_admin = False
+    admin_id = os.environ.get("ADMIN_DISCORD_ID")
+    if admin_id and str(discord_id) == str(admin_id):
+        is_admin = True
+        
+    user_id = db.upsert_discord_user(discord_id, username, avatar, is_admin=is_admin)
+    user = db.get_user_by_id(user_id)
+    
+    if user:
+        session.clear()
+        session["user_id"] = user["id"]
+        session["username"] = user["username"]
+        session["is_admin"] = bool(user["is_admin"])
+        flash(f"Bienvenido {user['username']}.", "success")
+    
+    return redirect(url_for("index"))
+
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
@@ -374,13 +448,21 @@ def _save_image_locally(image_url: str, char: Character) -> Optional[str]:
 
 @app.route("/")
 def index():
-    characters = db.list_characters()
+    all_chars = db.list_characters()
+    characters = [c for c in all_chars if not c["amigo"]]
     return render_template("index.html", characters=characters)
+
+@app.route("/friends")
+def friends():
+    all_chars = db.list_characters()
+    amigo_chars = [c for c in all_chars if c["amigo"]]
+    return render_template("friends.html", amigo_chars=amigo_chars)
 
 
 @app.route("/directory")
 def directory():
-    characters = db.list_characters()
+    all_chars = db.list_characters()
+    characters = [c for c in all_chars if not c["amigo"]]
 
     def get_range_label(level: int) -> str:
         tens = (level // 10) * 10
@@ -536,6 +618,7 @@ def addpj():
             return redirect(url_for("addpj"))
 
         libb_flag = 1 if request.form.get("libb") else 0
+        amigo_flag = 1 if request.form.get("amigo") else 0
 
         results = []  # (name, ok, message, char_id_or_none)
         for name in names:
@@ -544,7 +627,7 @@ def addpj():
                 char = scrape_character(url)
                 image_filename = _save_image_locally(char.image_url, char)
                 char_id = db.upsert_character(
-                    char, image_path=image_filename, libb=libb_flag,
+                    char, image_path=image_filename, libb=libb_flag, amigo=amigo_flag,
                 )
                 # EXP snapshot will be recorded by scheduler on next run (or startup scrape)
                 results.append((name, True, f"id #{char_id}", char_id))
@@ -805,8 +888,10 @@ def dashboard_update():
             continue
         new_libb = 1 if request.form.get(f"libb_{cid}") else 0
         new_leader = 1 if request.form.get(f"leader_{cid}") else 0
+        new_amigo = 1 if request.form.get(f"amigo_{cid}") else 0
         db.set_libb(cid_int, new_libb)
         db.set_leader(cid_int, new_leader)
+        db.set_amigo(cid_int, new_amigo)
         updated += 1
     flash(f"{updated} personajes actualizados.", "success")
     return redirect(url_for("dashboard"))
@@ -814,7 +899,8 @@ def dashboard_update():
 
 @app.route("/stats")
 def stats():
-    characters = db.list_characters()
+    all_chars = db.list_characters()
+    characters = [c for c in all_chars if not c["amigo"]]
     if not characters:
         return render_template(
             "stats.html",
