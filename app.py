@@ -258,11 +258,21 @@ def admin_required(view):
 
 
 def get_upcoming_maintenance() -> Optional[dict]:
-    import json, re
+    import json, re, os
     from datetime import datetime, timezone, timedelta
-    cache_path = os.path.join(_DATA_DIR, "news_cache.json")
+    
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    if "REPL_HOME" in os.environ:
+        _data_dir = os.path.join(os.environ["REPL_HOME"], "data")
+    elif "HOME" in os.environ:
+        _data_dir = os.path.join(os.environ["HOME"], "carpediem_data")
+    else:
+        _data_dir = os.path.join(base_dir, "instance")
+        
+    cache_path = os.path.join(_data_dir, "news_cache.json")
     if not os.path.exists(cache_path):
         return None
+        
     try:
         with open(cache_path, "r", encoding="utf-8") as f:
             news_items = json.load(f)
@@ -274,20 +284,25 @@ def get_upcoming_maintenance() -> Optional[dict]:
                         dt_str = match.group(1)
                         is_pdt = 'PDT' in dt_str
                         dt_str_clean = dt_str.replace(' PDT', '').replace(' PST', '')
-                        dt = datetime.strptime(dt_str_clean, '%B %d, %Y at %I:%M %p')
-                        offset = timedelta(hours=-7) if is_pdt else timedelta(hours=-8)
-                        dt = dt.replace(tzinfo=timezone(offset))
-                        timestamp = dt.timestamp()
-                        
-                        # Only return if it's within the last 24 hours or in the future
-                        if timestamp > datetime.now().timestamp() - 86400:
-                            return {
-                                "timestamp": timestamp * 1000, # JS uses milliseconds
-                                "title": item.get("title"),
-                                "url": item.get("url")
-                            }
-    except Exception:
-        pass
+                        try:
+                            dt = datetime.strptime(dt_str_clean, '%B %d, %Y at %I:%M %p')
+                            offset = timedelta(hours=-7) if is_pdt else timedelta(hours=-8)
+                            dt = dt.replace(tzinfo=timezone(offset))
+                            timestamp = dt.timestamp()
+                            
+                            # Only return if it's within the last 24 hours or in the future
+                            if timestamp > datetime.now().timestamp() - 86400:
+                                return {
+                                    "timestamp": timestamp * 1000, # JS uses milliseconds
+                                    "title": item.get("title"),
+                                    "url": item.get("url")
+                                }
+                        except Exception as e:
+                            # If parsing one date fails, continue to the next one
+                            print(f"Error parsing date {dt_str_clean}: {e}")
+                            continue
+    except Exception as e:
+        print(f"Error reading news cache: {e}")
     return None
 
 @app.context_processor
