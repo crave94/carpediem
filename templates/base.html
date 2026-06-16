@@ -558,6 +558,13 @@
           sessionStorage.setItem('welcomeDismissed', 'true');
         }, 300);
       });
+
+      // Auto dismiss after 5 seconds
+      setTimeout(() => {
+        if (popup.style.display !== 'none') {
+          closeBtn.click();
+        }
+      }, 5000);
     })();
     </script>
   {% endif %}
@@ -681,6 +688,12 @@
     updateCountdown();
     const intervalId = setInterval(updateCountdown, 1000);
 
+    // Adjust position if welcome popup is present
+    const welcomePopup = document.querySelector('.welcome-popup-container');
+    if (welcomePopup && sessionStorage.getItem('welcomeDismissed') !== 'true') {
+      document.querySelector('.maintenance-popup').style.bottom = '120px';
+    }
+
     closeBtn.addEventListener('click', () => {
       popup.style.opacity = '0';
       setTimeout(() => {
@@ -688,6 +701,13 @@
         sessionStorage.setItem(dismissKey, 'true');
       }, 300);
     });
+
+    // Auto dismiss after 10 seconds
+    setTimeout(() => {
+      if (popup.style.display !== 'none') {
+        closeBtn.click();
+      }
+    }, 10000);
   })();
   </script>
   {% endif %}
