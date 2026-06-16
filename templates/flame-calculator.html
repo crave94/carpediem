@@ -304,11 +304,22 @@
     const hpMp = (t) => ((Math.floor(level / 10) * 30) * t).toString();
     const defense = (t) => ((Math.floor(level / 20) + 1) * t).toString();
     
-    // Weapon WA formula approximation using Lvl 200 base fractions
-    const l200Mults = [0, 0, 64/257, 94/257, 129/257, 170/257, 218/257];
-    const getWa = (t) => {
-      const factor = (Math.floor(level / 40) + 1) / 6.0;
-      return Math.round(baseWa * l200Mults[t - 1] * factor).toString();
+    // Multipliers derived exactly from the standard MapleStory formula
+    // Boss (Special) has 5 visible tiers (T3 to T7)
+    const bossMultipliers = [0.03, 0.044, 0.0605, 0.08, 0.1025];
+    
+    // Normal equipment has 5 visible tiers (T1 to T5)
+    // Common multiplier distribution: [0.01, 0.015, 0.022, 0.032, 0.043]
+    const normalMultipliers = [0.01, 0.015, 0.022, 0.032, 0.043];
+
+    const getWa = (mode, tierIndex) => {
+      const levelFactor = Math.floor(level / 40) + 1;
+      const multipliers = mode === 'special' ? bossMultipliers : normalMultipliers;
+      
+      if (tierIndex < 0 || tierIndex >= multipliers.length) return "-";
+      
+      const m = multipliers[tierIndex];
+      return Math.ceil(baseWa * m * levelFactor).toString();
     };
 
     for (let mode of ['special', 'normal']) {
@@ -331,7 +342,11 @@
       ];
 
       data[mode].weapon = [
-        rowGen("Weapon WA/MA", getWa),
+        rowGen("Weapon WA/MA", (t) => {
+          // Adjust index map because `t` represents the Tier 1..7 directly
+          let tierIndex = mode === 'special' ? (t - 3) : (t - 1);
+          return getWa(mode, tierIndex);
+        }),
         rowGen("Boss%", (t) => (2 * t) + "%"),
         rowGen("Damage%", (t) => t + "%")
       ];
