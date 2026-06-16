@@ -95,6 +95,7 @@ JOB_TO_IMG_FALLBACK = {
     "Wild Hunter":      "wild_hunter.webp",
     "Xenon":            "xenon.webp",
     "Zero":             "zero.webp",
+    "Lynn":             "lynn_forest_child.webp",
 }
 
 _job_img_cache: dict[str, Optional[str]] = {}
@@ -144,6 +145,7 @@ def _build_job_image_map() -> dict[str, str]:
         "wild_hunter.webp": "Wild Hunter",
         "xenon.webp": "Xenon",
         "zero.webp": "Zero",
+        "lynn_forest_child.webp": "Lynn",
     }
 
     # First, use explicit mapping for known files
