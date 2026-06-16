@@ -134,23 +134,32 @@
 
   <!-- Interactive Controls Section -->
   <div class="card bg-dark-subtle border-0 rounded-4 p-4 mb-4 shadow-lg">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-4">
-      <div>
-        <h4 class="mb-1 text-white fw-bold">Tipo de Equipamiento</h4>
-        <p class="text-muted small mb-0">Selecciona el tipo de equipamiento para actualizar la tabla de valores.</p>
+    <div class="row g-4 align-items-end">
+      <!-- Equip Level -->
+      <div class="col-md-3">
+        <label class="form-label text-muted small fw-bold mb-2">Equip Level</label>
+        <input type="number" id="equipLevel" class="form-control bg-dark text-white border-secondary" value="200" min="0" max="250">
+      </div>
+      
+      <!-- Weapon Base WA/MA -->
+      <div class="col-md-3">
+        <label class="form-label text-muted small fw-bold mb-2">Weapon WA / MA</label>
+        <input type="number" id="weaponBase" class="form-control bg-dark text-white border-secondary" value="257" min="0">
       </div>
 
-      <!-- Equipment Toggle Switch -->
-      <div class="btn-group p-1" role="group" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50px;">
-        <input type="radio" class="btn-check" name="equipType" id="equipSpecial" checked autocomplete="off">
-        <label class="btn switch-label" for="equipSpecial">
-          <i class="bi bi-gem me-2"></i>Special Equip (Boss)
-        </label>
-
-        <input type="radio" class="btn-check" name="equipType" id="equipNormal" autocomplete="off">
-        <label class="btn switch-label" for="equipNormal">
-          <i class="bi bi-shield-shaded me-2"></i>Normal Equip
-        </label>
+      <!-- Equip Type -->
+      <div class="col-md-6 d-flex flex-column align-items-md-end">
+        <label class="form-label text-muted small fw-bold mb-2">Equip Type</label>
+        <div class="btn-group p-1" role="group" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50px;">
+          <input type="radio" class="btn-check" name="equipType" id="equipSpecial" checked autocomplete="off">
+          <label class="btn switch-label" for="equipSpecial">
+            <i class="bi bi-gem me-2"></i>Special
+          </label>
+          <input type="radio" class="btn-check" name="equipType" id="equipNormal" autocomplete="off">
+          <label class="btn switch-label" for="equipNormal">
+            <i class="bi bi-shield-shaded me-2"></i>Normal
+          </label>
+        </div>
       </div>
     </div>
   </div>
@@ -283,51 +292,62 @@
 </div>
 
 <script>
-  // Complete Scraped Data Structure
-  const flameData = {
-    "special": {
-      "common": [
-        { name: "Pure Stats", values: ["-", "-", "33", "44", "55", "66", "77"] },
-        { name: "Mixed Stats", values: ["-", "-", "18", "24", "30", "36", "42"] },
-        { name: "Max HP/MP", values: ["-", "-", "1800", "2400", "3000", "3600", "4200"] },
-        { name: "Defense", values: ["-", "-", "33", "44", "55", "66", "77"] },
-        { name: "All Stats%", values: ["-", "-", "3%", "4%", "5%", "6%", "7%"] },
-        { name: "Equip Level Reduction", values: ["-", "-", "-15", "-20", "-25", "-30", "-35"] }
-      ],
-      "weapon": [
-        { name: "Weapon WA/MA", values: ["-", "-", "64", "94", "129", "170", "218"] },
-        { name: "Boss%", values: ["-", "-", "6%", "8%", "10%", "12%", "14%"] },
-        { name: "Damage%", values: ["-", "-", "3%", "4%", "5%", "6%", "7%"] }
-      ],
-      "armor": [
-        { name: "Armor WA/MA", values: ["-", "-", "3", "4", "5", "6", "7"] },
-        { name: "Speed", values: ["-", "-", "3", "4", "5", "6", "7"] },
-        { name: "Jump", values: ["-", "-", "3", "4", "5", "6", "7"] }
-      ]
-    },
-    "normal": {
-      "common": [
-        { name: "Pure Stats", values: ["11", "22", "33", "44", "55", "-", "-"] },
-        { name: "Mixed Stats", values: ["6", "12", "18", "24", "30", "-", "-"] },
-        { name: "Max HP/MP", values: ["600", "1200", "1800", "2400", "3000", "-", "-"] },
-        { name: "Defense", values: ["11", "22", "33", "44", "55", "-", "-"] },
-        { name: "All Stats%", values: ["1%", "2%", "3%", "4%", "5%", "-", "-"] },
-        { name: "Equip Level Reduction", values: ["-5", "-10", "-15", "-20", "-25", "-", "-"] }
-      ],
-      "weapon": [
-        { name: "Weapon WA/MA", values: ["22", "47", "77", "113", "156", "-", "-"] },
-        { name: "Boss%", values: ["2%", "4%", "6%", "8%", "10%", "-", "-"] },
-        { name: "Damage%", values: ["1%", "2%", "3%", "4%", "5%", "-", "-"] }
-      ],
-      "armor": [
-        { name: "Armor WA/MA", values: ["1", "2", "3", "4", "5", "-", "-"] },
-        { name: "Speed", values: ["1", "2", "3", "4", "5", "-", "-"] },
-        { name: "Jump", values: ["1", "2", "3", "4", "5", "-", "-"] }
-      ]
+  function generateFlameData(level, baseWa) {
+    const data = {
+      special: { common: [], weapon: [], armor: [] },
+      normal: { common: [], weapon: [], armor: [] }
+    };
+
+    // Helper to calculate common stats
+    const pureStats = (t) => ((Math.floor(level / 20) + 1) * t).toString();
+    const mixedStats = (t) => ((Math.floor(level / 40) + 1) * t).toString();
+    const hpMp = (t) => ((Math.floor(level / 10) * 30) * t).toString();
+    const defense = (t) => ((Math.floor(level / 20) + 1) * t).toString();
+    
+    // Weapon WA formula approximation using Lvl 200 base fractions
+    const l200Mults = [0, 0, 64/257, 94/257, 129/257, 170/257, 218/257];
+    const getWa = (t) => {
+      const factor = (Math.floor(level / 40) + 1) / 6.0;
+      return Math.round(baseWa * l200Mults[t - 1] * factor).toString();
+    };
+
+    for (let mode of ['special', 'normal']) {
+      let tiers = mode === 'special' ? [3, 4, 5, 6, 7] : [1, 2, 3, 4, 5];
+      let rowGen = (name, fn) => {
+        let values = [];
+        for (let i = 1; i <= 7; i++) {
+          values.push(tiers.includes(i) ? fn(i) : "-");
+        }
+        return { name, values };
+      };
+
+      data[mode].common = [
+        rowGen("Pure Stats", pureStats),
+        rowGen("Mixed Stats", mixedStats),
+        rowGen("Max HP/MP", hpMp),
+        rowGen("Defense", defense),
+        rowGen("All Stats%", (t) => t + "%"),
+        rowGen("Equip Level Reduction", (t) => "-" + (5 * t))
+      ];
+
+      data[mode].weapon = [
+        rowGen("Weapon WA/MA", getWa),
+        rowGen("Boss%", (t) => (2 * t) + "%"),
+        rowGen("Damage%", (t) => t + "%")
+      ];
+
+      data[mode].armor = [
+        rowGen("Armor WA/MA", (t) => t.toString()),
+        rowGen("Speed", (t) => t.toString()),
+        rowGen("Jump", (t) => t.toString())
+      ];
     }
-  };
+    return data;
+  }
 
   // DOM Elements
+  const equipLevelInput = document.getElementById('equipLevel');
+  const weaponBaseInput = document.getElementById('weaponBase');
   const equipSpecial = document.getElementById('equipSpecial');
   const equipNormal = document.getElementById('equipNormal');
   const commonTableBody = document.getElementById('commonTableBody');
@@ -373,6 +393,9 @@
 
   function updateTables() {
     const mode = getActiveMode();
+    const level = parseInt(equipLevelInput.value) || 200;
+    const baseWa = parseInt(weaponBaseInput.value) || 257;
+    const flameData = generateFlameData(level, baseWa);
     
     // Update active configurations descriptions on cards
     if (mode === "special") {
@@ -433,6 +456,10 @@
   }
 
   // Event Listeners
+  [equipLevelInput, weaponBaseInput].forEach(el => {
+    el.addEventListener('input', updateTables);
+  });
+  
   equipSpecial.addEventListener('change', () => {
     updateTables();
     clearHighlights();
