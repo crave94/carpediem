@@ -9,7 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=10">
+  <!-- ApexCharts for modern interactive graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
   <!-- Enhanced background effects - layered for depth -->
@@ -25,6 +27,7 @@
   </div>
 
   <div class="stars-layer" aria-hidden="true" id="starsLayer"></div>
+  <div class="maple-leaves-layer" aria-hidden="true" id="leavesLayer"></div>
 
   <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="z-index: 1000; background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(168, 85, 247, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(168, 85, 247, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);">
     <div class="container">
@@ -510,42 +513,7 @@
         box-shadow: 0 0 5px ${color}, 0 0 10px ${color}80;
       `;
       starsLayer.appendChild(star);
-    }
-
-    // 2. Generate Drifting Sparks (glowing magical particles floating up)
-    const sparkCount = Math.min(35, Math.floor(window.innerWidth * window.innerHeight / 40000));
-    const sparkColors = [
-      '#C084FC', // Maple Purple
-      '#60A5FA', // Maple Blue
-      '#FB7185', // Maple Pink
-      '#FCD34D'  // Gold
-    ];
-
-    for (let i = 0; i < sparkCount; i++) {
-      const spark = document.createElement('div');
-      spark.className = 'spark';
-      const color = sparkColors[Math.floor(Math.random() * sparkColors.length)];
-      const size = 3 + Math.random() * 4;
-      const duration = 12 + Math.random() * 15;
-      const delay = -(Math.random() * duration);
-      const driftX = (Math.random() - 0.5) * 200;
-      const driftRot = (Math.random() - 0.5) * 360;
-      const left = Math.random() * 100;
-
-      spark.style.cssText = `
-        left: ${left}%;
-        width: ${size}px;
-        height: ${size}px;
-        background: ${color};
-        box-shadow: 0 0 8px ${color}, 0 0 16px ${color}c0, 0 0 24px ${color}60;
-        --drift-x: ${driftX}px;
-        --drift-rot: ${driftRot}deg;
-        --spark-duration: ${duration}s;
-        --spark-delay: ${delay}s;
-      `;
-      starsLayer.appendChild(spark);
-    }
-  })();
+    }  })();
   </script>
 
   {% if welcome_char %}
@@ -592,6 +560,71 @@
     })();
     </script>
   {% endif %}
+
+  <!-- 3D Tilt & Interactive Radial Glow Tracker -->
+  <script>
+  (function() {
+    'use strict';
+
+    // Respect prefers-reduced-motion user preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // Set up mouse listeners on cards
+    function initCardTilt() {
+      const cards = document.querySelectorAll('.char-card, .stat-card, .hover-card');
+
+      cards.forEach(card => {
+        let isTilting = false;
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          // Set coordinates in CSS custom properties
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+
+          // Calculate rotation (max 7 degrees tilt for a subtle look)
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((centerY - y) / centerY) * 7;
+          const rotateY = ((x - centerX) / centerX) * 7;
+
+          if (!isTilting) {
+            isTilting = true;
+            // Snappy transition for direct tracking
+            card.style.transition = 'transform 0.08s ease-out, border-color 0.15s, box-shadow 0.15s';
+          }
+
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          isTilting = false;
+          // Smooth ease back to neutral state on mouse leave
+          card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.15s, box-shadow 0.15s';
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+        });
+      });
+    }
+
+    // Initialize on load
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      initCardTilt();
+    } else {
+      window.addEventListener('DOMContentLoaded', initCardTilt);
+    }
+    
+    // Also re-run after skeleton loads (for homepage list grid)
+    window.addEventListener('load', () => {
+      setTimeout(initCardTilt, 900); // Trigger just after characterGrid is shown
+    });
+  </script>
+
+  <!-- Maple Leaf Particle System Loader -->
+  <script src="{{ url_for('static', filename='maple-particles.js') }}?v=10"></script>
 
   {% block scripts %}{% endblock %}
 </body>

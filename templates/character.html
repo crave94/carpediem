@@ -35,8 +35,12 @@
         <span class="badge badge-leader d-flex align-items-center">LIDER</span>
         {% endif %}
       </div>
-      <span class="badge badge-job mb-2">{{ char['job'] }}</span>
-      <!-- Character name moved to uniform section at end -->
+      <div class="mb-1">
+        <span class="badge badge-job mb-0">{{ char['job'] }}</span>
+      </div>
+      <h1 class="character-detail__name outfit mb-0 text-white fw-black" style="font-size: 2.3rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8); background: linear-gradient(135deg, #fff 30%, var(--ms-purple-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: -0.02em;">
+        {{ char['name'] }}
+      </h1>
     </div>
     <div class="character-detail__level ms-auto text-end">
       <div class="character-detail__level-label">NIVEL</div>
@@ -193,25 +197,110 @@
         Pico: <strong>{{ max_gain|format_short }}</strong> EXP/día.
       </p>
 
-      <div class="exp-chart">
-        {% for h in history %}
-        {% set has_gain = h['gain'] is not none %}
-        <div class="exp-chart__bar{% if not has_gain %} exp-chart__bar--no-data{% endif %}"
-          title="{{ h['day'] }} — EXP total: {{ h['exp_fmt'] }}{% if has_gain %} — Ganancia: +{{ h['gain_fmt'] }}{% endif %}">
-          <div class="exp-chart__value">
-            {%- if has_gain and h['gain'] > 0 -%}
-            +{{ h['gain']|format_short }}
-            {%- elif has_gain -%}
-            0
-            {%- endif -%}
-          </div>
-          <div class="exp-chart__fill-wrap">
-            <div class="exp-chart__fill" style="height: {{ '%.1f'|format(h['bar_height']) }}%"></div>
-          </div>
-          <div class="exp-chart__day">{{ h['day'][5:] }}</div>
-        </div>
-        {% endfor %}
-      </div>
+      <!-- ApexCharts Interactive Area Graph -->
+      <div id="expHistoryChart" class="w-100" style="min-height: 250px;"></div>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const rawHistory = [
+            {% for h in history %}
+            {
+              day: "{{ h['day'] }}",
+              gain: {{ h['gain'] if h['gain'] is not none else 0 }},
+              exp: {{ h['exp'] if h['exp'] is not none else 0 }}
+            },
+            {% endfor %}
+          ];
+          
+          const days = rawHistory.map(h => h.day.substring(5)); // Format: "06-15"
+          const gains = rawHistory.map(h => h.gain);
+
+          const options = {
+            chart: {
+              type: 'area',
+              height: 260,
+              toolbar: { show: false },
+              background: 'transparent',
+              foreColor: '#94a3b8',
+              fontFamily: 'Outfit, sans-serif'
+            },
+            theme: {
+              mode: 'dark'
+            },
+            colors: ['#A855F7'], // Maple Purple glow
+            fill: {
+              type: 'gradient',
+              gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.55,
+                opacityTo: 0.02,
+                stops: [0, 100],
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: '#A855F7',
+                    opacity: 0.55
+                  },
+                  {
+                    offset: 100,
+                    color: '#3B82F6',
+                    opacity: 0.02
+                  }
+                ]
+              }
+            },
+            stroke: {
+              curve: 'smooth',
+              width: 3.5,
+              colors: ['#A855F7']
+            },
+            markers: {
+              size: 4,
+              colors: ['#3B82F6'],
+              strokeColors: '#fff',
+              strokeWidth: 2,
+              hover: { size: 6 }
+            },
+            dataLabels: { enabled: false },
+            series: [{
+              name: 'EXP Ganada',
+              data: gains
+            }],
+            xaxis: {
+              categories: days,
+              axisBorder: { show: false },
+              axisTicks: { show: false }
+            },
+            yaxis: {
+              labels: {
+                formatter: function(val) {
+                  if (val === 0) return '0';
+                  if (val >= 1e12) return (val / 1e12).toFixed(1) + 'T';
+                  if (val >= 1e9) return (val / 1e9).toFixed(1) + 'B';
+                  if (val >= 1e6) return (val / 1e6).toFixed(1) + 'M';
+                  if (val >= 1e3) return (val / 1e3).toFixed(0) + 'k';
+                  return val.toLocaleString();
+                }
+              }
+            },
+            grid: {
+              borderColor: 'rgba(255, 255, 255, 0.08)',
+              strokeDashArray: 4
+            },
+            tooltip: {
+              theme: 'dark',
+              y: {
+                formatter: function(val, { seriesIndex, dataPointIndex, w }) {
+                  const item = rawHistory[dataPointIndex];
+                  return `<strong style="color: #fff;">+${val.toLocaleString()} EXP</strong><br><span style="font-size: 0.8rem; color: #cbd5e1;">Acumulado: ${item.exp.toLocaleString()}</span>`;
+                }
+              }
+            }
+          };
+
+          const chart = new ApexCharts(document.querySelector("#expHistoryChart"), options);
+          chart.render();
+        });
+      </script>
       {% endif %}
     </section>
   </main>
