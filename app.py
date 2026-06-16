@@ -458,6 +458,13 @@ def friends():
     amigo_chars = [c for c in all_chars if c["amigo"]]
     return render_template("friends.html", amigo_chars=amigo_chars)
 
+@app.route("/mercado")
+def mercado():
+    if "user_id" not in session:
+        flash("Debes iniciar sesión para acceder al Mercado.", "error")
+        return redirect(url_for("login"))
+    return render_template("mercado.html")
+
 
 @app.route("/directory")
 def directory():

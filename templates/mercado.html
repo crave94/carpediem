@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Mercado - Carpediem{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col">
+    <div class="glass-card text-center p-4">
+      <h2 class="fw-bold mb-3" style="color: var(--ms-blue-glow);"><i class="bi bi-shop me-2"></i>MERCADO</h2>
+      <p class="fs-5 mb-0">Estás logeado como <strong style="color: var(--ms-purple);">{{ session['username'] }}</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div class="glass-card p-4 text-center" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+      <p class="text-muted fs-5 mb-0"><i class="bi bi-tools me-2"></i>El mercado está en construcción. ¡Pronto habrá novedades!</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
