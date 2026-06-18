@@ -3,7 +3,7 @@ services:
     build: .
     container_name: carpediem
     ports:
-      - "${PORT:-8001}:8001"
+      - "80:8001"
     env_file:
       - .env
     environment:
