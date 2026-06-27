@@ -358,7 +358,8 @@ def login():
 
 DISCORD_CLIENT_ID = os.environ.get("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.environ.get("DISCORD_CLIENT_SECRET")
-DISCORD_REDIRECT_URI = os.environ.get("DISCORD_REDIRECT_URI", "http://127.0.0.1:5000/login/discord/callback")
+# Fallback to the production domain instead of localhost, which fixes the invalid OAuth2 redirect URI error
+DISCORD_REDIRECT_URI = os.environ.get("DISCORD_REDIRECT_URI", "https://carpediem-maple.duckdns.org/login/discord/callback")
 
 @app.route("/login/discord")
 def login_discord():
