@@ -367,10 +367,13 @@ def login_discord():
         flash("El login con Discord no está configurado (falta DISCORD_CLIENT_ID).", "error")
         return redirect(url_for("login"))
     
+    import urllib.parse
+    encoded_redirect = urllib.parse.quote(DISCORD_REDIRECT_URI, safe="")
+    
     url = (
         f"https://discord.com/api/oauth2/authorize"
         f"?client_id={DISCORD_CLIENT_ID}"
-        f"&redirect_uri={DISCORD_REDIRECT_URI}"
+        f"&redirect_uri={encoded_redirect}"
         f"&response_type=code"
         f"&scope=identify"
     )
